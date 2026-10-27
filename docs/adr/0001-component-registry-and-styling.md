@@ -13,6 +13,7 @@ Tracky has an existing React analytics SDK in the repository root. The component
 - Distribute the UI primitives through a Tracky component registry. A registry CLI adds editable component source to the consuming application; it does not install a separately hosted component runtime.
 - Keep the analytics SDK as the root `tracky` npm package. Keep registry entries and the website separate from the SDK runtime. The website may serve the registry, but it is not a runtime dependency for installed components.
 - Use Tailwind CSS utility classes in the copied component source. Consumers configure Tailwind in their application and own the resulting source and styles. Document the required Tailwind setup and any theme tokens alongside installation instructions.
+- Ship theme tokens as CSS variables with light-theme defaults, plus a Tailwind preset that maps them to semantic utilities. Components reference semantic classes such as `bg-primary` and `border-border` instead of palette values, so consumers theme them by overriding variables rather than editing every file.
 - Keep component runtime dependencies small. Prefer semantic HTML and React. Add a dependency only when a primitive requires behavior that native elements cannot provide accessibly; record that dependency in its registry entry and install instructions.
 - Put copied primitives in the consumer's conventional local UI directory, with one source file per primitive and named exports. Preserve native element props, refs, event handlers, and `className` customization. Use typed variants and sizes only where they are useful for that primitive.
 - Build on native controls where possible. Require associated labels, keyboard operation, visible focus, and correct disabled and invalid states. A component must remain usable when no analytics provider is present.
@@ -62,7 +63,7 @@ The registry CLI and exact registry manifest format will be selected during impl
 
 - Component analytics requires the Tracky provider for delivery, but components still render and behave normally without it. Component actions use the configured endpoint and do not enable page-wide capture.
 - Registry entries need to describe source files, imports, dependencies, and any setup steps so the CLI can add components predictably.
-- Remaining T-001 detail: choose the registry CLI and manifest format, and document Tailwind setup and import-alias adaptation.
+- Remaining T-001 detail: choose the registry CLI and manifest format, and document import-alias adaptation. Tailwind setup and theme overrides are documented in `registry/theme/`.
 - Build each primitive as a registry entry in follow-up component tickets.
 
 ## References

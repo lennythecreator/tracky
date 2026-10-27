@@ -1,0 +1,22 @@
+:root {
+  --tracky-background: #ffffff;
+  --tracky-foreground: #0f172a;
+  --tracky-primary: #1d4ed8;
+  --tracky-primary-foreground: #ffffff;
+  --tracky-primary-hover: #1e40af;
+  --tracky-secondary: #f1f5f9;
+  --tracky-secondary-foreground: #0f172a;
+  --tracky-secondary-hover: #e2e8f0;
+  --tracky-muted: #f1f5f9;
+  --tracky-muted-foreground: #64748b;
+  --tracky-destructive: #b91c1c;
+  --tracky-destructive-foreground: #ffffff;
+  --tracky-destructive-hover: #991b1b;
+  --tracky-border: #cbd5e1;
+  --tracky-switch-thumb: #ffffff;
+  --tracky-ring: #1d4ed8;
+  --tracky-radius-sm: 0.25rem;
+  --tracky-radius-md: 0.375rem;
+  --tracky-radius-lg: 0.5rem;
+  --tracky-font-sans: inherit;
+}

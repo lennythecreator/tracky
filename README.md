@@ -63,7 +63,11 @@ The browser sends batches with `fetch` and `keepalive` when possible. Failed req
 
 ## Component source
 
-The initial source-owned primitives are in [`registry/components/ui/`](registry/components/ui/). They are standalone React source files that consumers can adapt in their own application; they are not exports from the `tracky` SDK package, and no registry installer is available yet. The components use Tailwind CSS classes, so the consuming app must configure Tailwind. Component action tracking is still in progress; the current primitive source does not emit analytics events.
+The initial source-owned primitives are in [`registry/components/ui/`](registry/components/ui/). They are standalone React source files that consumers can adapt in their own application; they are not exports from the `tracky` SDK package, and no registry installer is available yet. The components use Tailwind CSS classes and semantic theme tokens, so the consuming app must configure Tailwind. Component action tracking is still in progress; the current primitive source does not emit analytics events.
+
+## Theming
+
+Colors, radii, and font family come from CSS variables. [`registry/theme/tokens.css`](registry/theme/tokens.css) provides light-theme defaults, and [`registry/theme/tailwind-preset.cjs`](registry/theme/tailwind-preset.cjs) maps them to semantic Tailwind utilities. Import the stylesheet and add the preset (Tailwind v3) or the `@theme inline` block (Tailwind v4), then override the `--tracky-*` variables to theme the components. Typography inherits your application's font until you set `--tracky-font-sans`. See [`registry/theme/README.md`](registry/theme/README.md) for setup, dark-theme examples, and the token list.
 
 ## Privacy and security
 
