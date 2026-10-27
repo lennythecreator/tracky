@@ -6,7 +6,13 @@ A lightweight React analytics SDK that sends first-party events to an endpoint y
 
 Early development. The public API and event schema may change before the first stable release. Hosted license verification and managed dashboards are not part of this repository foundation.
 
+## Component architecture decisions
+
+Tracky's reusable UI components are distributed as source-owned registry entries (not runtime exports from the `tracky` SDK package). The initial source lives in [`registry/components/ui/`](registry/components/ui/). See [ADR 0001: Component registry and styling model](./docs/adr/0001-component-registry-and-styling.md) for distribution, styling, accessibility, naming, and package-boundary decisions.
+
 ## Install
+
+Tracky is not published to npm yet. This command applies once a release is available:
 
 ```sh
 npm install tracky
@@ -47,7 +53,7 @@ The provider uses browser APIs after mounting, so it can be rendered inside a Re
 
 ## Event shape
 
-Events contain `eventType`, ISO UTC `timestamp`, relative `route`, a `context` object, and a random `sessionId` stored in `sessionStorage`. Call `analytics.trackComponentEvent(component, action, context)` from an explicit component action handler to send a `component_interaction` event. For example, the call above produces `component: "save_button"`, `action: "activate"`, and `location: "toolbar"` in `context`. Use stable component and action names; pass only small, JSON-safe metadata. Tracky does not inspect component props or read field values.
+Events contain `eventType`, ISO UTC `timestamp`, relative `route`, a `context` object, and a random `sessionId` stored in `sessionStorage`. Call `analytics.trackComponentEvent(component, action, context)` from an explicit component action handler to send a `component_interaction` event. For example, the call above produces `component: "save_button"`, `action: "activate"`, and `location: "toolbar"` in `context`. Use stable component and action names; pass only small, JSON-safe metadata. Tracky does not inspect component props or read field values. The approved target contract places `{ name, action }` in a top-level `component` object; the current scaffold still writes both into `context`.
 
 Explicit component events are sent when you call the method. The `captureInteractions` option controls only automatic DOM interaction capture.
 
@@ -69,5 +75,4 @@ Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK
 npm install
 npm run build
 ```
-
 
