@@ -6,6 +6,10 @@ A lightweight React analytics SDK that sends first-party events to an endpoint y
 
 Early development. The public API and event schema may change before the first stable release. Hosted license verification and managed dashboards are not part of this repository foundation.
 
+## Component architecture decisions
+
+Tracky's reusable UI components are planned as source-owned registry entries (not runtime exports from the `tracky` SDK package). See [ADR 0001: Component registry and styling model](./docs/adr/0001-component-registry-and-styling.md) for distribution, styling, accessibility, naming, and package-boundary decisions.
+
 ## Install
 
 ```sh
@@ -54,5 +58,4 @@ Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK
 npm install
 npm run build
 ```
-
 
