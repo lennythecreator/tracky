@@ -6,7 +6,13 @@ A lightweight React analytics SDK that sends first-party events to an endpoint y
 
 Early development. The public API and event schema may change before the first stable release. Hosted license verification and managed dashboards are not part of this repository foundation.
 
+## Component architecture decisions
+
+Tracky's reusable UI components are distributed as source-owned registry entries (not runtime exports from the `tracky` SDK package). The initial source lives in [`registry/components/ui/`](registry/components/ui/). See [ADR 0001: Component registry and styling model](./docs/adr/0001-component-registry-and-styling.md) for distribution, styling, accessibility, naming, and package-boundary decisions.
+
 ## Install
+
+Tracky is not published to npm yet. This command applies once a release is available:
 
 ```sh
 npm install tracky
@@ -21,14 +27,21 @@ import { AnalyticsProvider, useAnalytics } from 'tracky'
 
 function SaveButton() {
   const analytics = useAnalytics()
-  return <button onClick={() => analytics.track('save_clicked', { location: 'toolbar' })}>Save</button>
+  return (
+    <button
+      type="button"
+      onClick={() => analytics.trackComponentEvent('save_button', 'activate', { location: 'toolbar' })}
+    >
+      Save
+    </button>
+  )
 }
 
 export function AppAnalytics({ children }: { children: React.ReactNode }) {
   return (
     <AnalyticsProvider
       endpoint="https://your-api.example.com/events"
-      options={{ capturePageViews: true, captureInteractions: true }}
+      options={{ capturePageViews: true }}
     >
       {children}
     </AnalyticsProvider>
@@ -40,9 +53,17 @@ The provider uses browser APIs after mounting, so it can be rendered inside a Re
 
 ## Event shape
 
-Events contain `eventType`, ISO UTC `timestamp`, relative `route`, a `context` object, and a random `sessionId` stored in `sessionStorage`. Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable event name.
+Events contain `eventType`, ISO UTC `timestamp`, relative `route`, a `context` object, and a random `sessionId` stored in `sessionStorage`. Call `analytics.trackComponentEvent(component, action, context)` from an explicit component action handler to send a `component_interaction` event. For example, the call above produces `component: "save_button"`, `action: "activate"`, and `location: "toolbar"` in `context`. Use stable component and action names; pass only small, JSON-safe metadata. Tracky does not inspect component props or read field values. The approved target contract places `{ name, action }` in a top-level `component` object; the current scaffold still writes both into `context`.
+
+Explicit component events are sent when you call the method. The `captureInteractions` option controls only automatic DOM interaction capture.
+
+Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable event name.
 
 The browser sends batches with `fetch` and `keepalive` when possible. Failed requests are retried with capped exponential backoff while the page remains open. For durable delivery, validate and queue events on your own endpoint.
+
+## Component source
+
+The initial source-owned primitives are in [`registry/components/ui/`](registry/components/ui/). They are standalone React source files that consumers can adapt in their own application; they are not exports from the `tracky` SDK package, and no registry installer is available yet. The components use Tailwind CSS classes, so the consuming app must configure Tailwind. Component action tracking is still in progress; the current primitive source does not emit analytics events.
 
 ## Privacy and security
 
@@ -54,5 +75,4 @@ Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK
 npm install
 npm run build
 ```
-
 
