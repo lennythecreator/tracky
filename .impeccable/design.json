@@ -35,7 +35,7 @@
       "name": "Route Node",
       "kind": "custom",
       "refersTo": "route-poster",
-      "description": "Concept preview of the planned component library feeding the SDK event path.",
+      "description": "Concept preview of the component library feeding the SDK event path.",
       "html": "<article class=\"ds-route-node\"><span>TRACKY UI · PLANNED</span><strong>React component</strong><code>button_click</code></article>",
       "css": ".ds-route-node { display: grid; gap: 8px; width: 220px; padding: 16px; border: 1px solid #d2e3f2; border-radius: 14px; color: #15324f; background: #fff; font-family: 'Plus Jakarta Sans', sans-serif; } .ds-route-node span { color: #536e87; font: 600 11px/1.4 'Cascadia Code', monospace; letter-spacing: .05em; } .ds-route-node strong { font-size: 14px; } .ds-route-node code { color: #4e6a84; font: 12px/1.4 'Cascadia Code', monospace; }"
     },
@@ -50,8 +50,8 @@
   ],
   "narrative": {
     "northStar": "The Clear Route",
-    "overview": "Tracky pairs a planned React component library with an analytics SDK for developers who want useful product signals while keeping control of where those signals go. Its interface should feel precise, open, and trustworthy. Soft blue marks the event path and active choices. White space keeps the page readable. A routing diagram and a clearly labeled component preview show the intended product without implying the library is shipped or hosted infrastructure exists.",
-    "keyCharacteristics": ["Blue routing lines connect a planned component layer, SDK, and developer endpoint.", "Plus Jakarta Sans gives headings and body copy one consistent voice.", "Dark, restrained code and signal panels distinguish implementation examples from marketing copy."],
+    "overview": "Tracky pairs an in-development React component library with an analytics SDK for developers who want useful product signals while keeping control of where those signals go. Its interface should feel precise, open, and trustworthy. Soft blue marks the event path and active choices. White space keeps the page readable. A routing diagram and a clearly labeled component preview show the intended product without implying the library is shipped or hosted infrastructure exists.",
+    "keyCharacteristics": ["Blue routing lines connect a component layer, SDK, and developer endpoint.", "Plus Jakarta Sans gives headings and body copy one consistent voice.", "Dark, restrained code and signal panels distinguish implementation examples from marketing copy."],
     "rules": [],
     "dos": ["Do make the configured endpoint and developer-owned data path clear.", "Do label example data, the component preview, and animated route behavior as illustrative.", "Do keep opt-in capture and privacy boundaries accurate to the product implementation."],
     "donts": ["Don't imply Tracky provides a collector, dashboard, durable queue, consent manager, or guaranteed delivery.", "Don't add gradients, generic feature-card grids, or unsupported performance claims."]

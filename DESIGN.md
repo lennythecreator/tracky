@@ -49,7 +49,7 @@ components:
 
 ## Overview
 
-**Creative North Star: “The Clear Route.”** Tracky pairs a planned React component library with an analytics SDK for developers who want useful product signals while keeping control of where those signals go. Its interface should feel precise, open, and trustworthy. The SDK exists in the current scaffold; the component library is still in development.
+**Creative North Star: “The Clear Route.”** Tracky pairs an in-development React component library with an analytics SDK for developers who want useful product signals while keeping control of where those signals go. Its interface should feel precise, open, and trustworthy. The SDK exists in the current scaffold; the component library is still in development.
 
 Soft blue marks the event path and active choices. White space keeps the page readable. A routing diagram is the visual signature; explanatory copy and code show what the SDK does without implying hosted infrastructure.
 
@@ -81,8 +81,8 @@ Use 12–16px corners for controls and content panels, with a slightly larger ra
 ## Components
 
 - **Primary action:** solid blue button with white text, a subtle shadow, and a small lift on hover.
-- **Route poster:** pale-blue surface containing a planned Tracky UI component, the analytics SDK, and a developer endpoint linked by a simple SVG route. Label this path as a concept preview.
-- **Component preview:** one composed app surface paired with an illustrative event list. Keep planned status and the component library's unreleased state explicit.
+- **Route poster:** pale-blue surface containing a Tracky UI component, the analytics SDK, and a developer endpoint linked by a simple SVG route. Label this path as a concept preview.
+- **Component preview:** one composed app surface paired with an illustrative event list. Keep the component library's in-development status and unreleased state explicit.
 - **Code panels:** dark navy for the quick-start snippet; white for the example event payload.
 - **Capability rows:** icon, heading, explanation, and a short metadata label separated by thin rules.
 

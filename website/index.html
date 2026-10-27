@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f5f9fe" />
-  <meta name="description" content="Track React events and send them to your own endpoint with Tracky's analytics SDK. A reusable React component library is planned." />
+  <meta name="description" content="Track React events and send them to your own endpoint with Tracky's analytics SDK. Initial React primitives are in development." />
   <title>Tracky — React analytics, with your endpoint</title>
   <link rel="preload" href="./fonts/plus-jakarta-sans-regular.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="stylesheet" href="./styles.css" />
@@ -20,9 +20,9 @@
       </a>
       <details class="mobile-nav">
         <summary aria-label="Open navigation"><span></span><span></span></summary>
-        <nav class="mobile-nav-panel" aria-label="Main navigation"><a href="#components">Planned components</a><a href="#how-it-works">Analytics SDK</a><a href="#event-shape">Event schema</a><a href="#quick-start">SDK quick start</a></nav>
+        <nav class="mobile-nav-panel" aria-label="Main navigation"><a href="#components">Components</a><a href="#how-it-works">Analytics SDK</a><a href="#event-shape">Event schema</a><a href="#quick-start">SDK quick start</a></nav>
       </details>
-      <nav class="desktop-nav" aria-label="Main navigation"><a href="#components">Planned components</a><a href="#how-it-works">Analytics SDK</a><a href="#event-shape">Event schema</a><a class="nav-cta" href="#quick-start">SDK quick start <span aria-hidden="true">↗</span></a></nav>
+      <nav class="desktop-nav" aria-label="Main navigation"><a href="#components">Components</a><a href="#how-it-works">Analytics SDK</a><a href="#event-shape">Event schema</a><a class="nav-cta" href="#quick-start">SDK quick start <span aria-hidden="true">↗</span></a></nav>
     </div>
   </header>
 
@@ -30,7 +30,7 @@
     <section class="hero wrap" id="top" aria-labelledby="hero-title">
       <div class="hero-copy">
         <h1 id="hero-title">Track React events.<br><span>Own the data path.</span></h1>
-        <p class="hero-deck">The analytics SDK is in development. Its current scaffold sends named events to your endpoint; page-view and interaction metadata capture are opt-in. A reusable React component library is planned.</p>
+        <p class="hero-deck">The analytics SDK is in development. Its current scaffold sends named events to your endpoint; page-view and interaction metadata capture are opt-in. The initial React component source is available in the repository.</p>
         <div class="hero-actions"><a class="button button-primary" href="#quick-start">Explore the SDK setup <span aria-hidden="true">↗</span></a><a class="text-link" href="#how-it-works">Follow an event <span aria-hidden="true">↓</span></a></div>
         <p class="hero-note">No packages published yet · your endpoint owns storage and dashboards.</p>
       </div>
@@ -56,13 +56,13 @@
 
     <section class="component-section section wrap" id="components" aria-labelledby="components-title">
       <div class="component-copy">
-        <span class="status-pill"><span class="status-pill-dot" aria-hidden="true"></span> Planned · not yet available</span>
-        <h2 id="components-title">Planned React components. One event path.</h2>
-        <p>Tracky plans to pair reusable UI components with its analytics SDK, so common actions can flow to the endpoint you configure.</p>
-        <p class="component-boundary">The component package and API are still being defined. This mockup shows the direction; it is not a working component.</p>
+        <span class="status-pill"><span class="status-pill-dot" aria-hidden="true"></span> In development · not yet installable</span>
+        <h2 id="components-title">React components in development. One event path.</h2>
+        <p>Tracky is building reusable UI components to pair with its analytics SDK, so common actions can flow to the endpoint you configure.</p>
+        <p class="component-boundary">The initial primitives are source files in the component registry, with no installer yet. This preview shows the direction; it is not an installed component.</p>
         <a class="text-link" href="#quick-start">See the analytics SDK setup <span aria-hidden="true">↓</span></a>
       </div>
-      <div class="component-preview" role="img" aria-label="Mockup of a settings component and sample interaction events; the component library is not available yet">
+      <div class="component-preview" role="img" aria-label="Mockup of a settings component and sample interaction events; the component library is not installable yet">
         <div class="preview-app">
           <div class="preview-window-bar"><span></span><span></span><span></span><p>Account settings</p></div>
           <div class="preview-form">
@@ -73,7 +73,7 @@
         </div>
         <div class="preview-signals">
           <div class="signals-heading"><span>Example events</span><span>ILLUSTRATIVE</span></div>
-          <div class="signal-row"><span class="signal-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg></span><div><strong>button_click</strong><small>Save changes</small></div></div>
+          <div class="signal-row"><span class="signal-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg></span><div><strong>button · activate</strong><small>Save changes</small></div></div>
           <div class="signal-row"><span class="signal-mark signal-mark-soft" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 5.5h10M3 10.5h10M6 3v5M10 8v5"/></svg></span><div><strong>input_interaction</strong><small>Field interaction · value not collected</small></div></div>
           <p class="signals-note">No field values are collected.</p>
         </div>
