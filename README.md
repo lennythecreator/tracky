@@ -63,7 +63,7 @@ The browser sends batches with `fetch` and `keepalive` when possible. Failed req
 
 ## Component source
 
-The initial source-owned primitives are in [`registry/components/ui/`](registry/components/ui/). They are standalone React source files that consumers can adapt in their own application; they are not exports from the `tracky` SDK package, and no registry installer is available yet. The components use Tailwind CSS classes and semantic theme tokens, so the consuming app must configure Tailwind. Component action tracking is still in progress; the current primitive source does not emit analytics events.
+The initial source-owned primitives are in [`registry/components/ui/`](registry/components/ui/). They are standalone React source files that consumers can adapt in their own application; they are not exports from the `tracky` SDK package, and no registry installer is available yet. The components use Tailwind CSS classes and semantic theme tokens, so the consuming app must configure Tailwind. Component action tracking is still in progress; the current primitive source does not emit analytics events. Shared conventions, interaction states, and a field example are documented in [`registry/components/ui/README.md`](registry/components/ui/README.md).
 
 ## Theming
 
