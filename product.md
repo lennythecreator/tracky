@@ -64,7 +64,7 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 
 Initial primitive source has been implemented, but the reusable component library is not yet installable and its components do not emit action events. Cursor heat maps, frustration-click detection, per-capture switches, typed heat-map payloads, and the approved component event schema migration are also not implemented yet.
 
-- Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and have no analytics side effects yet. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The source is not installed through a registry CLI and is not included in the SDK package.
+- Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and have no analytics side effects yet. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The source is not installed through a registry CLI and is not included in the SDK package.
 
 ### Product direction, not yet complete
 
