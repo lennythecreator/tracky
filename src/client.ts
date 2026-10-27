@@ -83,8 +83,18 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     else scheduleFlush()
   }
 
+  const trackComponentEvent = (
+    component: string,
+    action: string,
+    context: AnalyticsContext = {},
+  ) => {
+    if (!component.trim() || !action.trim()) return
+    track('component_interaction', { ...context, component, action })
+  }
+
   return {
     track,
+    trackComponentEvent,
     flush,
     async shutdown() {
       await flush()

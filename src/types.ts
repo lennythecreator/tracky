@@ -27,6 +27,8 @@ export interface AnalyticsOptions {
 
 export interface AnalyticsClient {
   track: (eventType: string, context?: AnalyticsContext) => void
+  /** Track an explicit interaction from a Tracky or application UI component. */
+  trackComponentEvent: (component: string, action: string, context?: AnalyticsContext) => void
   flush: () => Promise<void>
   shutdown: () => Promise<void>
 }

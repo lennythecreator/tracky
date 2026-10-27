@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T19:13:32.000Z",
+  "title": "Design System: Tracky",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Route Blue", "canonical": "#28669f", "tonalRamp": ["#163450", "#1d4f7c", "#28669f", "#3e7fb7", "#669ed0", "#a5c7e8", "#c8def3", "#f1f7fd"] },
+      "surface-blue": { "role": "surface", "displayName": "Soft Blue", "canonical": "#f1f7fd", "tonalRamp": ["#15324f", "#1d4f7c", "#28669f", "#3e7fb7", "#669ed0", "#a5c7e8", "#c8def3", "#f1f7fd"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero and section headings." },
+      "body": { "displayName": "Body", "purpose": "Product explanations and navigation." }
+    },
+    "shadows": [
+      { "name": "button-low", "value": "0 7px 16px #28669f20", "purpose": "Subtle depth under the primary action." }
+    ],
+    "motion": [
+      { "name": "route-trace", "value": "1.25s cubic-bezier(.2,.75,.15,1)", "purpose": "User-triggered illustrative event path." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "640px" },
+      { "name": "tablet", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main page action for opening the quick start.",
+      "html": "<button class=\"ds-btn-primary\">Read the quick start <span aria-hidden=\"true\">↗</span></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 14px 18px; border: 0; border-radius: 13px; color: #fff; background: #28669f; font: 700 14px/1.4 'Plus Jakarta Sans', sans-serif; box-shadow: 0 7px 16px #28669f20; transition: transform 170ms ease, background 170ms ease; } .ds-btn-primary:hover { background: #1d4f7c; transform: translateY(-1px); } .ds-btn-primary:focus-visible { outline: 3px solid #3e7fb7; outline-offset: 4px; } .ds-btn-primary:active { transform: scale(.98); }"
+    },
+    {
+      "name": "Route Node",
+      "kind": "custom",
+      "refersTo": "route-poster",
+      "description": "Concept preview of the planned component library feeding the SDK event path.",
+      "html": "<article class=\"ds-route-node\"><span>TRACKY UI · PLANNED</span><strong>React component</strong><code>button_click</code></article>",
+      "css": ".ds-route-node { display: grid; gap: 8px; width: 220px; padding: 16px; border: 1px solid #d2e3f2; border-radius: 14px; color: #15324f; background: #fff; font-family: 'Plus Jakarta Sans', sans-serif; } .ds-route-node span { color: #536e87; font: 600 11px/1.4 'Cascadia Code', monospace; letter-spacing: .05em; } .ds-route-node strong { font-size: 14px; } .ds-route-node code { color: #4e6a84; font: 12px/1.4 'Cascadia Code', monospace; }"
+    },
+    {
+      "name": "Component Library Preview",
+      "kind": "custom",
+      "refersTo": "component-preview",
+      "description": "Illustrative UI controls paired with example signals. The library is not shipped.",
+      "html": "<section class=\"ds-component-preview\"><article class=\"ds-preview-app\"><span>Account settings</span><strong>Workspace name</strong><button>Save changes</button></article><aside class=\"ds-preview-signals\"><strong>button_click</strong><small>Illustrative event · no data sent</small></aside></section>",
+      "css": ".ds-component-preview { display: grid; grid-template-columns: 1fr .8fr; align-items: center; font: 400 14px/1.5 'Plus Jakarta Sans', sans-serif; } .ds-preview-app { display: grid; gap: 18px; padding: 20px; border: 1px solid #d9e6f2; border-radius: 16px; color: #15324f; background: #fff; box-shadow: 0 14px 32px #15324f12; } .ds-preview-app span { color: #4e6a84; font-size: 12px; } .ds-preview-app button { justify-self: start; padding: 9px 12px; border: 0; border-radius: 8px; color: #fff; background: #28669f; font: 700 12px 'Plus Jakarta Sans', sans-serif; } .ds-preview-signals { display: grid; gap: 8px; margin-left: -12px; padding: 16px; border: 1px solid #29415b; border-radius: 14px; color: #eef6ff; background: #142f4b; } .ds-preview-signals small { color: #b7cbdd; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Clear Route",
+    "overview": "Tracky pairs a planned React component library with an analytics SDK for developers who want useful product signals while keeping control of where those signals go. Its interface should feel precise, open, and trustworthy. Soft blue marks the event path and active choices. White space keeps the page readable. A routing diagram and a clearly labeled component preview show the intended product without implying the library is shipped or hosted infrastructure exists.",
+    "keyCharacteristics": ["Blue routing lines connect a planned component layer, SDK, and developer endpoint.", "Plus Jakarta Sans gives headings and body copy one consistent voice.", "Dark, restrained code and signal panels distinguish implementation examples from marketing copy."],
+    "rules": [],
+    "dos": ["Do make the configured endpoint and developer-owned data path clear.", "Do label example data, the component preview, and animated route behavior as illustrative.", "Do keep opt-in capture and privacy boundaries accurate to the product implementation."],
+    "donts": ["Don't imply Tracky provides a collector, dashboard, durable queue, consent manager, or guaranteed delivery.", "Don't add gradients, generic feature-card grids, or unsupported performance claims."]
+  }
+}
