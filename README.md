@@ -53,7 +53,9 @@ The provider uses browser APIs after mounting, so it can be rendered inside a Re
 
 ## Event shape
 
-Events contain `eventType`, ISO UTC `timestamp`, relative `route`, a `context` object, and a random `sessionId` stored in `sessionStorage`. Call `analytics.trackComponentEvent(component, action, context)` from an explicit component action handler to send a `component_interaction` event. For example, the call above produces `component: "save_button"`, `action: "activate"`, and `location: "toolbar"` in `context`. Use stable component and action names; pass only small, JSON-safe metadata. Tracky does not inspect component props or read field values. The approved target contract places `{ name, action }` in a top-level `component` object; the current scaffold still writes both into `context`.
+Events contain `eventType`, ISO UTC `timestamp`, relative `route`, a `context` object, and a random `sessionId` stored in `sessionStorage`. Component events also carry a top-level `component` object.
+
+Call `analytics.trackComponentEvent(component, action, context)` from an explicit component action handler to send a `component_interaction` event. The call above produces `component: { name: "save_button", action: "activate" }` with `location: "toolbar"` in `context`. Use stable component and action names; pass only small, JSON-safe metadata. Tracky does not inspect component props or read field values.
 
 Explicit component events are sent when you call the method. The `captureInteractions` option controls only automatic DOM interaction capture.
 
@@ -63,7 +65,28 @@ The browser sends batches with `fetch` and `keepalive` when possible. Failed req
 
 ## Component source
 
-The initial source-owned primitives are in [`registry/components/ui/`](registry/components/ui/). They are standalone React source files that consumers can adapt in their own application; they are not exports from the `tracky` SDK package, and no registry installer is available yet. The components use Tailwind CSS classes and semantic theme tokens, so the consuming app must configure Tailwind. Component action tracking is still in progress; the current primitive source does not emit analytics events. Shared conventions, interaction states, and a field example are documented in [`registry/components/ui/README.md`](registry/components/ui/README.md).
+The initial source-owned primitives are in [`registry/components/ui/`](registry/components/ui/). They are standalone React source files that consumers can adapt in their own application; they are not exports from the `tracky` SDK package, and no registry installer is available yet. The components use Tailwind CSS classes and semantic theme tokens, so the consuming app must configure Tailwind. Shared conventions, interaction states, and a field example are documented in [`registry/components/ui/README.md`](registry/components/ui/README.md).
+
+The primitives read the nearest provider through `useAnalyticsOptional()`, so their source imports the `tracky` package. With a provider present, each documented interaction sends one `component_interaction` event with a top-level `component` object:
+
+| Component | Component name | Action |
+| --- | --- | --- |
+| `Button` | `button` | `activate` |
+| `Checkbox` | `checkbox` | `toggle` |
+| `Switch` | `switch` | `toggle` |
+| `Select` | `select` | `change` |
+
+Enter and Space on a `Button` are ordinary activation and send the same `activate` action as a pointer click; Tracky never records key names or key presses. `Input`, `Textarea`, and `Label` send no component events.
+
+The events contain no values, labels, props, or selected options. Pass `analyticsName` to attach a stable name in `context`; the component renders it as `data-analytics-name`, so page-wide capture uses the same name for that element. Setting `data-analytics-name` yourself works too, and `analyticsName` wins when both are present. Component events reach only the configured endpoint, and using a Tracky component does not turn on page views or page-wide capture.
+
+```tsx
+<Button variant="primary" analyticsName="checkout_continue" onClick={continueCheckout}>
+  Continue
+</Button>
+```
+
+Without an `AnalyticsProvider`, the components still render and call your handlers; they send nothing.
 
 ## Theming
 

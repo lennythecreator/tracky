@@ -9,8 +9,9 @@ These files are copied into your application, not imported from the `tracky` pac
 - Use `cn()` from `utils.ts` to append your `className` after the defaults, so callers can override individual utilities.
 - Keep variants and sizes local to the component, typed with a union. Add them only where the primitive actually needs them.
 - Support controlled and uncontrolled use by passing `value`/`checked` and `defaultValue`/`defaultChecked` through to the native element. Primitive code must not hold or read form values.
-- Tracky components have no analytics side effects. They never read values, labels, or text. Component analytics is a separate capability.
-- React 18+ only; no runtime dependency beyond React.
+- Component analytics is limited to the documented actions: `Button` sends `activate`, `Checkbox` and `Switch` send `toggle`, and `Select` sends `change`. The events go through the nearest `AnalyticsProvider` and never include values, labels, text, or selected options. `Input`, `Textarea`, and `Label` send nothing. These files therefore import `useAnalyticsOptional()` from the `tracky` package and stay usable without a provider.
+- Pass `analyticsName` for a stable event name, or set `data-analytics-name` yourself; the prop takes precedence and is rendered as the attribute. Removing the analytics code is safe if you do not want it.
+- React 18+ only. The only import outside these files is `tracky`, for component events.
 - Styling uses the theme tokens in [`../../theme/`](../../theme/README.md). Run the Tailwind setup before using these classes.
 
 ## Interaction states

@@ -1,7 +1,8 @@
-export { AnalyticsProvider, useAnalytics } from './react.js'
+export { AnalyticsProvider, useAnalytics, useAnalyticsOptional } from './react.js'
 export { createAnalyticsClient } from './client.js'
 export type {
   AnalyticsClient,
+  AnalyticsComponent,
   AnalyticsContext,
   AnalyticsEvent,
   AnalyticsOptions,

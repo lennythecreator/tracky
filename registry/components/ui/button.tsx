@@ -1,5 +1,6 @@
 import { forwardRef } from 'react'
-import type { ButtonHTMLAttributes } from 'react'
+import type { ButtonHTMLAttributes, MouseEvent } from 'react'
+import { useAnalyticsOptional } from 'tracky'
 import { cn } from './utils.js'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive'
@@ -8,6 +9,11 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   size?: ButtonSize
+  /**
+   * Stable name attached to this component's analytics event.
+   * Takes precedence over `data-analytics-name`, which it is rendered as.
+   */
+  analyticsName?: string
 }
 
 const variants: Record<ButtonVariant, string> = {
@@ -25,14 +31,26 @@ const sizes: Record<ButtonSize, string> = {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { className, variant = 'primary', size = 'md', type = 'button', ...props },
+  { className, variant = 'primary', size = 'md', type = 'button', analyticsName, onClick, ...props },
   ref,
 ) {
+  const analytics = useAnalyticsOptional()
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event)
+    if (event.defaultPrevented) return
+    const name = event.currentTarget.dataset.analyticsName
+    analytics?.trackComponentEvent('button', 'activate', name ? { name } : undefined)
+  }
+
   return (
     <button
       {...props}
+      {...(analyticsName ? { 'data-analytics-name': analyticsName } : undefined)}
       ref={ref}
       type={type}
+      data-tracky-component="button"
+      onClick={handleClick}
       className={cn(
         'inline-flex items-center justify-center gap-2 rounded-md font-sans font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50',
         variants[variant],

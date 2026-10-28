@@ -2,7 +2,7 @@
 
 ## Product summary
 
-Tracky is a React UI analytics library: it pairs reusable, analytics-aware UI components with a lightweight SDK for capturing product events and sending them to an endpoint the developer controls. It should be quick to integrate, backend agnostic, and small enough to stay out of the app it measures. The SDK exists in the current scaffold. Initial primitive source now lives in the repository registry tree; registry installation and component analytics wiring are still in progress.
+Tracky is a React UI analytics library: it pairs reusable, analytics-aware UI components with a lightweight SDK for capturing product events and sending them to an endpoint the developer controls. It should be quick to integrate, backend agnostic, and small enough to stay out of the app it measures. The SDK exists in the current scaffold. Initial primitive source now lives in the repository registry tree and emits documented component actions; registry installation is still in progress.
 
 ## Users and problem
 
@@ -16,11 +16,11 @@ Tracky is for React developers and small product teams who need to understand pa
 - **Low overhead:** Buffer events and deliver asynchronously so tracking does not block normal UI work.
 - **Backend agnostic:** The SDK defines a browser event contract, not a server or storage implementation.
 - **Honest reliability:** Retries are bounded; durable storage and guaranteed delivery belong to the receiving service.
-- **Useful UI building blocks:** Source-owned React primitives make common UI interactions easier to instrument. The initial inventory and package boundaries are recorded in ADR 0001; registry installation and component event wiring are still in progress.
+- **Useful UI building blocks:** Source-owned React primitives make common UI interactions easier to instrument. The initial inventory and package boundaries are recorded in ADR 0001; registry installation is still in progress.
 
 ## Core experience
 
-A developer wraps the relevant client-side React tree in `AnalyticsProvider`, configures an endpoint or serverless function, and calls `useAnalytics().track(name, context)` for product-specific events. Once component event wiring is implemented, Tracky components will emit stable, documented action events when used. Developers separately opt in to page views and each page-wide capture type. Their endpoint receives batches and is responsible for validating, persisting, and querying events. The SDK workflow is implemented in the current scaffold; registry installation, component event wiring, and several approved tracking capabilities remain future work.
+A developer wraps the relevant client-side React tree in `AnalyticsProvider`, configures an endpoint or serverless function, and calls `useAnalytics().track(name, context)` for product-specific events. Tracky components emit stable, documented action events when used with a provider. Developers separately opt in to page views and each page-wide capture type. Their endpoint receives batches and is responsible for validating, persisting, and querying events. The SDK workflow is implemented in the current scaffold; registry installation and several approved tracking capabilities remain future work.
 
 ## Event model
 
@@ -33,8 +33,9 @@ An event has these fields:
 | `route` | Current relative path and query string. |
 | `context` | Small, JSON-safe developer context and safe target metadata, such as an element tag, optional ID, explicit analytics name, or bounded class name. |
 | `sessionId` | Random pseudonymous identifier scoped to the browser tab/session. |
+| `component` | Present on component interaction events as `{ name, action }`. |
 
-The approved target contract also allows a top-level `component: { name, action }` for component interactions and a typed `payload` for structured data such as heat map summaries. See [analytics-design.md](analytics-design.md) for the complete target contract and capture rules. These fields are not all implemented in the current scaffold.
+The approved target contract also allows a typed `payload` for structured data such as heat map summaries. See [analytics-design.md](analytics-design.md) for the complete target contract and capture rules. `payload` and the heat map summaries are not implemented in the current scaffold.
 
 The event context is not a place for credentials, personal data, form values, arbitrary component props, or unrestricted DOM snapshots. Custom context is supplied by the application developer. Automatic capture records only basic element metadata; it must not read or send typed values.
 
@@ -42,13 +43,13 @@ The event context is not a place for credentials, personal data, form values, ar
 
 - **Navigation and views:** The target captures the initial page view and actual route changes, including back/forward, when enabled. Path plus query is the default; a route resolver supports apps with custom route state.
 - **Element interactions:** The target offers separate opt-in capture for safe clicks, form submissions, input-change metadata, frustration clicks, cursor heat maps, and scroll depth. It never captures field values or text.
-- **Component interactions:** Tracky components emit documented actions. `trackComponentEvent(component, action, context)` supports explicit application-defined actions. The target event puts `{ name, action }` in a top-level `component` object and keeps `context` for developer metadata.
+- **Component interactions:** Tracky components emit documented actions. `trackComponentEvent(component, action, context)` supports explicit application-defined actions. The event puts `{ name, action }` in a top-level `component` object and keeps `context` for developer metadata.
 - **Conversion flows:** Developers can compose a flow today from named events. Dedicated form lifecycle helpers are future work.
 - **Engagement and performance:** The concept includes active-session and feature-usage signals plus frontend performance metrics. These metrics need defined measures, privacy bounds, and APIs before implementation; they are not current capabilities.
 
 ## Component library direction
 
-Tracky includes source for an initial set of reusable React UI primitives alongside the analytics SDK. The accepted distribution, styling, and accessibility conventions are recorded in [ADR 0001](docs/adr/0001-component-registry-and-styling.md). The primitives are not exported by the SDK package. A registry installer and automatic component action tracking remain future work; the approved event contract is documented in [analytics-design.md](analytics-design.md).
+Tracky includes source for an initial set of reusable React UI primitives alongside the analytics SDK. The accepted distribution, styling, and accessibility conventions are recorded in [ADR 0001](docs/adr/0001-component-registry-and-styling.md). The primitives are not exported by the SDK package. `Button`, `Checkbox`, `Switch`, and `Select` send their documented action through the nearest provider and stay usable without one; `Input`, `Textarea`, and `Label` send no events. A registry installer remains future work; the event contract is documented in [analytics-design.md](analytics-design.md).
 
 ## Capabilities and status
 
@@ -56,21 +57,21 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 
 - React provider and `useAnalytics` hook.
 - Explicit named events with typed context.
-- Explicit component interaction tracking with the current `component_interaction` shape (component and action currently live in `context`; migration to the target top-level component object remains to be implemented).
+- Explicit component interaction tracking that sends a `component_interaction` event with `{ name, action }` in a top-level `component` object.
+- Documented component actions from the initial primitives: `button` activate, `checkbox` toggle, `switch` toggle, and `select` change.
 - Optional page-view tracking for initial load and History API navigation.
 - Optional click, form-submit, and input-interaction metadata capture.
 - Event buffering, JSON batch POST, bounded exponential retry, and a delivery error callback.
 - Random session ID held in `sessionStorage` when available.
 
-Initial primitive source has been implemented, but the reusable component library is not yet installable and its components do not emit action events. Cursor heat maps, frustration-click detection, per-capture switches, typed heat-map payloads, and the approved component event schema migration are also not implemented yet.
+Initial primitive source has been implemented, but the reusable component library is not yet installable. Cursor heat maps, frustration-click detection, per-capture switches, and typed heat-map payloads are also not implemented yet.
 
-- Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and have no analytics side effects yet. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The source is not installed through a registry CLI and is not included in the SDK package.
+- Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and emit only the documented component actions listed above, never values, labels, or props. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The source is not installed through a registry CLI and is not included in the SDK package.
 
 ### Product direction, not yet complete
 
 - Route adapters for popular routers and more complete full-navigation behavior.
 - Registry manifest, installer, and consumer setup instructions for the initial primitives.
-- Documented component action wiring through the Tracky provider.
 - A component playground and conventions for any additional components.
 - Engagement, active-session, and frontend performance measurements.
 - Conversion-flow helpers and richer typed event conventions.

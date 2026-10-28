@@ -1,11 +1,18 @@
 export type AnalyticsContext = Record<string, string | number | boolean | null>
 
+export interface AnalyticsComponent {
+  name: string
+  action: string
+}
+
 export interface AnalyticsEvent {
   eventType: string
   timestamp: string
   route: string
   context: AnalyticsContext
   sessionId: string
+  /** Present on component interaction events. */
+  component?: AnalyticsComponent
 }
 
 export interface AnalyticsOptions {

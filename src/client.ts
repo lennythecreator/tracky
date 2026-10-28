@@ -1,4 +1,10 @@
-import type { AnalyticsClient, AnalyticsContext, AnalyticsEvent, AnalyticsOptions } from './types.js'
+import type {
+  AnalyticsClient,
+  AnalyticsComponent,
+  AnalyticsContext,
+  AnalyticsEvent,
+  AnalyticsOptions,
+} from './types.js'
 
 const DEFAULT_BATCH_SIZE = 10
 const DEFAULT_FLUSH_INTERVAL_MS = 3_000
@@ -70,17 +76,23 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     timer = setTimeout(() => void flush(), options.flushIntervalMs ?? DEFAULT_FLUSH_INTERVAL_MS)
   }
 
-  const track = (eventType: string, context: AnalyticsContext = {}) => {
+  const enqueue = (eventType: string, context: AnalyticsContext, component?: AnalyticsComponent) => {
     if (closed || !eventType.trim()) return
-    queue.push({
+    const event: AnalyticsEvent = {
       eventType,
       timestamp: new Date().toISOString(),
       route: currentRoute(),
       context: { ...options.context, ...context },
       sessionId: sessionId ??= getSessionId(),
-    })
+    }
+    if (component) event.component = component
+    queue.push(event)
     if (queue.length >= (options.batchSize ?? DEFAULT_BATCH_SIZE)) void flush()
     else scheduleFlush()
+  }
+
+  const track = (eventType: string, context: AnalyticsContext = {}) => {
+    enqueue(eventType, context)
   }
 
   const trackComponentEvent = (
@@ -89,7 +101,7 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     context: AnalyticsContext = {},
   ) => {
     if (!component.trim() || !action.trim()) return
-    track('component_interaction', { ...context, component, action })
+    enqueue('component_interaction', context, { name: component, action })
   }
 
   return {

@@ -61,6 +61,8 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
     const onClick = (event: MouseEvent) => {
       const target = event.target
       if (!(target instanceof Element) || ignored(target)) return
+      // A Tracky component emits its own documented action for this interaction.
+      if (target.closest('[data-tracky-component]')) return
       const el = target.closest('button,a,[role="button"],[data-analytics-name]')
       if (el) client.track('click', metadata(el))
     }
@@ -94,5 +96,10 @@ export function useAnalytics(): AnalyticsClient {
   const client = useContext(AnalyticsContextValue)
   if (!client) throw new Error('useAnalytics must be used within an AnalyticsProvider')
   return client
+}
+
+/** Returns the client, or `null` outside an `AnalyticsProvider` so UI stays usable. */
+export function useAnalyticsOptional(): AnalyticsClient | null {
+  return useContext(AnalyticsContextValue)
 }
 
