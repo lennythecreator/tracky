@@ -28,6 +28,23 @@ document.querySelectorAll('[data-copy]').forEach((button) => {
   });
 });
 
+const installButton = document.querySelector('[data-copy-install]');
+const installCommand = document.querySelector('#install-command-code');
+
+installButton?.addEventListener('click', async () => {
+  const command = installCommand?.textContent?.trim();
+  if (!command) return;
+  try {
+    await navigator.clipboard.writeText(command);
+    installButton.textContent = 'Copied';
+    if (copyStatus) copyStatus.textContent = 'Install command copied to clipboard.';
+  } catch {
+    installButton.textContent = 'Select to copy';
+    if (copyStatus) copyStatus.textContent = 'Clipboard access is unavailable. Select the command and copy it.';
+  }
+  window.setTimeout(() => { installButton.textContent = 'Copy'; }, 2200);
+});
+
 document.querySelectorAll('.mobile-nav-panel a').forEach((link) => {
   link.addEventListener('click', () => {
     const menu = link.closest('details');
