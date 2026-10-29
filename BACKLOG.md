@@ -103,9 +103,10 @@ Confirm this inventory in T-001 before implementation. Keep the first pass focus
 
 ### T-005 — Build a component playground for the primitive set
 
-**Status:** In progress. The playground renders the registry source with the SDK provider and a local event preview, and it ships with the site at `https://tracky-ivory.vercel.app/playground/`. Keyboard exploration of every state still needs a pass before the acceptance criteria are met.
+**Status:** Complete. The playground renders the registry source with the SDK provider and a local event preview, and it ships with the site at `https://tracky-ivory.vercel.app/playground/`. The keyboard pass covered every tab stop in Chromium: each control is reachable in document order with a visible focus ring, Enter and Space activate `Button`, Space toggles `Checkbox` and `Switch`, arrow keys change `Select`, and every disabled example is skipped by Tab. Typing into `Input` or `Textarea` produces no event.
 
 **Priority:** After T-003; can proceed alongside T-004
+**GitHub:** [#5](https://github.com/lennythecreator/tracky/issues/5)
 
 **Goal:** Let developers explore the primitive components and their analytics behavior on the Tracky website.
 
@@ -126,7 +127,10 @@ Confirm this inventory in T-001 before implementation. Keep the first pass focus
 
 ### T-006 — Implement the chosen component distribution path
 
+**Status:** Complete. The `tracky` CLI in `src/cli/` installs the primitives as source: `init` writes the theme files and stylesheet import, and `add <component>` copies the component with its shared `cn` helper, recording the resolved commit. Installed files read the nearest provider through `useAnalyticsOptional()` and send only to the configured endpoint.
+
 **Priority:** After T-001 through T-004
+**GitHub:** [#6](https://github.com/lennythecreator/tracky/issues/6)
 
 **Goal:** Make the primitive source easy for developers to adopt in the form chosen by T-001.
 
