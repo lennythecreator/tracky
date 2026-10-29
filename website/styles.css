@@ -7,7 +7,7 @@
   --sky-700: #28669f; --sky-800: #1d4f7c; --ink: #15324f; --ink-muted: #4e6a84;
   --ink-soft: #536e87; --line: #d9e6f2; --code: #142f4b;
   --font-sans: "Plus Jakarta Sans", "Segoe UI", sans-serif;
-  --font-mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  --font-mono: "Plus Jakarta Sans", "Segoe UI", sans-serif;
   --content: 1160px; --space-section: clamp(5rem, 10vw, 8.5rem);
   font-family: var(--font-sans); font-synthesis: none; text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
@@ -147,17 +147,28 @@ h1, h2, h3, p { margin-top: 0; }
 .file-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sky-500); }
 .code-label { color: var(--ink-soft); font: 600 .7rem/1.4 var(--font-mono); letter-spacing: .06em; }
 pre { max-width: 100%; margin: 0; overflow-x: auto; tab-size: 2; }
-.payload-panel pre { padding: 1.35rem 1.5rem; color: var(--ink); font: 500 .76rem/1.85 var(--font-mono); }
-.json-key { color: var(--sky-700); } .json-string { color: #3f748b; }
+.payload-panel pre { padding: 1.35rem 1.5rem; color: var(--ink); font: 500 .76rem/1.75 var(--font-mono); }
+.payload-panel .t-key { color: var(--sky-700); }
+.payload-panel .t-str { color: #2f7a6b; }
+.payload-panel .t-punct { color: #93a9bf; }
 .payload-note { margin: 0; padding: 0 1.5rem 1.2rem; color: var(--ink-soft); font-size: .75rem; line-height: 1.6; }
 .quickstart-section { padding-top: var(--space-section); padding-bottom: clamp(4rem, 8vw, 7rem); }
 .quickstart-heading { display: flex; align-items: end; justify-content: space-between; gap: 3rem; margin-bottom: 2rem; }
 .quickstart-heading > p { max-width: 38ch; margin: 0 0 .4rem; color: var(--ink-muted); font-size: .92rem; line-height: 1.8; }
 .quickstart-code { border-color: #203b57; background: var(--code); box-shadow: 0 18px 42px #15324f15; }
-.quickstart-code pre { padding: clamp(1.2rem, 3vw, 2rem); color: #e7eff8; font: 500 .8rem/1.9 var(--font-mono); }
+.quickstart-code pre { padding: clamp(1.1rem, 2.6vw, 1.75rem); color: #e7eff8; font: 500 .8rem/1.72 var(--font-mono); }
 .copy-button { padding: .45rem .7rem; border: 1px solid #56718b; border-radius: 8px; color: #f1f7fd; background: #244361; font-size: .7rem; font-weight: 700; cursor: pointer; transition: background 140ms ease; }
 .copy-button:hover { background: #315475; }
-.code-purple { color: #c0b8ff; } .code-green { color: #a7dfd1; } .code-yellow { color: #f3d892; } .code-blue { color: #9ec9f1; } .code-orange { color: #f3b47a; }
+/* IDE-style tokens for the dark SDK sample. */
+.quickstart-code .t-kw { color: #c9a7f5; }
+.quickstart-code .t-str { color: #9edcc2; }
+.quickstart-code .t-fn { color: #f3d892; }
+.quickstart-code .t-type { color: #7fc7d9; }
+.quickstart-code .t-tag { color: #8fc4ee; }
+.quickstart-code .t-attr { color: #b9d8f2; }
+.quickstart-code .t-prop { color: #b9d8f2; }
+.quickstart-code .t-num { color: #f3b47a; }
+.quickstart-code .t-punct { color: #a3bad0; }
 .quickstart-foot { display: flex; justify-content: space-between; align-items: center; gap: 2rem; margin-top: 1.5rem; }
 .quickstart-foot p { max-width: 68ch; margin: 0; color: var(--ink-soft); font-size: .78rem; line-height: 1.7; }
 .quickstart-foot strong { color: var(--ink-muted); } .quickstart-foot .button { min-height: 42px; padding: .65rem .9rem; font-size: .78rem; }

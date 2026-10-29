@@ -18,6 +18,14 @@ npm run build:playground
 
 On the served site the playground is at `http://localhost:8000/playground/`, which forwards to `playground/dist/`. The Vite app root is `playground/app/`, so `playground/index.html` is a plain page rather than the app entry — opening the app's own `index.html` over a static server shows nothing.
 
+## Page metadata and icons
+
+`index.html` carries the canonical URL, description, Open Graph and Twitter card tags, and the theme colour. `og-image.png` is the 1200×630 share image named by `og:image`.
+
+The icon set lives at the root of this folder: `favicon.svg` (primary, the blue route mark), `favicon.ico` (16/32/48 fallback), and `apple-touch-icon.png` (180×180, square so iOS can apply its own rounding). The playground reuses these files; `playground/vite.config.ts` copies them into `playground/dist/` and serves them in dev, so there is no second copy to keep in sync.
+
+Canonical, Open Graph, and Twitter URLs point at `https://tracky-ivory.vercel.app/`. Update them together with `og-image.png` if the site moves to a custom domain or the page copy changes.
+
 ## Deploying
 
 `vercel.json` at the repository root builds the playground and publishes this folder, so the deployed site is the landing page plus the playground at `/playground/`. No environment variables or server code are involved.
