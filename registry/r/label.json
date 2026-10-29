@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "name": "label",
+  "type": "ui",
+  "title": "Label",
+  "description": "Label for a form control, associated with htmlFor.",
+  "dependencies": [],
+  "requires": [
+    "utils"
+  ],
+  "files": [
+    {
+      "type": "ui",
+      "path": "label.tsx",
+      "content": "import { forwardRef } from 'react'\nimport type { LabelHTMLAttributes } from 'react'\nimport { cn } from '@tracky/lib/utils'\n\nexport type LabelProps = LabelHTMLAttributes<HTMLLabelElement>\n\nexport const Label = forwardRef<HTMLLabelElement, LabelProps>(function Label(\n  { className, ...props },\n  ref,\n) {\n  return (\n    <label\n      {...props}\n      ref={ref}\n      className={cn('font-sans text-sm font-medium leading-none text-foreground', className)}\n    />\n  )\n})\n"
+    }
+  ]
+}

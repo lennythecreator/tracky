@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "button",
+  "type": "ui",
+  "title": "Button",
+  "description": "Primary, secondary, outline, ghost, and destructive button in three sizes.",
+  "dependencies": [
+    "tracky"
+  ],
+  "requires": [
+    "utils"
+  ],
+  "files": [
+    {
+      "type": "ui",
+      "path": "button.tsx",
+      "content": "import { forwardRef } from 'react'\nimport type { ButtonHTMLAttributes, MouseEvent } from 'react'\nimport { useAnalyticsOptional } from 'tracky'\nimport { cn } from '@tracky/lib/utils'\n\nexport type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive'\nexport type ButtonSize = 'sm' | 'md' | 'lg'\n\nexport interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {\n  variant?: ButtonVariant\n  size?: ButtonSize\n  /**\n   * Stable name attached to this component's analytics event.\n   * Takes precedence over `data-analytics-name`, which it is rendered as.\n   */\n  analyticsName?: string\n}\n\nconst variants: Record<ButtonVariant, string> = {\n  primary: 'bg-primary text-primary-foreground hover:bg-primary-hover',\n  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary-hover',\n  outline: 'border border-border bg-background text-foreground hover:bg-muted',\n  ghost: 'bg-transparent text-foreground hover:bg-muted',\n  destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive-hover',\n}\n\nconst sizes: Record<ButtonSize, string> = {\n  sm: 'min-h-9 px-3 text-sm',\n  md: 'min-h-10 px-4 text-sm',\n  lg: 'min-h-11 px-5 text-base',\n}\n\nexport const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(\n  { className, variant = 'primary', size = 'md', type = 'button', analyticsName, onClick, ...props },\n  ref,\n) {\n  const analytics = useAnalyticsOptional()\n\n  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {\n    onClick?.(event)\n    if (event.defaultPrevented) return\n    const name = event.currentTarget.dataset.analyticsName\n    analytics?.trackComponentEvent('button', 'activate', name ? { name } : undefined)\n  }\n\n  return (\n    <button\n      {...props}\n      {...(analyticsName ? { 'data-analytics-name': analyticsName } : undefined)}\n      ref={ref}\n      type={type}\n      data-tracky-component=\"button\"\n      onClick={handleClick}\n      className={cn(\n        'inline-flex items-center justify-center gap-2 rounded-md font-sans font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50',\n        variants[variant],\n        sizes[size],\n        className,\n      )}\n    />\n  )\n})\n"
+    }
+  ]
+}

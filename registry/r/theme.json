@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "theme",
+  "type": "theme",
+  "title": "Theme tokens",
+  "description": "CSS variables for the semantic theme and the Tailwind preset that maps them to utilities.",
+  "dependencies": [],
+  "requires": [],
+  "files": [
+    {
+      "type": "theme",
+      "path": "tokens.css",
+      "content": ":root {\n  --tracky-background: #ffffff;\n  --tracky-foreground: #0f172a;\n  --tracky-primary: #1d4ed8;\n  --tracky-primary-foreground: #ffffff;\n  --tracky-primary-hover: #1e40af;\n  --tracky-secondary: #f1f5f9;\n  --tracky-secondary-foreground: #0f172a;\n  --tracky-secondary-hover: #e2e8f0;\n  --tracky-muted: #f1f5f9;\n  --tracky-muted-foreground: #64748b;\n  --tracky-destructive: #b91c1c;\n  --tracky-destructive-foreground: #ffffff;\n  --tracky-destructive-hover: #991b1b;\n  --tracky-border: #cbd5e1;\n  --tracky-switch-thumb: #ffffff;\n  --tracky-ring: #1d4ed8;\n  --tracky-radius-sm: 0.25rem;\n  --tracky-radius-md: 0.375rem;\n  --tracky-radius-lg: 0.5rem;\n  --tracky-font-sans: inherit;\n}\n"
+    },
+    {
+      "type": "theme",
+      "path": "tailwind-preset.cjs",
+      "content": "/**\n * Tailwind CSS preset for Tracky registry components (Tailwind v3).\n *\n * Add it to the consumer's Tailwind config and import `tokens.css` once in\n * the application stylesheet. Tailwind v4 consumers use the `@theme inline`\n * block documented in this directory instead.\n */\nmodule.exports = {\n  theme: {\n    extend: {\n      colors: {\n        background: 'var(--tracky-background)',\n        foreground: 'var(--tracky-foreground)',\n        primary: {\n          DEFAULT: 'var(--tracky-primary)',\n          foreground: 'var(--tracky-primary-foreground)',\n          hover: 'var(--tracky-primary-hover)',\n        },\n        secondary: {\n          DEFAULT: 'var(--tracky-secondary)',\n          foreground: 'var(--tracky-secondary-foreground)',\n          hover: 'var(--tracky-secondary-hover)',\n        },\n        muted: {\n          DEFAULT: 'var(--tracky-muted)',\n          foreground: 'var(--tracky-muted-foreground)',\n        },\n        destructive: {\n          DEFAULT: 'var(--tracky-destructive)',\n          foreground: 'var(--tracky-destructive-foreground)',\n          hover: 'var(--tracky-destructive-hover)',\n        },\n        border: 'var(--tracky-border)',\n        ring: 'var(--tracky-ring)',\n        'switch-thumb': 'var(--tracky-switch-thumb)',\n      },\n      borderRadius: {\n        sm: 'var(--tracky-radius-sm)',\n        md: 'var(--tracky-radius-md)',\n        lg: 'var(--tracky-radius-lg)',\n      },\n      fontFamily: {\n        sans: ['var(--tracky-font-sans)'],\n      },\n    },\n  },\n}\n"
+    }
+  ]
+}

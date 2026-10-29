@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "name": "utils",
+  "type": "lib",
+  "title": "Class merge helper",
+  "description": "Shared cn() helper used by every primitive to append caller classes.",
+  "dependencies": [],
+  "requires": [],
+  "files": [
+    {
+      "type": "lib",
+      "path": "utils.ts",
+      "content": "/** Join optional class names for copied component source. */\nexport function cn(...classes: Array<string | undefined | false | null>): string {\n  return classes.filter(Boolean).join(' ')\n}\n"
+    }
+  ]
+}
