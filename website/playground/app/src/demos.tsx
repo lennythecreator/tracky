@@ -144,13 +144,22 @@ export function TextareaDemo() {
           </Button>
           <span className="text-[11px] text-[var(--pg-soft)]">rows: {rows}</span>
         </div>
+
+        <Textarea
+          disabled
+          rows={3}
+          placeholder="Disabled"
+          aria-label="Disabled textarea example"
+          className="max-w-sm"
+        />
       </div>
 
       <StateChips app={[['focus', focused ? 'note' : 'none'], ['rows', rows]]} tracky="nothing, ever" />
 
       <p className={NOTE}>
         The resize buttons are ordinary app state. Growing the textarea does not touch the SDK, and
-        the typed text never leaves the element.
+        the typed text never leaves the element. Tab skips the disabled field, so it never reaches
+        the SDK either.
       </p>
     </>
   )
