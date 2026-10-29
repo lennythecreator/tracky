@@ -65,7 +65,34 @@ The browser sends batches with `fetch` and `keepalive` when possible. Failed req
 
 ## Component source
 
-The initial source-owned primitives are in [`registry/components/ui/`](registry/components/ui/). They are standalone React source files that consumers can adapt in their own application; they are not exports from the `tracky` SDK package, and no registry installer is available yet. The components use Tailwind CSS classes and semantic theme tokens, so the consuming app must configure Tailwind. Shared conventions, interaction states, and a field example are documented in [`registry/components/ui/README.md`](registry/components/ui/README.md).
+Tracky's primitives are installed as source into your project by the `tracky` CLI, which ships in this package. The files are not exports of the `tracky` SDK package: you own them and can edit them. The registry is this repository, so the CLI needs network access.
+
+The package is not published to npm yet. From a checkout, build it and run the CLI directly:
+
+```sh
+npm run build
+node dist/cli/index.js init
+node dist/cli/index.js add button
+```
+
+After a release, the same commands are `npx tracky init` and `npx tracky add button`. The CLI runs on Node 18 or later.
+
+`tracky init` writes `tracky.json`, copies `tokens.css` and `tailwind-preset.cjs` into your component directory, and adds the token import to your stylesheet. With Tailwind CSS v4 it also writes the `@theme inline` mapping; with v3 it prints the preset line to add to your Tailwind config. `tracky add <component>` copies the component and any shared file it needs, currently the `cn` helper.
+
+Both commands fetch from the repository's `main` branch and record the resolved commit in `tracky.lock.json`. Pass `--ref <tag|sha>` to install an exact revision. Existing files are left alone unless you pass `--overwrite`.
+
+`tracky.json` sits at your frontend root:
+
+```json
+{
+  "ui": "src/components/ui",
+  "lib": "src/lib",
+  "stylesheet": "src/app/globals.css",
+  "alias": { "prefix": "@", "root": "src" }
+}
+```
+
+The CLI reads your `tsconfig.json` path mappings and stops with the exact mapping to add when `@/*` does not resolve to the configured root, because installed files import through that alias. The components use Tailwind CSS classes and semantic theme tokens, so the app must run Tailwind. Shared conventions, interaction states, and a field example are documented in [`registry/components/ui/README.md`](registry/components/ui/README.md).
 
 The primitives read the nearest provider through `useAnalyticsOptional()`, so their source imports the `tracky` package. With a provider present, each documented interaction sends one `component_interaction` event with a top-level `component` object:
 
@@ -90,7 +117,7 @@ Without an `AnalyticsProvider`, the components still render and call your handle
 
 ## Theming
 
-Colors, radii, and font family come from CSS variables. [`registry/theme/tokens.css`](registry/theme/tokens.css) provides light-theme defaults, and [`registry/theme/tailwind-preset.cjs`](registry/theme/tailwind-preset.cjs) maps them to semantic Tailwind utilities. Import the stylesheet and add the preset (Tailwind v3) or the `@theme inline` block (Tailwind v4), then override the `--tracky-*` variables to theme the components. Typography inherits your application's font until you set `--tracky-font-sans`. See [`registry/theme/README.md`](registry/theme/README.md) for setup, dark-theme examples, and the token list.
+Colors, radii, and font family come from CSS variables. [`registry/theme/tokens.css`](registry/theme/tokens.css) provides light-theme defaults, and [`registry/theme/tailwind-preset.cjs`](registry/theme/tailwind-preset.cjs) maps them to semantic Tailwind utilities. `tracky init` imports the tokens and writes the `@theme inline` mapping for Tailwind v4; with v3, add the preset line it prints. Then override the `--tracky-*` variables to theme the components. Typography inherits your application's font until you set `--tracky-font-sans`. See [`registry/theme/README.md`](registry/theme/README.md) for setup, dark-theme examples, and the token list.
 
 ## Privacy and security
 

@@ -1,6 +1,6 @@
 # Tracky UI primitives
 
-These files are copied into your application, not imported from the `tracky` package. Edit them freely. The shared conventions below keep the primitives consistent as you customize them.
+These files are copied into your application, not imported from the `tracky` package. The `tracky` CLI installs them (`tracky init`, then `tracky add <component>`); you can also copy them by hand. Edit them freely. The shared conventions below keep the primitives consistent as you customize them.
 
 ## Conventions
 

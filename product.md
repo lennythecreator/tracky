@@ -2,7 +2,7 @@
 
 ## Product summary
 
-Tracky is a React UI analytics library: it pairs reusable, analytics-aware UI components with a lightweight SDK for capturing product events and sending them to an endpoint the developer controls. It should be quick to integrate, backend agnostic, and small enough to stay out of the app it measures. The SDK exists in the current scaffold. Initial primitive source now lives in the repository registry tree and emits documented component actions; registry installation is still in progress.
+Tracky is a React UI analytics library: it pairs reusable, analytics-aware UI components with a lightweight SDK for capturing product events and sending them to an endpoint the developer controls. It should be quick to integrate, backend agnostic, and small enough to stay out of the app it measures. The SDK exists in the current scaffold. Initial primitive source lives in the repository registry tree, emits documented component actions, and is installed with the `tracky` registry CLI; the package is not published yet.
 
 ## Users and problem
 
@@ -16,11 +16,11 @@ Tracky is for React developers and small product teams who need to understand pa
 - **Low overhead:** Buffer events and deliver asynchronously so tracking does not block normal UI work.
 - **Backend agnostic:** The SDK defines a browser event contract, not a server or storage implementation.
 - **Honest reliability:** Retries are bounded; durable storage and guaranteed delivery belong to the receiving service.
-- **Useful UI building blocks:** Source-owned React primitives make common UI interactions easier to instrument. The initial inventory and package boundaries are recorded in ADR 0001; registry installation is still in progress.
+- **Useful UI building blocks:** Source-owned React primitives make common UI interactions easier to instrument. The initial inventory and package boundaries are recorded in ADR 0001; the registry CLI installs the source into the consuming app.
 
 ## Core experience
 
-A developer wraps the relevant client-side React tree in `AnalyticsProvider`, configures an endpoint or serverless function, and calls `useAnalytics().track(name, context)` for product-specific events. Tracky components emit stable, documented action events when used with a provider. Developers separately opt in to page views and each page-wide capture type. Their endpoint receives batches and is responsible for validating, persisting, and querying events. The SDK workflow is implemented in the current scaffold; registry installation and several approved tracking capabilities remain future work.
+A developer wraps the relevant client-side React tree in `AnalyticsProvider`, configures an endpoint or serverless function, and calls `useAnalytics().track(name, context)` for product-specific events. Tracky components emit stable, documented action events when used with a provider. Developers separately opt in to page views and each page-wide capture type. Their endpoint receives batches and is responsible for validating, persisting, and querying events. The SDK workflow and the component installer are implemented in the current scaffold; publishing and several approved tracking capabilities remain future work.
 
 ## Event model
 
@@ -49,7 +49,7 @@ The event context is not a place for credentials, personal data, form values, ar
 
 ## Component library direction
 
-Tracky includes source for an initial set of reusable React UI primitives alongside the analytics SDK. The accepted distribution, styling, and accessibility conventions are recorded in [ADR 0001](docs/adr/0001-component-registry-and-styling.md). The primitives are not exported by the SDK package. `Button`, `Checkbox`, `Switch`, and `Select` send their documented action through the nearest provider and stay usable without one; `Input`, `Textarea`, and `Label` send no events. A registry installer remains future work; the event contract is documented in [analytics-design.md](analytics-design.md).
+Tracky includes source for an initial set of reusable React UI primitives alongside the analytics SDK. The accepted distribution, styling, and accessibility conventions are recorded in [ADR 0001](docs/adr/0001-component-registry-and-styling.md). The primitives are not exported by the SDK package. `Button`, `Checkbox`, `Switch`, and `Select` send their documented action through the nearest provider and stay usable without one; `Input`, `Textarea`, and `Label` send no events. The `tracky` CLI installs the source: `tracky init` writes the project config and theme files, and `tracky add <component>` copies the component and its shared helper. The CLI validates the project's `tsconfig` alias and records the resolved registry commit in `tracky.lock.json`. The event contract is documented in [analytics-design.md](analytics-design.md).
 
 ## Capabilities and status
 
@@ -64,14 +64,13 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 - Event buffering, JSON batch POST, bounded exponential retry, and a delivery error callback.
 - Random session ID held in `sessionStorage` when available.
 
-Initial primitive source has been implemented, but the reusable component library is not yet installable. Cursor heat maps, frustration-click detection, per-capture switches, and typed heat-map payloads are also not implemented yet.
+Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet. Cursor heat maps, frustration-click detection, per-capture switches, and typed heat-map payloads are also not implemented yet.
 
-- Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and emit only the documented component actions listed above, never values, labels, or props. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The source is not installed through a registry CLI and is not included in the SDK package.
+- Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and emit only the documented component actions listed above, never values, labels, or props. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The `tracky` CLI installs the source into the project; the primitives are not included in the SDK package.
 
 ### Product direction, not yet complete
 
 - Route adapters for popular routers and more complete full-navigation behavior.
-- Registry manifest, installer, and consumer setup instructions for the initial primitives.
 - A component playground and conventions for any additional components.
 - Engagement, active-session, and frontend performance measurements.
 - Conversion-flow helpers and richer typed event conventions.
