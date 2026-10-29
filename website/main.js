@@ -58,10 +58,8 @@ installButton?.addEventListener('click', async () => {
   window.clearTimeout(installResetTimer);
 
   const startedAt = performance.now();
-  if (installChip) {
-    installChip.dataset.status = 'running';
-    installChip.setAttribute('aria-busy', 'true');
-  }
+  if (installChip) installChip.dataset.status = 'running';
+  installButton.setAttribute('aria-busy', 'true');
   let frame = requestAnimationFrame(function tick() {
     if (installTimer) installTimer.textContent = formatMs(performance.now() - startedAt);
     frame = requestAnimationFrame(tick);
@@ -77,7 +75,7 @@ installButton?.addEventListener('click', async () => {
   const settledAt = performance.now() - startedAt;
   await new Promise((resolve) => window.setTimeout(resolve, Math.max(0, CHIP_MIN_RUN_MS - settledAt)));
   cancelAnimationFrame(frame);
-  if (installChip) installChip.removeAttribute('aria-busy');
+  installButton.removeAttribute('aria-busy');
   if (installTimer) installTimer.textContent = formatMs(performance.now() - startedAt);
 
   if (failed) {
@@ -89,7 +87,7 @@ installButton?.addEventListener('click', async () => {
   }
 
   if (installChip) installChip.dataset.status = 'done';
-  setInstallLabel('Copied', 'Install command copied to clipboard');
+  setInstallLabel('Copied', 'Copied');
   if (copyStatus) copyStatus.textContent = 'Install command copied to clipboard.';
   installResetTimer = window.setTimeout(resetInstallChip, 2400);
 });
