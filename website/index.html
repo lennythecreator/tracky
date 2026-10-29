@@ -4,7 +4,26 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f5f9fe" />
-  <meta name="description" content="Track React events and send them to your own endpoint with Tracky's analytics SDK. Initial React primitives are in development." />
+  <meta name="description" content="Tracky is a React analytics SDK that batches the events you track to an endpoint you control. No hosted collector, no cookies — your endpoint owns the data." />
+  <link rel="canonical" href="https://tracky-ivory.vercel.app/" />
+  <link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Tracky" />
+  <meta property="og:title" content="Tracky — React analytics, with your endpoint" />
+  <meta property="og:description" content="Tracky is a React analytics SDK that batches the events you track to an endpoint you control. No hosted collector, no cookies — your endpoint owns the data." />
+  <meta property="og:url" content="https://tracky-ivory.vercel.app/" />
+  <meta property="og:image" content="https://tracky-ivory.vercel.app/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Tracky wordmark, the headline “Track React events. Own the data path.”, and a diagram running from your React component to your endpoint." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tracky — React analytics, with your endpoint" />
+  <meta name="twitter:description" content="Tracky is a React analytics SDK that batches the events you track to an endpoint you control. No hosted collector, no cookies — your endpoint owns the data." />
+  <meta name="twitter:image" content="https://tracky-ivory.vercel.app/og-image.png" />
+  <meta name="twitter:image:alt" content="Tracky wordmark, the headline “Track React events. Own the data path.”, and a diagram running from your React component to your endpoint." />
   <title>Tracky — React analytics, with your endpoint</title>
   <link rel="preload" href="./fonts/plus-jakarta-sans-regular.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="stylesheet" href="./styles.css" />
@@ -30,7 +49,7 @@
     <section class="hero wrap" id="top" aria-labelledby="hero-title">
       <div class="hero-copy">
         <h1 id="hero-title">Track React events.<br><span>Own the data path.</span></h1>
-        <p class="hero-deck">The analytics SDK is in development. Its current scaffold sends named events to your endpoint; page-view and interaction metadata capture are opt-in. The initial React component source is available in the repository.</p>
+        <p class="hero-deck">Wrap a client-side part of your app in the analytics provider and point it at an endpoint you control. Track the product events you want to measure; Tracky batches them and posts the batch to that URL. Page views and interaction metadata stay off until you opt in.</p>
         <div class="hero-actions"><a class="button button-primary" href="#quick-start">Explore the SDK setup <span aria-hidden="true">↗</span></a><div class="install-command"><code id="install-command-code">npm install tracky</code><button class="install-copy" type="button" data-copy-install aria-label="Copy the install command">Copy</button></div></div>
         <p class="hero-note">Not published to npm yet · this command applies once a release is available · your endpoint owns storage and dashboards.</p>
       </div>
@@ -89,38 +108,43 @@
 
     <section class="event-section" id="event-shape" aria-labelledby="event-title"><div class="wrap event-layout">
       <div class="event-copy"><h2 id="event-title">Know what Tracky sends.</h2><p>Each event includes a name, ISO timestamp, relative route, context, and random tab-scoped session ID. Tracky sends batches as JSON to your endpoint.</p><a class="text-link" href="#quick-start">See the SDK setup <span aria-hidden="true">↓</span></a></div>
-      <div class="payload-panel"><div class="code-bar"><span class="code-file"><span class="file-dot" aria-hidden="true"></span>event.json</span><span class="code-label">ILLUSTRATIVE</span></div><pre><code>{
-  <span class="json-key">"eventType"</span>: <span class="json-string">"report_exported"</span>,
-  <span class="json-key">"timestamp"</span>: <span class="json-string">"2026-10-26T14:32:08.000Z"</span>,
-  <span class="json-key">"route"</span>: <span class="json-string">"/reports?range=30d"</span>,
-  <span class="json-key">"context"</span>: {
-    <span class="json-key">"format"</span>: <span class="json-string">"csv"</span>
-  },
-  <span class="json-key">"sessionId"</span>: <span class="json-string">"random-session-id"</span>
-}</code></pre><p class="payload-note">Example values only. Avoid personal data and secrets in custom context.</p></div>
+      <div class="payload-panel"><div class="code-bar"><span class="code-file"><span class="file-dot" aria-hidden="true"></span>event.json</span><span class="code-label">ILLUSTRATIVE</span></div><pre><code><span class="t-punct">{</span>
+  <span class="t-key">"eventType"</span><span class="t-punct">:</span> <span class="t-str">"report_exported"</span><span class="t-punct">,</span>
+  <span class="t-key">"timestamp"</span><span class="t-punct">:</span> <span class="t-str">"2026-10-26T14:32:08.000Z"</span><span class="t-punct">,</span>
+  <span class="t-key">"route"</span><span class="t-punct">:</span> <span class="t-str">"/reports?range=30d"</span><span class="t-punct">,</span>
+  <span class="t-key">"context"</span><span class="t-punct">:</span> <span class="t-punct">{</span>
+    <span class="t-key">"format"</span><span class="t-punct">:</span> <span class="t-str">"csv"</span>
+  <span class="t-punct">}</span><span class="t-punct">,</span>
+  <span class="t-key">"sessionId"</span><span class="t-punct">:</span> <span class="t-str">"random-session-id"</span>
+<span class="t-punct">}</span></code></pre><p class="payload-note">Example values only. Avoid personal data and secrets in custom context.</p></div>
     </div></section>
 
     <section class="section quickstart-section wrap" id="quick-start" aria-labelledby="quick-title">
       <div class="quickstart-heading"><div><h2 id="quick-title">Start with the analytics SDK.</h2></div><p>Wrap a client-side part of your app, set your endpoint, then call <code>track()</code> for the events you want to measure.</p></div>
       <div class="quickstart-code"><div class="code-bar"><span class="code-file"><span class="file-dot" aria-hidden="true"></span>analytics.tsx</span><button class="copy-button" type="button" data-copy="quickstart-code" aria-label="Copy quick-start example">Copy code</button></div>
-        <pre id="quickstart-code"><code><span class="code-purple">import</span> type { ReactNode } <span class="code-purple">from</span> <span class="code-green">'react'</span>;
-<span class="code-purple">import</span> { AnalyticsProvider, useAnalytics } <span class="code-purple">from</span> <span class="code-green">'tracky'</span>;
+        <pre id="quickstart-code"><code><span class="t-kw">import</span> <span class="t-kw">type</span> { <span class="t-type">ReactNode</span> } <span class="t-kw">from</span> <span class="t-str">'react'</span>;
+<span class="t-kw">import</span> { <span class="t-type">AnalyticsProvider</span>, <span class="t-fn">useAnalytics</span> } <span class="t-kw">from</span> <span class="t-str">'tracky'</span>;
 
-<span class="code-purple">function</span> <span class="code-yellow">ExportButton</span>() {
-  <span class="code-purple">const</span> analytics = <span class="code-blue">useAnalytics</span>();
-  <span class="code-purple">return</span> (
-    &lt;button onClick={() =&gt; analytics.<span class="code-blue">track</span>(<span class="code-green">'report_exported'</span>, { format: <span class="code-green">'csv'</span> })}&gt;
+<span class="t-kw">function</span> <span class="t-fn">ExportButton</span>() {
+  <span class="t-kw">const</span> analytics = <span class="t-fn">useAnalytics</span>();
+
+  <span class="t-kw">return</span> (
+    <span class="t-punct">&lt;</span><span class="t-tag">button</span>
+      <span class="t-attr">onClick</span><span class="t-punct">={</span>() =&gt; analytics.<span class="t-fn">track</span>(<span class="t-str">'report_exported'</span>, <span class="t-punct">{</span> <span class="t-prop">format</span><span class="t-punct">:</span> <span class="t-str">'csv'</span> <span class="t-punct">}</span>)<span class="t-punct">}</span>
+    <span class="t-punct">&gt;</span>
       Export report
-    &lt;/button&gt;
+    <span class="t-punct">&lt;/</span><span class="t-tag">button</span><span class="t-punct">&gt;</span>
   );
 }
 
-<span class="code-purple">export function</span> <span class="code-yellow">AppAnalytics</span>({ children }: { children: ReactNode }) {
-  <span class="code-purple">return</span> (
-    &lt;<span class="code-blue">AnalyticsProvider</span> endpoint=<span class="code-green">"https://your-api.example.com/events"</span>
-      options={{ capturePageViews: <span class="code-orange">true</span> }}&gt;
-      {children}
-    &lt;/<span class="code-blue">AnalyticsProvider</span>&gt;
+<span class="t-kw">export</span> <span class="t-kw">function</span> <span class="t-fn">AppAnalytics</span>({ <span class="t-prop">children</span> }: { <span class="t-prop">children</span>: <span class="t-type">ReactNode</span> }) {
+  <span class="t-kw">return</span> (
+    <span class="t-punct">&lt;</span><span class="t-tag">AnalyticsProvider</span>
+      <span class="t-attr">endpoint</span><span class="t-punct">=</span><span class="t-str">"https://your-api.example.com/events"</span>
+      <span class="t-attr">options</span><span class="t-punct">=</span><span class="t-punct">{{</span> <span class="t-prop">capturePageViews</span><span class="t-punct">:</span> <span class="t-num">true</span> <span class="t-punct">}}</span>
+    <span class="t-punct">&gt;</span>
+      <span class="t-punct">{</span>children<span class="t-punct">}</span>
+    <span class="t-punct">&lt;/</span><span class="t-tag">AnalyticsProvider</span><span class="t-punct">&gt;</span>
   );
 }</code></pre>
       </div>

@@ -64,7 +64,7 @@ Use white for the main canvas and pale blue for diagram and event-example surfac
 
 ## Typography
 
-Use the self-hosted Plus Jakarta Sans files in `website/fonts/` for headings and prose. Headings are bold with modest negative tracking; avoid compressed letter spacing. Reserve the system monospace stack for code, paths, and event data.
+Use the self-hosted Plus Jakarta Sans files in `website/fonts/` for headings, prose, and code. Headings are bold with modest negative tracking; avoid compressed letter spacing. Code samples, paths, and event data use the same family so the page keeps one voice; rely on the code panel's background, padding, and syntax colour for separation instead of a second typeface.
 
 ## Layout
 

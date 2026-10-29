@@ -43,6 +43,7 @@
   --radius-md: var(--tracky-radius-md);
   --radius-lg: var(--tracky-radius-lg);
   --font-sans: var(--tracky-font-sans);
+  --font-mono: var(--tracky-font-sans);
 }
 
 :root {
@@ -57,7 +58,7 @@
   --pg-tint-strong: #e0eefa;
   --pg-accent: #28669f;
   --pg-accent-ink: #1d4f7c;
-  --pg-mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  --pg-mono: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
 }
 
 @layer base {
@@ -149,6 +150,27 @@
     border-radius: 12px;
     background: #142f4b;
     color: #e7eff8;
+  }
+
+  /* Same token colours as the landing page's SDK sample. */
+  .code-shell .t-tag {
+    color: #8fc4ee;
+  }
+
+  .code-shell .t-attr {
+    color: #b9d8f2;
+  }
+
+  .code-shell .t-str {
+    color: #9edcc2;
+  }
+
+  .code-shell .t-num {
+    color: #f3b47a;
+  }
+
+  .code-shell .t-punct {
+    color: #a3bad0;
   }
 
   .code-bar {
