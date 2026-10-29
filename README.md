@@ -94,6 +94,8 @@ Both commands fetch from the repository's `main` branch and record the resolved 
 
 The CLI reads your `tsconfig.json` path mappings and stops with the exact mapping to add when `@/*` does not resolve to the configured root, because installed files import through that alias. The components use Tailwind CSS classes and semantic theme tokens, so the app must run Tailwind. Shared conventions, interaction states, and a field example are documented in [`registry/components/ui/README.md`](registry/components/ui/README.md).
 
+The [component playground](website/playground/) renders the same source files with a local event preview. It runs the SDK's delivery path and answers the request inside the page, so nothing is sent when you interact with a control.
+
 The primitives read the nearest provider through `useAnalyticsOptional()`, so their source imports the `tracky` package. With a provider present, each documented interaction sends one `component_interaction` event with a top-level `component` object:
 
 | Component | Component name | Action |

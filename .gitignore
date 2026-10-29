@@ -2,3 +2,8 @@ node_modules/
 dist/
 *.tsbuildinfo
 .env*
+
+# The built playground ships with the static site.
+!website/playground/dist/
+!website/playground/dist/**
+.vercel

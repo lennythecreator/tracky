@@ -49,7 +49,7 @@ The event context is not a place for credentials, personal data, form values, ar
 
 ## Component library direction
 
-Tracky includes source for an initial set of reusable React UI primitives alongside the analytics SDK. The accepted distribution, styling, and accessibility conventions are recorded in [ADR 0001](docs/adr/0001-component-registry-and-styling.md). The primitives are not exported by the SDK package. `Button`, `Checkbox`, `Switch`, and `Select` send their documented action through the nearest provider and stay usable without one; `Input`, `Textarea`, and `Label` send no events. The `tracky` CLI installs the source: `tracky init` writes the project config and theme files, and `tracky add <component>` copies the component and its shared helper. The CLI validates the project's `tsconfig` alias and records the resolved registry commit in `tracky.lock.json`. The event contract is documented in [analytics-design.md](analytics-design.md).
+Tracky includes source for an initial set of reusable React UI primitives alongside the analytics SDK. The accepted distribution, styling, and accessibility conventions are recorded in [ADR 0001](docs/adr/0001-component-registry-and-styling.md). The primitives are not exported by the SDK package. `Button`, `Checkbox`, `Switch`, and `Select` send their documented action through the nearest provider and stay usable without one; `Input`, `Textarea`, and `Label` send no events. The `tracky` CLI installs the source: `tracky init` writes the project config and theme files, and `tracky add <component>` copies the component and its shared helper. The CLI validates the project's `tsconfig` alias and records the resolved registry commit in `tracky.lock.json`. The website playground renders the same source files and shows each documented action in a local event preview. The event contract is documented in [analytics-design.md](analytics-design.md).
 
 ## Capabilities and status
 
@@ -66,12 +66,13 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 
 Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet. Cursor heat maps, frustration-click detection, per-capture switches, and typed heat-map payloads are also not implemented yet.
 
+- A website playground that renders the initial primitives with variant, state, and snippet examples. Its event preview intercepts the SDK's request inside the page, so it shows the documented actions without sending events anywhere.
 - Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and emit only the documented component actions listed above, never values, labels, or props. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The `tracky` CLI installs the source into the project; the primitives are not included in the SDK package.
 
 ### Product direction, not yet complete
 
 - Route adapters for popular routers and more complete full-navigation behavior.
-- A component playground and conventions for any additional components.
+- Conventions for components added after the initial seven.
 - Engagement, active-session, and frontend performance measurements.
 - Conversion-flow helpers and richer typed event conventions.
 - A complete consent integration story and production privacy review.
