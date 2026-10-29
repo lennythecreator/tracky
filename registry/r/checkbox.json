@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "checkbox",
+  "type": "ui",
+  "title": "Checkbox",
+  "description": "Native checkbox that sends the documented toggle action.",
+  "dependencies": [
+    "tracky"
+  ],
+  "requires": [
+    "utils"
+  ],
+  "files": [
+    {
+      "type": "ui",
+      "path": "checkbox.tsx",
+      "content": "import { forwardRef } from 'react'\nimport type { ChangeEvent, InputHTMLAttributes } from 'react'\nimport { useAnalyticsOptional } from 'tracky'\nimport { cn } from '@tracky/lib/utils'\n\nexport type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {\n  /**\n   * Stable name attached to this component's analytics event.\n   * Takes precedence over `data-analytics-name`, which it is rendered as.\n   */\n  analyticsName?: string\n}\n\nexport const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(\n  { className, analyticsName, onChange, ...props },\n  ref,\n) {\n  const analytics = useAnalyticsOptional()\n\n  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {\n    onChange?.(event)\n    const name = event.currentTarget.dataset.analyticsName\n    analytics?.trackComponentEvent('checkbox', 'toggle', name ? { name } : undefined)\n  }\n\n  return (\n    <input\n      {...props}\n      {...(analyticsName ? { 'data-analytics-name': analyticsName } : undefined)}\n      ref={ref}\n      type=\"checkbox\"\n      data-tracky-component=\"checkbox\"\n      onChange={handleChange}\n      className={cn(\n        'h-4 w-4 shrink-0 cursor-pointer rounded-sm border border-border accent-primary aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:ring-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',\n        className,\n      )}\n    />\n  )\n})\n"
+    }
+  ]
+}

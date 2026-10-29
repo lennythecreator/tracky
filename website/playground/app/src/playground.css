@@ -1,0 +1,219 @@
+@import "tailwindcss";
+@import "../../../../registry/theme/tokens.css";
+
+@source "../../../../registry/components/ui/*.tsx";
+
+/* Keep the committed build output out of Tailwind's automatic source scan. */
+@source not "../../dist";
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("../../../fonts/plus-jakarta-sans-regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("../../../fonts/plus-jakarta-sans-bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@theme inline {
+  --color-background: var(--tracky-background);
+  --color-foreground: var(--tracky-foreground);
+  --color-primary: var(--tracky-primary);
+  --color-primary-foreground: var(--tracky-primary-foreground);
+  --color-primary-hover: var(--tracky-primary-hover);
+  --color-secondary: var(--tracky-secondary);
+  --color-secondary-foreground: var(--tracky-secondary-foreground);
+  --color-secondary-hover: var(--tracky-secondary-hover);
+  --color-muted: var(--tracky-muted);
+  --color-muted-foreground: var(--tracky-muted-foreground);
+  --color-destructive: var(--tracky-destructive);
+  --color-destructive-foreground: var(--tracky-destructive-foreground);
+  --color-destructive-hover: var(--tracky-destructive-hover);
+  --color-border: var(--tracky-border);
+  --color-switch-thumb: var(--tracky-switch-thumb);
+  --color-ring: var(--tracky-ring);
+  --radius-sm: var(--tracky-radius-sm);
+  --radius-md: var(--tracky-radius-md);
+  --radius-lg: var(--tracky-radius-lg);
+  --font-sans: var(--tracky-font-sans);
+}
+
+:root {
+  /* The playground borrows the landing page's palette and typography. */
+  --tracky-font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --pg-ink: #15324f;
+  --pg-muted: #4e6a84;
+  --pg-soft: #6b839a;
+  --pg-line: #d9e6f2;
+  --pg-wash: #f7fbff;
+  --pg-tint: #eef6fd;
+  --pg-tint-strong: #e0eefa;
+  --pg-accent: #28669f;
+  --pg-accent-ink: #1d4f7c;
+  --pg-mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    color: var(--pg-ink);
+    background: #c9e1f8;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--pg-accent);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .surface {
+    border: 1px solid var(--pg-line);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow:
+      0 1px 2px rgb(21 50 79 / 5%),
+      0 20px 44px -30px rgb(21 50 79 / 45%);
+  }
+
+  .inset-canvas {
+    border: 1px solid #e4f0fb;
+    border-radius: 12px;
+    background:
+      radial-gradient(circle at 1px 1px, #dbe9f6 1px, transparent 0) 0 0 / 18px 18px,
+      var(--pg-wash);
+  }
+
+  .event-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.28rem 0.55rem;
+    border: 1px solid #cfe2f4;
+    border-radius: 999px;
+    color: var(--pg-accent-ink);
+    background: var(--pg-tint);
+    font: 600 0.68rem/1.35 var(--pg-mono);
+    white-space: nowrap;
+  }
+
+  .event-badge-quiet {
+    border-color: var(--pg-line);
+    color: var(--pg-soft);
+    background: #fbfdff;
+  }
+
+  .state-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--pg-line);
+    border-radius: 999px;
+    background: #fff;
+    font: 500 0.68rem/1.5 var(--pg-mono);
+    color: var(--pg-accent-ink);
+    transition: border-color 160ms ease, background-color 160ms ease;
+  }
+
+  .state-chip > span:first-child {
+    color: var(--pg-soft);
+  }
+
+  .state-chip > span:last-child {
+    font-weight: 700;
+  }
+
+  .code-shell {
+    overflow: hidden;
+    border: 1px solid #22405c;
+    border-radius: 12px;
+    background: #142f4b;
+    color: #e7eff8;
+  }
+
+  .code-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.35rem 0.45rem 0.35rem 0.75rem;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    color: #9fc4e5;
+    font: 600 0.64rem/1.4 var(--pg-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .code-copy {
+    padding: 0.22rem 0.5rem;
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 7px;
+    background: transparent;
+    color: #dceaf7;
+    font: 600 0.64rem/1.4 var(--pg-mono);
+    letter-spacing: 0.04em;
+    text-transform: none;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease;
+  }
+
+  .code-copy:hover {
+    border-color: rgb(255 255 255 / 34%);
+    background: rgb(255 255 255 / 10%);
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #3e7fb7;
+    box-shadow: 0 0 0 3px rgb(62 127 183 / 18%);
+  }
+
+  .event-entry {
+    animation: pg-event-in 220ms cubic-bezier(0.2, 0.75, 0.15, 1) both;
+  }
+}
+
+@keyframes pg-event-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .event-entry {
+    animation: none;
+  }
+}

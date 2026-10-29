@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "name": "tracky",
+  "homepage": "https://github.com/lennythecreator/tracky",
+  "baseUrl": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r",
+  "items": [
+    {
+      "name": "button",
+      "type": "ui",
+      "title": "Button",
+      "description": "Primary, secondary, outline, ghost, and destructive button in three sizes.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/button.json"
+    },
+    {
+      "name": "input",
+      "type": "ui",
+      "title": "Input",
+      "description": "Single-line text input with disabled and invalid states.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/input.json"
+    },
+    {
+      "name": "textarea",
+      "type": "ui",
+      "title": "Textarea",
+      "description": "Multi-line text input with disabled and invalid states.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/textarea.json"
+    },
+    {
+      "name": "label",
+      "type": "ui",
+      "title": "Label",
+      "description": "Label for a form control, associated with htmlFor.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/label.json"
+    },
+    {
+      "name": "checkbox",
+      "type": "ui",
+      "title": "Checkbox",
+      "description": "Native checkbox that sends the documented toggle action.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/checkbox.json"
+    },
+    {
+      "name": "switch",
+      "type": "ui",
+      "title": "Switch",
+      "description": "Native checkbox rendered as a switch that sends the documented toggle action.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/switch.json"
+    },
+    {
+      "name": "select",
+      "type": "ui",
+      "title": "Select",
+      "description": "Native select that sends the documented change action.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/select.json"
+    },
+    {
+      "name": "utils",
+      "type": "lib",
+      "title": "Class merge helper",
+      "description": "Shared cn() helper used by every primitive to append caller classes.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/utils.json"
+    },
+    {
+      "name": "theme",
+      "type": "theme",
+      "title": "Theme tokens",
+      "description": "CSS variables for the semantic theme and the Tailwind preset that maps them to utilities.",
+      "url": "https://raw.githubusercontent.com/lennythecreator/tracky/main/registry/r/theme.json"
+    }
+  ]
+}

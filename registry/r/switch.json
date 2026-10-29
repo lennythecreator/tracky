@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "switch",
+  "type": "ui",
+  "title": "Switch",
+  "description": "Native checkbox rendered as a switch that sends the documented toggle action.",
+  "dependencies": [
+    "tracky"
+  ],
+  "requires": [
+    "utils"
+  ],
+  "files": [
+    {
+      "type": "ui",
+      "path": "switch.tsx",
+      "content": "import { forwardRef } from 'react'\nimport type { ChangeEvent, InputHTMLAttributes } from 'react'\nimport { useAnalyticsOptional } from 'tracky'\nimport { cn } from '@tracky/lib/utils'\n\nexport type SwitchProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {\n  /**\n   * Stable name attached to this component's analytics event.\n   * Takes precedence over `data-analytics-name`, which it is rendered as.\n   */\n  analyticsName?: string\n}\n\nexport const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(\n  { className, role = 'switch', analyticsName, onChange, ...props },\n  ref,\n) {\n  const analytics = useAnalyticsOptional()\n\n  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {\n    onChange?.(event)\n    const name = event.currentTarget.dataset.analyticsName\n    analytics?.trackComponentEvent('switch', 'toggle', name ? { name } : undefined)\n  }\n\n  return (\n    <input\n      {...props}\n      {...(analyticsName ? { 'data-analytics-name': analyticsName } : undefined)}\n      ref={ref}\n      type=\"checkbox\"\n      role={role}\n      data-tracky-component=\"switch\"\n      onChange={handleChange}\n      className={cn(\n        'relative inline-flex h-6 w-11 shrink-0 cursor-pointer appearance-none rounded-full bg-muted transition-colors aria-[invalid=true]:border aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:ring-destructive checked:bg-primary after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-switch-thumb after:shadow-sm after:transition-transform checked:after:translate-x-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',\n        className,\n      )}\n    />\n  )\n})\n"
+    }
+  ]
+}

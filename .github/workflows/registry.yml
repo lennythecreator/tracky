@@ -1,0 +1,52 @@
+name: registry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'registry/**'
+      - 'scripts/build-registry.mjs'
+      - '.github/workflows/registry.yml'
+  pull_request:
+    paths:
+      - 'registry/**'
+      - 'scripts/build-registry.mjs'
+      - '.github/workflows/registry.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  payloads:
+    # The bot's own payload commit would otherwise trigger another run.
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify payloads are current
+        if: github.event_name == 'pull_request'
+        run: node scripts/build-registry.mjs --check
+
+      - name: Rebuild payloads
+        if: github.event_name == 'push'
+        run: node scripts/build-registry.mjs
+
+      - name: Commit payload changes
+        if: github.event_name == 'push'
+        run: |
+          if [ -z "$(git status --porcelain registry/r)" ]; then
+            echo "Payloads are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add registry/r
+          git commit -m "chore: rebuild registry payloads"
+          git push origin HEAD:main

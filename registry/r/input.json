@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "name": "input",
+  "type": "ui",
+  "title": "Input",
+  "description": "Single-line text input with disabled and invalid states.",
+  "dependencies": [],
+  "requires": [
+    "utils"
+  ],
+  "files": [
+    {
+      "type": "ui",
+      "path": "input.tsx",
+      "content": "import { forwardRef } from 'react'\nimport type { InputHTMLAttributes } from 'react'\nimport { cn } from '@tracky/lib/utils'\n\nexport type InputProps = InputHTMLAttributes<HTMLInputElement>\n\nexport const Input = forwardRef<HTMLInputElement, InputProps>(function Input(\n  { className, type = 'text', ...props },\n  ref,\n) {\n  return (\n    <input\n      {...props}\n      ref={ref}\n      type={type}\n      className={cn(\n        'flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 font-sans text-sm text-foreground placeholder:text-muted-foreground aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:ring-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',\n        className,\n      )}\n    />\n  )\n})\n"
+    }
+  ]
+}

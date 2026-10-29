@@ -103,6 +103,8 @@ Confirm this inventory in T-001 before implementation. Keep the first pass focus
 
 ### T-005 — Build a component playground for the primitive set
 
+**Status:** In progress. The playground renders the registry source with the SDK provider and a local event preview, and it ships with the site at `https://tracky-ivory.vercel.app/playground/`. Keyboard exploration of every state still needs a pass before the acceptance criteria are met.
+
 **Priority:** After T-003; can proceed alongside T-004
 
 **Goal:** Let developers explore the primitive components and their analytics behavior on the Tracky website.

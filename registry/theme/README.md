@@ -7,7 +7,7 @@ The copied primitives read their colors, radii, and font family from CSS variabl
 - `tokens.css` — default light-theme values for the `--tracky-*` variables.
 - `tailwind-preset.cjs` — a Tailwind CSS v3 preset that maps the variables to semantic utilities such as `bg-primary`, `text-foreground`, `border-border`, `rounded-md`, and `font-sans`.
 
-Keep both files next to the components you copy, for example in `src/components/ui/`, and import `tokens.css` once from your global stylesheet.
+`tracky init` writes both files next to your components, for example in `src/components/ui/`, and adds the `tokens.css` import to your stylesheet. If you copy them by hand, keep them together and import `tokens.css` once yourself.
 
 ## Tailwind CSS v4
 

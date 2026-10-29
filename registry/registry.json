@@ -1,0 +1,90 @@
+{
+  "name": "tracky",
+  "homepage": "https://github.com/lennythecreator/tracky",
+  "items": [
+    {
+      "name": "button",
+      "type": "ui",
+      "title": "Button",
+      "description": "Primary, secondary, outline, ghost, and destructive button in three sizes.",
+      "dependencies": ["tracky"],
+      "requires": ["utils"],
+      "files": [{ "path": "registry/components/ui/button.tsx" }]
+    },
+    {
+      "name": "input",
+      "type": "ui",
+      "title": "Input",
+      "description": "Single-line text input with disabled and invalid states.",
+      "dependencies": [],
+      "requires": ["utils"],
+      "files": [{ "path": "registry/components/ui/input.tsx" }]
+    },
+    {
+      "name": "textarea",
+      "type": "ui",
+      "title": "Textarea",
+      "description": "Multi-line text input with disabled and invalid states.",
+      "dependencies": [],
+      "requires": ["utils"],
+      "files": [{ "path": "registry/components/ui/textarea.tsx" }]
+    },
+    {
+      "name": "label",
+      "type": "ui",
+      "title": "Label",
+      "description": "Label for a form control, associated with htmlFor.",
+      "dependencies": [],
+      "requires": ["utils"],
+      "files": [{ "path": "registry/components/ui/label.tsx" }]
+    },
+    {
+      "name": "checkbox",
+      "type": "ui",
+      "title": "Checkbox",
+      "description": "Native checkbox that sends the documented toggle action.",
+      "dependencies": ["tracky"],
+      "requires": ["utils"],
+      "files": [{ "path": "registry/components/ui/checkbox.tsx" }]
+    },
+    {
+      "name": "switch",
+      "type": "ui",
+      "title": "Switch",
+      "description": "Native checkbox rendered as a switch that sends the documented toggle action.",
+      "dependencies": ["tracky"],
+      "requires": ["utils"],
+      "files": [{ "path": "registry/components/ui/switch.tsx" }]
+    },
+    {
+      "name": "select",
+      "type": "ui",
+      "title": "Select",
+      "description": "Native select that sends the documented change action.",
+      "dependencies": ["tracky"],
+      "requires": ["utils"],
+      "files": [{ "path": "registry/components/ui/select.tsx" }]
+    },
+    {
+      "name": "utils",
+      "type": "lib",
+      "title": "Class merge helper",
+      "description": "Shared cn() helper used by every primitive to append caller classes.",
+      "dependencies": [],
+      "requires": [],
+      "files": [{ "path": "registry/components/ui/utils.ts" }]
+    },
+    {
+      "name": "theme",
+      "type": "theme",
+      "title": "Theme tokens",
+      "description": "CSS variables for the semantic theme and the Tailwind preset that maps them to utilities.",
+      "dependencies": [],
+      "requires": [],
+      "files": [
+        { "path": "registry/theme/tokens.css" },
+        { "path": "registry/theme/tailwind-preset.cjs" }
+      ]
+    }
+  ]
+}
