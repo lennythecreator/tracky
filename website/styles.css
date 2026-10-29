@@ -56,7 +56,7 @@ h1, h2, h3, p { margin-top: 0; }
 .install-command[data-status="done"] .glyph-tool { opacity: 0; transform: translateY(-70%); }
 .install-command[data-status="done"] .glyph-done { color: #15803d; opacity: 1; transform: none; filter: none; }
 .install-command[data-status="error"] .glyph-retry { color: #b91c1c; opacity: 1; transform: none; filter: none; }
-.chip-timer { min-width: 4.2ch; color: var(--ink-soft); font: 600 .7rem/1 var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; opacity: .6; }
+.chip-timer { min-width: 4.2ch; color: var(--ink-soft); font: 600 .7rem/1 var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
 .install-command[data-status="error"] { animation: chip-shake 450ms cubic-bezier(.77, 0, .175, 1); }
 @keyframes chip-shake { 14% { transform: translateX(-6px); } 28% { transform: translateX(6px); } 43% { transform: translateX(-4px); } 57% { transform: translateX(4px); } 71% { transform: translateX(-2px); } }
 @media (prefers-reduced-motion: reduce) {
