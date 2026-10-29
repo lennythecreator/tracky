@@ -1,20 +1,14 @@
 const routeDiagram = document.querySelector('#route-diagram');
 const traceButton = document.querySelector('#trace-button');
-const traceStatus = document.querySelector('#trace-status');
+const traceButtonLabel = document.querySelector('#trace-button-label');
 const copyStatus = document.querySelector('#copy-status');
-let traceTimer;
 
 traceButton?.addEventListener('click', () => {
-  if (!routeDiagram || !traceStatus) return;
-  window.clearTimeout(traceTimer);
-  routeDiagram.classList.remove('is-tracing');
-  void routeDiagram.offsetWidth;
-  routeDiagram.classList.add('is-tracing');
-  traceStatus.textContent = 'Preview: an example event moves through the flow. No data is sent.';
-  traceTimer = window.setTimeout(() => {
-    routeDiagram.classList.remove('is-tracing');
-    traceStatus.textContent = 'Illustration only · no data is sent';
-  }, 1450);
+  if (!routeDiagram) return;
+  const paused = routeDiagram.classList.toggle('is-paused');
+  traceButton.classList.toggle('is-paused', paused);
+  traceButton.setAttribute('aria-label', paused ? 'Play the event flow animation' : 'Pause the event flow animation');
+  if (traceButtonLabel) traceButtonLabel.textContent = paused ? 'Play animation' : 'Pause animation';
 });
 
 document.querySelectorAll('[data-copy]').forEach((button) => {
