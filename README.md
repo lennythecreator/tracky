@@ -49,7 +49,19 @@ export function AppAnalytics({ children }: { children: React.ReactNode }) {
 }
 ```
 
-With `capture.pageViews`, Tracky sends one `pageview` for the current page and one for each route change through `pushState`, `replaceState`, or back/forward. The route is path plus query, so hash-only changes don't count. Tracky reads `document.title` one task after the history change, which gives the router time to render the new page. Several changes in the same task, such as a redirect, count once, at the final route.
+With `capture.pageViews`, Tracky sends one `pageview` for the current page and one for each route change through `pushState`, `replaceState`, or back/forward. The route is path plus query, so hash-only changes don't count unless you pass `resolveRoute`. Tracky reads `document.title` one task after the history change, which gives the router time to render the new page. Several changes in the same task, such as a redirect, count once, at the final route.
+
+For hash-based or custom routers, pass `resolveRoute`. It receives `window.location` and returns the route to record, or `null` to ignore the location (for example, a redirect page). Tracky uses its result for page views and for the `route` field on every event. If the resolver throws, Tracky falls back to path plus query.
+
+```tsx
+<AnalyticsProvider
+  endpoint="/api/events"
+  options={{
+    capture: { pageViews: true },
+    resolveRoute: (location) => (location.hash.startsWith('#/') ? location.hash.slice(1) : '/'),
+  }}
+>
+```
 
 Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then turn on the `capture` switches you need once you have consent. Turning an option off removes its listeners.
 

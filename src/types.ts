@@ -36,6 +36,12 @@ export interface AnalyticsOptions {
   batchSize?: number
   /** Maximum delay before flushing the current batch. Defaults to 3000 ms. */
   flushIntervalMs?: number
+  /**
+   * Map the current location to the route Tracky records. Return `null` to
+   * ignore the location, for example an intermediate redirect. Defaults to
+   * path plus query, which ignores hash-only changes.
+   */
+  resolveRoute?: (location: Location) => string | null
   /** Page-wide capture switches. Each one is independent and off by default. */
   capture?: CaptureOptions
   /** @deprecated Use `capture.pageViews`. */
