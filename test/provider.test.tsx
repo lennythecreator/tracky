@@ -95,9 +95,14 @@ describe('defaults', () => {
 describe('page views', () => {
   it('sends the initial page view and one page view per route change', async () => {
     render(<Page options={{ capturePageViews: true }} />)
-    act(() => window.history.pushState(null, '', '/reports'))
-    act(() => window.history.replaceState(null, '', '/reports'))
-    act(() => window.history.pushState(null, '', '/reports?tab=exports'))
+    // Page views are taken one task after the history change.
+    const navigate = async (method: 'pushState' | 'replaceState', url: string) => {
+      act(() => window.history[method](null, '', url))
+      await vi.advanceTimersByTimeAsync(0)
+    }
+    await navigate('pushState', '/reports')
+    await navigate('replaceState', '/reports')
+    await navigate('pushState', '/reports?tab=exports')
     await settle()
 
     expect(fetch.events().map((event) => [event.eventType, event.route])).toEqual([
