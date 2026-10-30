@@ -31,6 +31,31 @@ export interface CaptureOptions {
   inputChanges?: boolean
   /** `frustration_click` when one target is clicked 3+ times within 1 second. Works without `clicks`. */
   frustrationClicks?: boolean
+  /** `heatmap` summaries of pointer time, clicks, and keyboard focus on a 10×10 viewport grid. */
+  heatMaps?: boolean
+}
+
+/**
+ * Payload of a `heatmap` event: one period of one visit to one route. The
+ * event's `route` is the route the visit was on. Each grid is row-major,
+ * `columns × rows` long, over the visible viewport (index 0 is top left).
+ * Periods of the same `visitId` do not overlap; sum them for the visit.
+ */
+export type HeatMapSummary = {
+  /** Random ID for this visit to the route. Not stored and not reused. */
+  visitId: string
+  visitStartedAt: string
+  periodStartedAt: string
+  periodEndedAt: string
+  columns: number
+  rows: number
+  sampleIntervalMs: number
+  /** Milliseconds a mouse or pen pointer was sampled in each region. */
+  pointerMs: number[]
+  /** Pointer clicks, including touch taps, in each region. */
+  clicks: number[]
+  /** Keyboard focus moves into each region. */
+  focusEntries: number[]
 }
 
 export interface AnalyticsOptions {
