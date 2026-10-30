@@ -29,6 +29,8 @@ export interface CaptureOptions {
   formSubmits?: boolean
   /** `input_interaction` when a field changes, never its value. */
   inputChanges?: boolean
+  /** `frustration_click` when one target is clicked 3+ times within 1 second. Works without `clicks`. */
+  frustrationClicks?: boolean
 }
 
 export interface AnalyticsOptions {

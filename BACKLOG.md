@@ -251,6 +251,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-011 — Detect frustration clicks
 
+**Status:** Complete. `capture.frustrationClicks` sends one `frustration_click` per burst of 3+ pointer clicks within 1 second on one live element, or across elements that share a `data-analytics-name`. It listens independently of `capture.clicks`.
+
 **Priority:** After T-009 (click switch)
 **GitHub:** [#13](https://github.com/lennythecreator/tracky/issues/13)
 

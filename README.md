@@ -95,10 +95,13 @@ Each switch in `options.capture` is independent and off by default. Tracky attac
 | `clicks` | `click` | Clicks on buttons, links, `role="button"`, and `data-analytics-name` elements. A link click is only a click; navigation shows up as a page view. |
 | `formSubmits` | `form_submit` | That a form was submitted, never its values. |
 | `inputChanges` | `input_interaction` | That an input, select, or textarea changed, never its value. Password and hidden inputs are skipped. |
+| `frustrationClicks` | `frustration_click` | One event when the same target gets 3 or more pointer clicks within 1 second. Works without `clicks`. |
 
 ```tsx
 <AnalyticsProvider endpoint="/api/events" options={{ capture: { pageViews: true, clicks: true } }}>
 ```
+
+A frustration click's target is the clicked control, or the clicked element itself when it isn't a control, so repeated clicks on a non-interactive image count too. Elements that share a `data-analytics-name` are grouped across instances. A burst sends one event however long it lasts, with the same safe metadata as `click`. Keyboard activation doesn't count. Tracky never looks at text, labels, or whether the page responded.
 
 The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 

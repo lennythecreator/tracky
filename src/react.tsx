@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react'
+import { captureFrustrationClicks } from './capture/frustration.js'
 import { captureClicks, captureFormSubmits, captureInputChanges } from './capture/interactions.js'
 import { resolveCapture } from './capture/options.js'
 import { capturePageViews, type LastPageView } from './capture/pageviews.js'
@@ -51,6 +52,7 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
   useEffect(() => (capture.clicks ? captureClicks(client) : undefined), [client, capture.clicks])
   useEffect(() => (capture.formSubmits ? captureFormSubmits(client) : undefined), [client, capture.formSubmits])
   useEffect(() => (capture.inputChanges ? captureInputChanges(client) : undefined), [client, capture.inputChanges])
+  useEffect(() => (capture.frustrationClicks ? captureFrustrationClicks(client) : undefined), [client, capture.frustrationClicks])
 
   return <AnalyticsContextValue.Provider value={client}>{children}</AnalyticsContextValue.Provider>
 }
