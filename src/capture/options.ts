@@ -13,5 +13,6 @@ export function resolveCapture(options: AnalyticsOptions | undefined): Required<
     clicks: capture.clicks ?? interactions,
     formSubmits: capture.formSubmits ?? interactions,
     inputChanges: capture.inputChanges ?? interactions,
+    frustrationClicks: capture.frustrationClicks ?? false,
   }
 }
