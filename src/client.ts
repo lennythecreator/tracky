@@ -4,6 +4,7 @@ import type {
   AnalyticsContext,
   AnalyticsEvent,
   AnalyticsOptions,
+  JsonValue,
 } from './types.js'
 
 const DEFAULT_BATCH_SIZE = 10
@@ -111,7 +112,12 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     timer = setTimeout(() => void flush(), options.flushIntervalMs ?? DEFAULT_FLUSH_INTERVAL_MS)
   }
 
-  const enqueue = (eventType: string, context: AnalyticsContext, component?: AnalyticsComponent) => {
+  const enqueue = (
+    eventType: string,
+    context: AnalyticsContext,
+    component?: AnalyticsComponent,
+    payload?: JsonValue,
+  ) => {
     if (closed || !eventType.trim()) return
     const event: AnalyticsEvent = {
       eventType,
@@ -121,14 +127,15 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
       sessionId: sessionId ??= getSessionId(),
     }
     if (component) event.component = component
+    if (payload !== undefined) event.payload = payload
     if (queue.length >= MAX_QUEUE_SIZE) queue.shift()
     queue.push(event)
     if (queue.length >= batchSize()) sendQueued()
     else scheduleFlush()
   }
 
-  const track = (eventType: string, context: AnalyticsContext = {}) => {
-    enqueue(eventType, context)
+  const track = (eventType: string, context: AnalyticsContext = {}, payload?: JsonValue) => {
+    enqueue(eventType, context, undefined, payload)
   }
 
   const trackComponentEvent = (

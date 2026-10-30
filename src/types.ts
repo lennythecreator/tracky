@@ -1,5 +1,8 @@
 export type AnalyticsContext = Record<string, string | number | boolean | null>
 
+/** A value that survives `JSON.stringify` unchanged. */
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue }
+
 export interface AnalyticsComponent {
   name: string
   action: string
@@ -13,6 +16,8 @@ export interface AnalyticsEvent {
   sessionId: string
   /** Present on component interaction events. */
   component?: AnalyticsComponent
+  /** Structured data for events that need more than flat context, such as summaries. */
+  payload?: JsonValue
 }
 
 export interface AnalyticsOptions {
@@ -33,7 +38,11 @@ export interface AnalyticsOptions {
 }
 
 export interface AnalyticsClient {
-  track: (eventType: string, context?: AnalyticsContext) => void
+  /**
+   * Track a named event. Pass structured data as `payload`, not in `context`.
+   * The type parameter lets callers name the payload shape they send.
+   */
+  track: <TPayload extends JsonValue = JsonValue>(eventType: string, context?: AnalyticsContext, payload?: TPayload) => void
   /** Track an explicit interaction from a Tracky or application UI component. */
   trackComponentEvent: (component: string, action: string, context?: AnalyticsContext) => void
   flush: () => Promise<void>
