@@ -61,7 +61,7 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 - Documented component actions from the initial primitives: `button` activate, `checkbox` toggle, `switch` toggle, and `select` change.
 - Optional page-view tracking for initial load and History API navigation.
 - Optional click, form-submit, and input-interaction metadata capture.
-- Event buffering, JSON batch POST, bounded exponential retry, and a delivery error callback.
+- Event buffering, JSON batch POST, a flush when the page is hidden or unloaded, bounded exponential retry for transient failures, a bounded queue, and a delivery error callback.
 - Random session ID held in `sessionStorage` when available.
 
 Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet. Cursor heat maps, frustration-click detection, per-capture switches, and typed heat-map payloads are also not implemented yet.
