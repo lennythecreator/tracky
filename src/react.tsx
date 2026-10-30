@@ -5,6 +5,7 @@ import { captureFrustrationClicks } from './capture/frustration.js'
 import { captureHeatMaps } from './capture/heatmap.js'
 import { captureClicks, captureFormSubmits, captureInputChanges } from './capture/interactions.js'
 import { resolveCapture } from './capture/options.js'
+import { captureScrollDepth } from './capture/scroll.js'
 import { capturePageViews, type LastPageView } from './capture/pageviews.js'
 import { createAnalyticsClient, resolveRoute } from './client.js'
 import type { AnalyticsClient, AnalyticsProviderProps } from './types.js'
@@ -58,6 +59,10 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
     if (!capture.heatMaps) return
     return captureHeatMaps(client, () => resolveRoute(optionsRef.current?.resolveRoute))
   }, [client, capture.heatMaps])
+  useEffect(() => {
+    if (!capture.scrollDepth) return
+    return captureScrollDepth(client, () => resolveRoute(optionsRef.current?.resolveRoute))
+  }, [client, capture.scrollDepth])
 
   return <AnalyticsContextValue.Provider value={client}>{children}</AnalyticsContextValue.Provider>
 }

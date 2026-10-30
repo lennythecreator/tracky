@@ -15,5 +15,6 @@ export function resolveCapture(options: AnalyticsOptions | undefined): Required<
     inputChanges: capture.inputChanges ?? interactions,
     frustrationClicks: capture.frustrationClicks ?? false,
     heatMaps: capture.heatMaps ?? false,
+    scrollDepth: capture.scrollDepth ?? false,
   }
 }

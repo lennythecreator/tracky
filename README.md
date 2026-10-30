@@ -97,6 +97,7 @@ Each switch in `options.capture` is independent and off by default. Tracky attac
 | `inputChanges` | `input_interaction` | That an input, select, or textarea changed, never its value. Password and hidden inputs are skipped. |
 | `frustrationClicks` | `frustration_click` | One event when the same target gets 3 or more pointer clicks within 1 second. Works without `clicks`. |
 | `heatMaps` | `heatmap` | A per-visit `HeatMapSummary` payload of pointer time, clicks, and keyboard focus on a 10 × 10 viewport grid. |
+| `scrollDepth` | `scroll_depth` | A per-visit `ScrollDepthSummary` payload with the deepest 25% bucket reached. Independent of `heatMaps`. |
 
 ```tsx
 <AnalyticsProvider endpoint="/api/events" options={{ capture: { pageViews: true, clicks: true } }}>
@@ -115,6 +116,14 @@ With `capture.heatMaps`, the browser builds the heat map itself and sends only t
 A summary covers one period of one visit to one route. Tracky sends it when the route changes, when the page is hidden or unloaded, every 30 seconds during a long visit, and when the switch turns off. Each send resets the grids, so periods never overlap, and an empty period is not sent. The event's `route` is the route the visit was on, even when the summary is sent after navigation. To build a cross-visit heat map, sum the grids on your endpoint by `route`, or by `visitId` for a single visit.
 
 Raw coordinates, cursor trails, pointer IDs, and viewport size are never sent. `data-analytics="ignore"` subtrees don't count.
+
+### Scroll depth
+
+With `capture.scrollDepth`, Tracky records how far down the page each visit got: the bottom of the viewport as a share of the page height, rounded down to 0, 25, 50, 75, or 100. A page shorter than the viewport counts as 100. Scrolling back up doesn't lower the value.
+
+Tracky sends the summary when the route changes, when the page is hidden or unloaded, and when the switch turns off. It sends again only if the visit got deeper since the last send, so a visit sends at most five events; keep the largest `maxDepthPercent` per `visitId`. There's no periodic flush: the page-hidden signal also covers closing the tab and switching apps on mobile. Raw scroll positions, page text, and DOM paths are never sent.
+
+After navigation, the new visit is measured on its first scroll, resize, or exit, because the router may not have scrolled the new page yet.
 
 The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 

@@ -33,6 +33,8 @@ export interface CaptureOptions {
   frustrationClicks?: boolean
   /** `heatmap` summaries of pointer time, clicks, and keyboard focus on a 10×10 viewport grid. */
   heatMaps?: boolean
+  /** `scroll_depth` with the deepest 25% bucket reached per visit. Independent of `heatMaps`. */
+  scrollDepth?: boolean
 }
 
 /**
@@ -41,6 +43,19 @@ export interface CaptureOptions {
  * `columns × rows` long, over the visible viewport (index 0 is top left).
  * Periods of the same `visitId` do not overlap; sum them for the visit.
  */
+/**
+ * Payload of a `scroll_depth` event: the deepest point of the page a visit has
+ * shown, as a bucket. A visit can send several events as it gets deeper; keep
+ * the largest `maxDepthPercent` per `visitId`.
+ */
+export type ScrollDepthSummary = {
+  /** Random ID for this visit to the route. Not stored and not reused. */
+  visitId: string
+  visitStartedAt: string
+  /** Bottom of the viewport as a share of the page height, rounded down to 0, 25, 50, 75, or 100. */
+  maxDepthPercent: 0 | 25 | 50 | 75 | 100
+}
+
 export type HeatMapSummary = {
   /** Random ID for this visit to the route. Not stored and not reused. */
   visitId: string
