@@ -129,6 +129,10 @@ Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK
 
 ```sh
 npm install
+npm run lint
+npm test
 npm run build
 ```
+
+`npm test` runs the Vitest suite in jsdom without network access. It checks the event envelope, batching and retry, and the privacy defaults: no capture without an opt-in, no field values, and no password, hidden, or ignored fields.
 

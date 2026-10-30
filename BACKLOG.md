@@ -152,6 +152,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-007 — Add analytics test harness and privacy coverage
 
+**Status:** Complete. `npm test` runs Vitest with jsdom from `test/`, offline, and CI runs it with `npm run lint` and `npm run build` on every pull request. The suite covers the envelope, batching, scheduled flush, bounded retry, `onDeliveryError`, `shutdown()`, the opt-in defaults, and the privacy boundary, and it fails when a field value, password, hidden input, or ignored subtree reaches a request body.
+
 **Priority:** After T-002
 **GitHub:** [#9](https://github.com/lennythecreator/tracky/issues/9)
 
