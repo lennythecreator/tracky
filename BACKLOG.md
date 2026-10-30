@@ -328,6 +328,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-014 — Capture scroll depth independently of heat maps
 
+**Status:** Complete. `capture.scrollDepth` sends a `ScrollDepthSummary` with the deepest 25% bucket per route visit. It sends on route change, page exit, and when capture stops, and only when the visit got deeper, so a visit sends at most five events. There is no periodic flush.
+
 **Priority:** After T-009; independent of T-012 and T-013
 **GitHub:** [#16](https://github.com/lennythecreator/tracky/issues/16)
 
