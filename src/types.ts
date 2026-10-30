@@ -20,14 +20,27 @@ export interface AnalyticsEvent {
   payload?: JsonValue
 }
 
+export interface CaptureOptions {
+  /** `pageview` on initial load and each route change. */
+  pageViews?: boolean
+  /** `click` with safe metadata for buttons, links, and named elements. */
+  clicks?: boolean
+  /** `form_submit` with safe metadata for the form, never submitted values. */
+  formSubmits?: boolean
+  /** `input_interaction` when a field changes, never its value. */
+  inputChanges?: boolean
+}
+
 export interface AnalyticsOptions {
   /** Number of events to buffer before sending. Defaults to 10. */
   batchSize?: number
   /** Maximum delay before flushing the current batch. Defaults to 3000 ms. */
   flushIntervalMs?: number
-  /** Enable page-view events on initial mount and history changes. Defaults to false. */
+  /** Page-wide capture switches. Each one is independent and off by default. */
+  capture?: CaptureOptions
+  /** @deprecated Use `capture.pageViews`. */
   capturePageViews?: boolean
-  /** Enable safe click, form-submit, and input-interaction metadata. Defaults to false. */
+  /** @deprecated Use `capture.clicks`, `capture.formSubmits`, and `capture.inputChanges`. */
   captureInteractions?: boolean
   /** Maximum number of retries per batch. Defaults to 3. */
   maxRetries?: number
