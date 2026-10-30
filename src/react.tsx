@@ -43,6 +43,21 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
     return () => { void client.flush() }
   }, [client])
 
+  // Send buffered events when the page is hidden or unloaded. `keepalive`
+  // lets these requests outlive the page; the flush interval would not.
+  useEffect(() => {
+    const onPageHide = () => { void client.flush() }
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') void client.flush()
+    }
+    window.addEventListener('pagehide', onPageHide)
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => {
+      window.removeEventListener('pagehide', onPageHide)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
+  }, [client])
+
   useEffect(() => {
     if (!optionsRef.current?.captureInteractions) return
 

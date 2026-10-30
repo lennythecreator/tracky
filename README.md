@@ -61,7 +61,11 @@ Explicit component events are sent when you call the method. The `captureInterac
 
 Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable event name.
 
-The browser sends batches with `fetch` and `keepalive` when possible. Failed requests are retried with capped exponential backoff while the page remains open. For durable delivery, validate and queue events on your own endpoint.
+The browser sends batches with `fetch` and `keepalive`. Each request carries at most `batchSize` events. Inside an `AnalyticsProvider`, Tracky also sends buffered events when the page is hidden or unloaded, so they don't wait for the flush interval.
+
+Failed requests are retried with capped exponential backoff while the page remains open. That covers network errors, `5xx`, `408`, and `429`. Tracky doesn't retry any other `4xx` response, because the endpoint rejected the request itself. In both cases `onDeliveryError` receives the error.
+
+Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the queue. When the queue is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
 
 ## Component source
 
