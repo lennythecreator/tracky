@@ -49,7 +49,8 @@ function getSessionId(): string {
   }
 }
 
-function currentRoute(): string {
+/** Path plus query. Hash-only changes keep the same route. */
+export function currentRoute(): string {
   return `${window.location.pathname}${window.location.search}`
 }
 
@@ -57,8 +58,10 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
   const queue: AnalyticsEvent[] = []
   const inFlight = new Set<Promise<void>>()
   let sessionId: string | undefined
-  const batchSize = Math.max(1, options.batchSize ?? DEFAULT_BATCH_SIZE)
-  const maxRetries = Math.max(0, options.maxRetries ?? DEFAULT_MAX_RETRIES)
+  // Options are read when used, so a caller can pass an object whose values
+  // change over the client's lifetime, as `AnalyticsProvider` does.
+  const batchSize = () => Math.max(1, options.batchSize ?? DEFAULT_BATCH_SIZE)
+  const maxRetries = () => Math.max(0, options.maxRetries ?? DEFAULT_MAX_RETRIES)
   let timer: ReturnType<typeof setTimeout> | undefined
   let closed = false
 
@@ -74,7 +77,7 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
       })
       if (!response.ok) throw new DeliveryError(response.status)
     } catch (error) {
-      if (attempt < maxRetries && !closed && isRetryable(error)) {
+      if (attempt < maxRetries() && !closed && isRetryable(error)) {
         const delay = Math.min(1_000 * 2 ** attempt, MAX_BACKOFF_MS)
         await new Promise<void>((resolve) => setTimeout(resolve, delay))
         return send(batch, attempt + 1)
@@ -90,7 +93,7 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     if (timer) clearTimeout(timer)
     timer = undefined
     while (queue.length > 0 && inFlight.size < MAX_CONCURRENT_BATCHES) {
-      const request: Promise<void> = send(queue.splice(0, batchSize)).then(() => {
+      const request: Promise<void> = send(queue.splice(0, batchSize())).then(() => {
         inFlight.delete(request)
         sendQueued()
       })
@@ -120,7 +123,7 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     if (component) event.component = component
     if (queue.length >= MAX_QUEUE_SIZE) queue.shift()
     queue.push(event)
-    if (queue.length >= batchSize) sendQueued()
+    if (queue.length >= batchSize()) sendQueued()
     else scheduleFlush()
   }
 
