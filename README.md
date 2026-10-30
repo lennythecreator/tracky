@@ -59,6 +59,16 @@ The provider uses browser APIs after mounting, so it can be rendered inside a Re
 
 Events contain `eventType`, ISO UTC `timestamp`, relative `route`, a `context` object, and a random `sessionId` stored in `sessionStorage`. Component events also carry a top-level `component` object.
 
+`context` is flat: string, number, boolean, or `null` values only. For structured data, pass a third argument to `track()`. Tracky sends it as a top-level `payload` field and leaves `context` alone:
+
+```ts
+type ExportSummary = { rows: number; columns: string[] }
+
+analytics.track<ExportSummary>('report_exported', { format: 'csv' }, { rows: 120, columns: ['date', 'total'] })
+```
+
+The payload must be JSON-safe (`JsonValue`). The type parameter is optional and checks the shape at compile time. Events without a payload have no `payload` field.
+
 Call `analytics.trackComponentEvent(component, action, context)` from an explicit component action handler to send a `component_interaction` event. The call above produces `component: { name: "save_button", action: "activate" }` with `location: "toolbar"` in `context`. Use stable component and action names; pass only small, JSON-safe metadata. Tracky does not inspect component props or read field values.
 
 Explicit component events are sent when you call the method. The `captureInteractions` option controls only automatic DOM interaction capture.

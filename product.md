@@ -34,8 +34,9 @@ An event has these fields:
 | `context` | Small, JSON-safe developer context and safe target metadata, such as an element tag, optional ID, explicit analytics name, or bounded class name. |
 | `sessionId` | Random pseudonymous identifier scoped to the browser tab/session. |
 | `component` | Present on component interaction events as `{ name, action }`. |
+| `payload` | Optional JSON-safe structured data passed as the third argument to `track()`. |
 
-The approved target contract also allows a typed `payload` for structured data such as heat map summaries. See [analytics-design.md](analytics-design.md) for the complete target contract and capture rules. `payload` and the heat map summaries are not implemented in the current scaffold.
+The approved target contract also allows a typed `payload` for structured data such as heat map summaries. See [analytics-design.md](analytics-design.md) for the complete target contract and capture rules. `track(eventType, context, payload)` sends a JSON-safe `payload`; heat map summaries are not implemented in the current scaffold.
 
 The event context is not a place for credentials, personal data, form values, arbitrary component props, or unrestricted DOM snapshots. Custom context is supplied by the application developer. Automatic capture records only basic element metadata; it must not read or send typed values.
 
@@ -56,7 +57,7 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 ### In the current scaffold
 
 - React provider and `useAnalytics` hook.
-- Explicit named events with typed context.
+- Explicit named events with typed context and an optional JSON-safe `payload`.
 - Explicit component interaction tracking that sends a `component_interaction` event with `{ name, action }` in a top-level `component` object.
 - Documented component actions from the initial primitives: `button` activate, `checkbox` toggle, `switch` toggle, and `select` change.
 - Optional page-view tracking for initial load and History API navigation, keyed by path plus query, so hash-only changes don't count. Capture options can be turned on or off after mount, for example once consent is given.
@@ -64,7 +65,7 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 - Event buffering, JSON batch POST, a flush when the page is hidden or unloaded, bounded exponential retry for transient failures, a bounded queue, and a delivery error callback.
 - Random session ID held in `sessionStorage` when available.
 
-Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet. Cursor heat maps, frustration-click detection, per-capture switches, and typed heat-map payloads are also not implemented yet.
+Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet. Cursor heat maps, frustration-click detection, per-capture switches, and the typed heat-map payload are also not implemented yet.
 
 - A website playground that renders the initial primitives with variant, state, and snippet examples. Its event preview intercepts the SDK's request inside the page, so it shows the documented actions without sending events anywhere.
 - Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and emit only the documented component actions listed above, never values, labels, or props. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The `tracky` CLI installs the source into the project; the primitives are not included in the SDK package.
