@@ -61,11 +61,11 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 - Explicit component interaction tracking that sends a `component_interaction` event with `{ name, action }` in a top-level `component` object.
 - Documented component actions from the initial primitives: `button` activate, `checkbox` toggle, `switch` toggle, and `select` change.
 - Optional page-view tracking for initial load and History API navigation, keyed by path plus query, so hash-only changes don't count. Capture options can be turned on or off after mount, for example once consent is given.
-- Optional click, form-submit, and input-interaction metadata capture.
+- Independent, opt-in `capture` switches for page views, clicks, form submits, and input changes. The earlier `capturePageViews` and `captureInteractions` flags are kept as deprecated aliases.
 - Event buffering, JSON batch POST, a flush when the page is hidden or unloaded, bounded exponential retry for transient failures, a bounded queue, and a delivery error callback.
 - Random session ID held in `sessionStorage` when available.
 
-Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet. Cursor heat maps, frustration-click detection, per-capture switches, and the typed heat-map payload are also not implemented yet.
+Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet. Cursor heat maps, frustration-click detection, scroll depth, and the typed heat-map payload are also not implemented yet.
 
 - A website playground that renders the initial primitives with variant, state, and snippet examples. Its event preview intercepts the SDK's request inside the page, so it shows the documented actions without sending events anywhere.
 - Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and emit only the documented component actions listed above, never values, labels, or props. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The `tracky` CLI installs the source into the project; the primitives are not included in the SDK package.

@@ -1,6 +1,6 @@
 # Tracky
 
-A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, an opt-in automatic interaction capture mode, page-view capture, buffered delivery, retry with backoff, and a session-scoped anonymous ID.
+A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped anonymous ID.
 
 ## Status
 
@@ -41,7 +41,7 @@ export function AppAnalytics({ children }: { children: React.ReactNode }) {
   return (
     <AnalyticsProvider
       endpoint="https://your-api.example.com/events"
-      options={{ capturePageViews: true }}
+      options={{ capture: { pageViews: true } }}
     >
       {children}
     </AnalyticsProvider>
@@ -49,9 +49,9 @@ export function AppAnalytics({ children }: { children: React.ReactNode }) {
 }
 ```
 
-With `capturePageViews`, Tracky sends one `pageview` for the current page and one for each route change through `pushState`, `replaceState`, or back/forward. The route is path plus query, so hash-only changes don't count. Tracky reads `document.title` one task after the history change, which gives the router time to render the new page. Several changes in the same task, such as a redirect, count once, at the final route.
+With `capture.pageViews`, Tracky sends one `pageview` for the current page and one for each route change through `pushState`, `replaceState`, or back/forward. The route is path plus query, so hash-only changes don't count. Tracky reads `document.title` one task after the history change, which gives the router time to render the new page. Several changes in the same task, such as a redirect, count once, at the final route.
 
-Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then set `capturePageViews` or `captureInteractions` once you have consent. Turning an option off removes its listeners.
+Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then turn on the `capture` switches you need once you have consent. Turning an option off removes its listeners.
 
 The provider uses browser APIs after mounting, so it can be rendered inside a React app or a Next.js client boundary. In Next.js App Router, put it in a small Client Component and render that component from the server layout.
 
@@ -71,7 +71,24 @@ The payload must be JSON-safe (`JsonValue`). The type parameter is optional and 
 
 Call `analytics.trackComponentEvent(component, action, context)` from an explicit component action handler to send a `component_interaction` event. The call above produces `component: { name: "save_button", action: "activate" }` with `location: "toolbar"` in `context`. Use stable component and action names; pass only small, JSON-safe metadata. Tracky does not inspect component props or read field values.
 
-Explicit component events are sent when you call the method. The `captureInteractions` option controls only automatic DOM interaction capture.
+Explicit component events are sent when you call the method. The `capture` switches control only automatic, page-wide capture.
+
+## Page-wide capture
+
+Each switch in `options.capture` is independent and off by default. Tracky attaches a category's listeners only while its switch is on.
+
+| Switch | Event | What it records |
+| --- | --- | --- |
+| `pageViews` | `pageview` | Initial load and each route change, with `title` in `context`. |
+| `clicks` | `click` | Clicks on buttons, links, `role="button"`, and `data-analytics-name` elements. A link click is only a click; navigation shows up as a page view. |
+| `formSubmits` | `form_submit` | That a form was submitted, never its values. |
+| `inputChanges` | `input_interaction` | That an input, select, or textarea changed, never its value. Password and hidden inputs are skipped. |
+
+```tsx
+<AnalyticsProvider endpoint="/api/events" options={{ capture: { pageViews: true, clicks: true } }}>
+```
+
+The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 
 Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable event name.
 

@@ -201,6 +201,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-009 — Split page-wide capture into independent opt-in switches
 
+**Status:** Complete. `options.capture` has `pageViews`, `clicks`, `formSubmits`, and `inputChanges`, each off by default and attached only while on. `capturePageViews` and `captureInteractions` remain as deprecated aliases; an explicit `capture` key wins. Each category lives in `src/capture/`.
+
 **Priority:** After T-008
 **GitHub:** [#11](https://github.com/lennythecreator/tracky/issues/11)
 

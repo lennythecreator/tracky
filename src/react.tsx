@@ -1,16 +1,17 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react'
+import { captureClicks, captureFormSubmits, captureInputChanges } from './capture/interactions.js'
+import { resolveCapture } from './capture/options.js'
 import { createAnalyticsClient, currentRoute } from './client.js'
-import type { AnalyticsClient, AnalyticsContext, AnalyticsOptions, AnalyticsProviderProps } from './types.js'
+import type { AnalyticsClient, AnalyticsProviderProps } from './types.js'
 
 const AnalyticsContextValue = createContext<AnalyticsClient | null>(null)
 
 export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProviderProps) {
   const optionsRef = useRef(options)
   optionsRef.current = options
-  const capturePageViews = Boolean(options?.capturePageViews)
-  const captureInteractions = Boolean(options?.captureInteractions)
+  const capture = resolveCapture(options)
   const lastPageView = useRef<{ client: AnalyticsClient; route: string } | null>(null)
 
   // The client lives as long as the endpoint. It reads the other options
@@ -26,7 +27,7 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
   useEffect(() => () => { void client.flush() }, [client])
 
   useEffect(() => {
-    if (!capturePageViews) return
+    if (!capture.pageViews) return
 
     // One page view per route. Remembered across effect runs so a Strict Mode
     // remount or an options change does not repeat the current page.
@@ -71,7 +72,7 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
       if (history.pushState === pushState) history.pushState = originalPushState
       if (history.replaceState === replaceState) history.replaceState = originalReplaceState
     }
-  }, [client, capturePageViews])
+  }, [client, capture.pageViews])
 
   // Send buffered events when the page is hidden or unloaded. `keepalive`
   // lets these requests outlive the page; the flush interval would not.
@@ -88,51 +89,9 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
     }
   }, [client])
 
-  useEffect(() => {
-    if (!captureInteractions) return
-
-    const ignored = (target: Element) => Boolean(target.closest('[data-analytics="ignore"]'))
-    const metadata = (target: Element): AnalyticsContext => {
-      const el = target.closest<HTMLElement>('[data-analytics-name],button,a,[role="button"],input,select,textarea')
-        ?? target as HTMLElement
-      const safe: AnalyticsContext = {
-        tag: el.tagName.toLowerCase(),
-      }
-      if (el.id) safe.id = el.id
-      if (el.dataset.analyticsName) safe.name = el.dataset.analyticsName
-      if (typeof el.className === 'string' && el.className) safe.className = el.className.slice(0, 120)
-      return safe
-    }
-    const onClick = (event: MouseEvent) => {
-      const target = event.target
-      if (!(target instanceof Element) || ignored(target)) return
-      // A Tracky component emits its own documented action for this interaction.
-      if (target.closest('[data-tracky-component]')) return
-      const el = target.closest('button,a,[role="button"],[data-analytics-name]')
-      if (el) client.track('click', metadata(el))
-    }
-    const onChange = (event: Event) => {
-      const target = event.target
-      if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return
-      if (target instanceof HTMLInputElement && (target.type === 'password' || target.type === 'hidden')) return
-      if (target.matches('[contenteditable="true"]') || ignored(target)) return
-      client.track('input_interaction', metadata(target))
-    }
-    const onSubmit = (event: Event) => {
-      const form = event.target
-      if (!(form instanceof HTMLFormElement) || ignored(form)) return
-      client.track('form_submit', metadata(form))
-    }
-
-    document.addEventListener('click', onClick, true)
-    document.addEventListener('change', onChange, true)
-    document.addEventListener('submit', onSubmit, true)
-    return () => {
-      document.removeEventListener('click', onClick, true)
-      document.removeEventListener('change', onChange, true)
-      document.removeEventListener('submit', onSubmit, true)
-    }
-  }, [client, captureInteractions])
+  useEffect(() => (capture.clicks ? captureClicks(client) : undefined), [client, capture.clicks])
+  useEffect(() => (capture.formSubmits ? captureFormSubmits(client) : undefined), [client, capture.formSubmits])
+  useEffect(() => (capture.inputChanges ? captureInputChanges(client) : undefined), [client, capture.inputChanges])
 
   return <AnalyticsContextValue.Provider value={client}>{children}</AnalyticsContextValue.Provider>
 }
