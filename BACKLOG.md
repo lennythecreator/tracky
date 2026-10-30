@@ -277,6 +277,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-012 — Aggregate cursor heat map summaries
 
+**Status:** Complete. `capture.heatMaps` aggregates `pointerMs`, `clicks`, and `focusEntries` on a 10×10 viewport grid in `src/capture/heatmap.ts`. The payload type is `HeatMapSummary`.
+
 **Priority:** After T-010
 **GitHub:** [#14](https://github.com/lennythecreator/tracky/issues/14)
 
@@ -300,6 +302,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - Collection runs only when the cursor heat map switch is on.
 
 ### T-013 — Deliver heat map summaries on route change and exit
+
+**Status:** Complete. Summaries are sent on route change (recorded against the route the visitor left), on `pagehide` or hidden `visibilitychange`, every 30 seconds, and when capture stops. Each send resets the period, so grids are never resent.
 
 **Priority:** After T-012
 **GitHub:** [#15](https://github.com/lennythecreator/tracky/issues/15)

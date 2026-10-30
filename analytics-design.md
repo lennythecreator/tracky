@@ -80,7 +80,7 @@ Build a per-visit, per-route summary on a normalized 10×10 grid of the visible 
 - Send summaries on route change and page exit, with a bounded periodic flush for long visits. Delivery is best-effort; periodic flushes should limit data lost when a page closes unexpectedly.
 - The configured endpoint is responsible for combining per-visit summaries into cross-visit heat maps.
 
-The exact grid payload fields and periodic flush interval are implementation details to define in the public types and documentation. Preserve the approved aggregation and privacy behavior above.
+The grid payload is `HeatMapSummary` in `src/types.ts`, and the periodic flush interval is 30 seconds (see README). Preserve the approved aggregation and privacy behavior above.
 
 ## Delivery and runtime constraints
 

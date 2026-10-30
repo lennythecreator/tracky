@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react'
 import { captureFrustrationClicks } from './capture/frustration.js'
+import { captureHeatMaps } from './capture/heatmap.js'
 import { captureClicks, captureFormSubmits, captureInputChanges } from './capture/interactions.js'
 import { resolveCapture } from './capture/options.js'
 import { capturePageViews, type LastPageView } from './capture/pageviews.js'
@@ -53,6 +54,10 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
   useEffect(() => (capture.formSubmits ? captureFormSubmits(client) : undefined), [client, capture.formSubmits])
   useEffect(() => (capture.inputChanges ? captureInputChanges(client) : undefined), [client, capture.inputChanges])
   useEffect(() => (capture.frustrationClicks ? captureFrustrationClicks(client) : undefined), [client, capture.frustrationClicks])
+  useEffect(() => {
+    if (!capture.heatMaps) return
+    return captureHeatMaps(client, () => resolveRoute(optionsRef.current?.resolveRoute))
+  }, [client, capture.heatMaps])
 
   return <AnalyticsContextValue.Provider value={client}>{children}</AnalyticsContextValue.Provider>
 }

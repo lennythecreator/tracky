@@ -28,7 +28,7 @@ const isRetryable = (error: unknown) =>
   !(error instanceof DeliveryError) || error.status >= 500 || error.status === 408 || error.status === 429
 
 /** A random v4 UUID. `crypto.randomUUID` needs a secure context; `getRandomValues` does not. */
-function randomId(): string {
+export function randomId(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
   const bytes = crypto.getRandomValues(new Uint8Array(16))
   bytes[6] = (bytes[6] & 0x0f) | 0x40
@@ -67,6 +67,33 @@ export function resolveRoute(resolver: AnalyticsOptions['resolveRoute']): string
   } catch {
     return defaultRoute()
   }
+}
+
+type Enqueue = (
+  eventType: string,
+  context: AnalyticsContext,
+  component?: AnalyticsComponent,
+  payload?: JsonValue,
+  route?: string,
+) => void
+
+// Lets built-in capture record an event against a route other than the
+// current one, without adding that to the public client API.
+const enqueuers = new WeakMap<AnalyticsClient, Enqueue>()
+
+/**
+ * Track an event for `route` instead of the current location. Summaries use
+ * this after navigation, when they describe the page the visitor just left.
+ */
+export function trackForRoute(
+  client: AnalyticsClient,
+  route: string,
+  eventType: string,
+  payload: JsonValue,
+): void {
+  const enqueue = enqueuers.get(client)
+  if (enqueue) enqueue(eventType, {}, undefined, payload, route)
+  else client.track(eventType, {}, payload)
 }
 
 export function createAnalyticsClient(endpoint: string, options: AnalyticsOptions = {}): AnalyticsClient {
@@ -126,17 +153,12 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     timer = setTimeout(() => void flush(), options.flushIntervalMs ?? DEFAULT_FLUSH_INTERVAL_MS)
   }
 
-  const enqueue = (
-    eventType: string,
-    context: AnalyticsContext,
-    component?: AnalyticsComponent,
-    payload?: JsonValue,
-  ) => {
+  const enqueue: Enqueue = (eventType, context, component, payload, route) => {
     if (closed || !eventType.trim()) return
     const event: AnalyticsEvent = {
       eventType,
       timestamp: new Date().toISOString(),
-      route: resolveRoute(options.resolveRoute) ?? defaultRoute(),
+      route: route ?? resolveRoute(options.resolveRoute) ?? defaultRoute(),
       context: { ...options.context, ...context },
       sessionId: sessionId ??= getSessionId(),
     }
@@ -161,7 +183,7 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     enqueue('component_interaction', context, { name: component, action })
   }
 
-  return {
+  const client: AnalyticsClient = {
     track,
     trackComponentEvent,
     flush,
@@ -172,4 +194,6 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
       timer = undefined
     },
   }
+  enqueuers.set(client, enqueue)
+  return client
 }

@@ -96,12 +96,25 @@ Each switch in `options.capture` is independent and off by default. Tracky attac
 | `formSubmits` | `form_submit` | That a form was submitted, never its values. |
 | `inputChanges` | `input_interaction` | That an input, select, or textarea changed, never its value. Password and hidden inputs are skipped. |
 | `frustrationClicks` | `frustration_click` | One event when the same target gets 3 or more pointer clicks within 1 second. Works without `clicks`. |
+| `heatMaps` | `heatmap` | A per-visit `HeatMapSummary` payload of pointer time, clicks, and keyboard focus on a 10 × 10 viewport grid. |
 
 ```tsx
 <AnalyticsProvider endpoint="/api/events" options={{ capture: { pageViews: true, clicks: true } }}>
 ```
 
 A frustration click's target is the clicked control, or the clicked element itself when it isn't a control, so repeated clicks on a non-interactive image count too. Elements that share a `data-analytics-name` are grouped across instances. A burst sends one event however long it lasts, with the same safe metadata as `click`. Keyboard activation doesn't count. Tracky never looks at text, labels, or whether the page responded.
+
+### Heat maps
+
+With `capture.heatMaps`, the browser builds the heat map itself and sends only the totals. The visible viewport is split into a 10 × 10 grid; each grid is a row-major array of 100 numbers, with index 0 at the top left.
+
+- `pointerMs`: Tracky samples the mouse or pen position every 250 ms while the pointer is over the visible page, and adds 250 ms to that region. Touch movement doesn't count.
+- `clicks`: pointer clicks and touch taps per region. Keyboard activation doesn't count.
+- `focusEntries`: keyboard focus moving into a region, located at the focused element's center. Focus caused by a pointer press doesn't count, and the key used is never recorded.
+
+A summary covers one period of one visit to one route. Tracky sends it when the route changes, when the page is hidden or unloaded, every 30 seconds during a long visit, and when the switch turns off. Each send resets the grids, so periods never overlap, and an empty period is not sent. The event's `route` is the route the visit was on, even when the summary is sent after navigation. To build a cross-visit heat map, sum the grids on your endpoint by `route`, or by `visitId` for a single visit.
+
+Raw coordinates, cursor trails, pointer IDs, and viewport size are never sent. `data-analytics="ignore"` subtrees don't count.
 
 The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 

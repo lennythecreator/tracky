@@ -8,5 +8,6 @@ export type {
   AnalyticsOptions,
   AnalyticsProviderProps,
   CaptureOptions,
+  HeatMapSummary,
   JsonValue,
 } from './types.js'
