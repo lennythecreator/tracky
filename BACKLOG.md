@@ -226,6 +226,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-010 — Capture navigation with an optional route resolver
 
+**Status:** Complete. `resolveRoute(location)` returns the route or `null` and also sets each event's `route`. One shared observer in `src/capture/navigation.ts` wraps the History API once for every subscriber, checks one task after a change, and restores the originals when the last subscriber leaves.
+
 **Priority:** After T-009 (page-view switch)
 **GitHub:** [#12](https://github.com/lennythecreator/tracky/issues/12)
 

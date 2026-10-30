@@ -51,8 +51,22 @@ function getSessionId(): string {
 }
 
 /** Path plus query. Hash-only changes keep the same route. */
-export function currentRoute(): string {
+export function defaultRoute(): string {
   return `${window.location.pathname}${window.location.search}`
+}
+
+/**
+ * The current route from the app's resolver, or path plus query without one.
+ * `null` means the resolver chose to ignore the current location. A resolver
+ * that throws falls back to the default so tracking never breaks the app.
+ */
+export function resolveRoute(resolver: AnalyticsOptions['resolveRoute']): string | null {
+  if (!resolver) return defaultRoute()
+  try {
+    return resolver(window.location)
+  } catch {
+    return defaultRoute()
+  }
 }
 
 export function createAnalyticsClient(endpoint: string, options: AnalyticsOptions = {}): AnalyticsClient {
@@ -122,7 +136,7 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
     const event: AnalyticsEvent = {
       eventType,
       timestamp: new Date().toISOString(),
-      route: currentRoute(),
+      route: resolveRoute(options.resolveRoute) ?? defaultRoute(),
       context: { ...options.context, ...context },
       sessionId: sessionId ??= getSessionId(),
     }
