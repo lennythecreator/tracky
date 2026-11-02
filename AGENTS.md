@@ -39,5 +39,6 @@ When writing or editing developer-facing content, also read `WRITING.md` and fol
 ## Local commands
 
 - `npm run build` compiles the distributable package.
-- `npm run lint` runs TypeScript's no-emit check.
+- `npm run lint` runs TypeScript's no-emit check on the SDK and the tests.
+- `npm test` runs the Vitest suite in jsdom. It runs offline and covers the event envelope, delivery, and privacy defaults; add a test when you change capture or delivery.
 - Report only checks that were actually run; do not describe a build as tested if it was not run.
