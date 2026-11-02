@@ -22,12 +22,13 @@ interface AnalyticsEvent {
   sessionId: string
   context: Record<string, string | number | boolean | null>
   component?: { name: string; action: string }
-  payload?: unknown // Define a concrete type for each structured payload.
+  payload?: JsonValue // Define a concrete type for each structured payload.
 }
 ```
 
 - `eventType` identifies the event, for example `pageview`, `click`, or `component_interaction`.
 - Component events put `{ name, action }` in the top-level `component` object, alongside `eventType` and `context`. Keep `context` for small, JSON-safe developer metadata and safe target metadata.
+- `track(eventType, context, payload)` sets `payload`. Callers name its shape with the type parameter, for example `track<ExportSummary>(…)`.
 - Heat map summaries use a typed `payload`, not `context`. Define a concrete TypeScript payload type when implementing the feature.
 - `route` is path plus query by default. Hash-only changes do not create page views by default. Support a developer-provided route resolver for hash-based or custom routers.
 - `sessionId` remains a random identifier scoped to the browser tab/session. Do not add cross-tab identity, user identity, cookies, or persistent identifiers.

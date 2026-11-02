@@ -177,6 +177,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-008 — Migrate analytics events to the approved envelope
 
+**Status:** Complete. Component events already used the top-level `component` object. `track(eventType, context, payload)` now sends a JSON-safe `payload` (`JsonValue`) whose shape callers can name with a type parameter.
+
 **Priority:** After T-007
 **GitHub:** [#10](https://github.com/lennythecreator/tracky/issues/10)
 
