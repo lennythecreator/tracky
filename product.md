@@ -59,7 +59,7 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 - Explicit named events with typed context.
 - Explicit component interaction tracking that sends a `component_interaction` event with `{ name, action }` in a top-level `component` object.
 - Documented component actions from the initial primitives: `button` activate, `checkbox` toggle, `switch` toggle, and `select` change.
-- Optional page-view tracking for initial load and History API navigation.
+- Optional page-view tracking for initial load and History API navigation, keyed by path plus query, so hash-only changes don't count. Capture options can be turned on or off after mount, for example once consent is given.
 - Optional click, form-submit, and input-interaction metadata capture.
 - Event buffering, JSON batch POST, a flush when the page is hidden or unloaded, bounded exponential retry for transient failures, a bounded queue, and a delivery error callback.
 - Random session ID held in `sessionStorage` when available.

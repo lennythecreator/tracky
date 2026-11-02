@@ -49,6 +49,10 @@ export function AppAnalytics({ children }: { children: React.ReactNode }) {
 }
 ```
 
+With `capturePageViews`, Tracky sends one `pageview` for the current page and one for each route change through `pushState`, `replaceState`, or back/forward. The route is path plus query, so hash-only changes don't count. Tracky reads `document.title` one task after the history change, which gives the router time to render the new page. Several changes in the same task, such as a redirect, count once, at the final route.
+
+Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then set `capturePageViews` or `captureInteractions` once you have consent. Turning an option off removes its listeners.
+
 The provider uses browser APIs after mounting, so it can be rendered inside a React app or a Next.js client boundary. In Next.js App Router, put it in a small Client Component and render that component from the server layout.
 
 ## Event shape

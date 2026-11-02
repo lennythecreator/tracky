@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react'
-import { createAnalyticsClient } from './client.js'
+import { createAnalyticsClient, currentRoute } from './client.js'
 import type { AnalyticsClient, AnalyticsContext, AnalyticsOptions, AnalyticsProviderProps } from './types.js'
 
 const AnalyticsContextValue = createContext<AnalyticsClient | null>(null)
@@ -9,39 +9,69 @@ const AnalyticsContextValue = createContext<AnalyticsClient | null>(null)
 export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProviderProps) {
   const optionsRef = useRef(options)
   optionsRef.current = options
+  const capturePageViews = Boolean(options?.capturePageViews)
+  const captureInteractions = Boolean(options?.captureInteractions)
+  const lastPageView = useRef<{ client: AnalyticsClient; route: string } | null>(null)
 
-  const client = useMemo(() => createAnalyticsClient(endpoint, options), [endpoint])
+  // The client lives as long as the endpoint. It reads the other options
+  // through this view, so new values apply without recreating it.
+  const client = useMemo(() => createAnalyticsClient(endpoint, {
+    get batchSize() { return optionsRef.current?.batchSize },
+    get flushIntervalMs() { return optionsRef.current?.flushIntervalMs },
+    get maxRetries() { return optionsRef.current?.maxRetries },
+    get context() { return optionsRef.current?.context },
+    onDeliveryError: (error) => optionsRef.current?.onDeliveryError?.(error),
+  }), [endpoint])
+
+  useEffect(() => () => { void client.flush() }, [client])
 
   useEffect(() => {
-    if (optionsRef.current?.capturePageViews) {
+    if (!capturePageViews) return
+
+    // One page view per route. Remembered across effect runs so a Strict Mode
+    // remount or an options change does not repeat the current page.
+    const trackPageView = () => {
+      pending = undefined
+      const route = currentRoute()
+      const last = lastPageView.current
+      if (last?.client === client && last.route === route) return
+      lastPageView.current = { client, route }
       client.track('pageview', { title: document.title })
-      let previousUrl = window.location.href
-      const onNavigation = () => {
-        if (window.location.href === previousUrl) return
-        previousUrl = window.location.href
-        client.track('pageview', { title: document.title })
-      }
-      window.addEventListener('popstate', onNavigation)
-      const originalPushState = history.pushState
-      const originalReplaceState = history.replaceState
-      history.pushState = function (...args) {
-        originalPushState.apply(this, args)
-        onNavigation()
-      }
-      history.replaceState = function (...args) {
-        originalReplaceState.apply(this, args)
-        onNavigation()
-      }
-      return () => {
-        window.removeEventListener('popstate', onNavigation)
-        history.pushState = originalPushState
-        history.replaceState = originalReplaceState
-        void client.flush()
-      }
     }
 
-    return () => { void client.flush() }
-  }, [client])
+    // Wait one task after a history change so the router can render the new
+    // page and its title, and so a redirect in the same task counts once.
+    let pending: ReturnType<typeof setTimeout> | undefined
+    const onNavigation = () => { pending ??= setTimeout(trackPageView, 0) }
+
+    trackPageView()
+    window.addEventListener('popstate', onNavigation)
+
+    // Another script may wrap the History API after this one. On cleanup, only
+    // restore the originals if these wrappers are still installed; otherwise
+    // leave the chain intact and let `active` make these wrappers inert.
+    let active = true
+    const originalPushState = history.pushState
+    const originalReplaceState = history.replaceState
+    const pushState: History['pushState'] = function (this: History, ...args) {
+      originalPushState.apply(this, args)
+      if (active) onNavigation()
+    }
+    const replaceState: History['replaceState'] = function (this: History, ...args) {
+      originalReplaceState.apply(this, args)
+      if (active) onNavigation()
+    }
+    history.pushState = pushState
+    history.replaceState = replaceState
+
+    return () => {
+      active = false
+      if (pending) clearTimeout(pending)
+      window.removeEventListener('popstate', onNavigation)
+      if (history.pushState === pushState) history.pushState = originalPushState
+      if (history.replaceState === replaceState) history.replaceState = originalReplaceState
+    }
+  }, [client, capturePageViews])
 
   // Send buffered events when the page is hidden or unloaded. `keepalive`
   // lets these requests outlive the page; the flush interval would not.
@@ -59,7 +89,7 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
   }, [client])
 
   useEffect(() => {
-    if (!optionsRef.current?.captureInteractions) return
+    if (!captureInteractions) return
 
     const ignored = (target: Element) => Boolean(target.closest('[data-analytics="ignore"]'))
     const metadata = (target: Element): AnalyticsContext => {
@@ -102,7 +132,7 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
       document.removeEventListener('change', onChange, true)
       document.removeEventListener('submit', onSubmit, true)
     }
-  }, [client])
+  }, [client, captureInteractions])
 
   return <AnalyticsContextValue.Provider value={client}>{children}</AnalyticsContextValue.Provider>
 }
