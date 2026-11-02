@@ -1,93 +1,68 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react'
-import { createAnalyticsClient } from './client.js'
-import type { AnalyticsClient, AnalyticsContext, AnalyticsOptions, AnalyticsProviderProps } from './types.js'
+import { captureFrustrationClicks } from './capture/frustration.js'
+import { captureHeatMaps } from './capture/heatmap.js'
+import { captureClicks, captureFormSubmits, captureInputChanges } from './capture/interactions.js'
+import { resolveCapture } from './capture/options.js'
+import { captureScrollDepth } from './capture/scroll.js'
+import { capturePageViews, type LastPageView } from './capture/pageviews.js'
+import { createAnalyticsClient, resolveRoute } from './client.js'
+import type { AnalyticsClient, AnalyticsProviderProps } from './types.js'
 
 const AnalyticsContextValue = createContext<AnalyticsClient | null>(null)
 
 export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProviderProps) {
   const optionsRef = useRef(options)
   optionsRef.current = options
+  const capture = resolveCapture(options)
+  const lastPageView: LastPageView = useRef(null)
 
-  const client = useMemo(() => createAnalyticsClient(endpoint, options), [endpoint])
+  // The client lives as long as the endpoint. It reads the other options
+  // through this view, so new values apply without recreating it.
+  const client = useMemo(() => createAnalyticsClient(endpoint, {
+    get batchSize() { return optionsRef.current?.batchSize },
+    get flushIntervalMs() { return optionsRef.current?.flushIntervalMs },
+    get maxRetries() { return optionsRef.current?.maxRetries },
+    get context() { return optionsRef.current?.context },
+    get resolveRoute() { return optionsRef.current?.resolveRoute },
+    onDeliveryError: (error) => optionsRef.current?.onDeliveryError?.(error),
+  }), [endpoint])
 
-  useEffect(() => {
-    if (optionsRef.current?.capturePageViews) {
-      client.track('pageview', { title: document.title })
-      let previousUrl = window.location.href
-      const onNavigation = () => {
-        if (window.location.href === previousUrl) return
-        previousUrl = window.location.href
-        client.track('pageview', { title: document.title })
-      }
-      window.addEventListener('popstate', onNavigation)
-      const originalPushState = history.pushState
-      const originalReplaceState = history.replaceState
-      history.pushState = function (...args) {
-        originalPushState.apply(this, args)
-        onNavigation()
-      }
-      history.replaceState = function (...args) {
-        originalReplaceState.apply(this, args)
-        onNavigation()
-      }
-      return () => {
-        window.removeEventListener('popstate', onNavigation)
-        history.pushState = originalPushState
-        history.replaceState = originalReplaceState
-        void client.flush()
-      }
-    }
-
-    return () => { void client.flush() }
-  }, [client])
+  useEffect(() => () => { void client.flush() }, [client])
 
   useEffect(() => {
-    if (!optionsRef.current?.captureInteractions) return
+    if (!capture.pageViews) return
+    return capturePageViews(client, () => resolveRoute(optionsRef.current?.resolveRoute), lastPageView)
+  }, [client, capture.pageViews])
 
-    const ignored = (target: Element) => Boolean(target.closest('[data-analytics="ignore"]'))
-    const metadata = (target: Element): AnalyticsContext => {
-      const el = target.closest<HTMLElement>('[data-analytics-name],button,a,[role="button"],input,select,textarea')
-        ?? target as HTMLElement
-      const safe: AnalyticsContext = {
-        tag: el.tagName.toLowerCase(),
-      }
-      if (el.id) safe.id = el.id
-      if (el.dataset.analyticsName) safe.name = el.dataset.analyticsName
-      if (typeof el.className === 'string' && el.className) safe.className = el.className.slice(0, 120)
-      return safe
+  // Send buffered events when the page is hidden or unloaded. `keepalive`
+  // lets these requests outlive the page; the flush interval would not.
+  useEffect(() => {
+    const onPageHide = () => { void client.flush() }
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') void client.flush()
     }
-    const onClick = (event: MouseEvent) => {
-      const target = event.target
-      if (!(target instanceof Element) || ignored(target)) return
-      // A Tracky component emits its own documented action for this interaction.
-      if (target.closest('[data-tracky-component]')) return
-      const el = target.closest('button,a,[role="button"],[data-analytics-name]')
-      if (el) client.track('click', metadata(el))
-    }
-    const onChange = (event: Event) => {
-      const target = event.target
-      if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return
-      if (target instanceof HTMLInputElement && (target.type === 'password' || target.type === 'hidden')) return
-      if (target.matches('[contenteditable="true"]') || ignored(target)) return
-      client.track('input_interaction', metadata(target))
-    }
-    const onSubmit = (event: Event) => {
-      const form = event.target
-      if (!(form instanceof HTMLFormElement) || ignored(form)) return
-      client.track('form_submit', metadata(form))
-    }
-
-    document.addEventListener('click', onClick, true)
-    document.addEventListener('change', onChange, true)
-    document.addEventListener('submit', onSubmit, true)
+    window.addEventListener('pagehide', onPageHide)
+    document.addEventListener('visibilitychange', onVisibilityChange)
     return () => {
-      document.removeEventListener('click', onClick, true)
-      document.removeEventListener('change', onChange, true)
-      document.removeEventListener('submit', onSubmit, true)
+      window.removeEventListener('pagehide', onPageHide)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
     }
   }, [client])
+
+  useEffect(() => (capture.clicks ? captureClicks(client) : undefined), [client, capture.clicks])
+  useEffect(() => (capture.formSubmits ? captureFormSubmits(client) : undefined), [client, capture.formSubmits])
+  useEffect(() => (capture.inputChanges ? captureInputChanges(client) : undefined), [client, capture.inputChanges])
+  useEffect(() => (capture.frustrationClicks ? captureFrustrationClicks(client) : undefined), [client, capture.frustrationClicks])
+  useEffect(() => {
+    if (!capture.heatMaps) return
+    return captureHeatMaps(client, () => resolveRoute(optionsRef.current?.resolveRoute))
+  }, [client, capture.heatMaps])
+  useEffect(() => {
+    if (!capture.scrollDepth) return
+    return captureScrollDepth(client, () => resolveRoute(optionsRef.current?.resolveRoute))
+  }, [client, capture.scrollDepth])
 
   return <AnalyticsContextValue.Provider value={client}>{children}</AnalyticsContextValue.Provider>
 }

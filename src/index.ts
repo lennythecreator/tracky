@@ -7,4 +7,8 @@ export type {
   AnalyticsEvent,
   AnalyticsOptions,
   AnalyticsProviderProps,
+  CaptureOptions,
+  HeatMapSummary,
+  ScrollDepthSummary,
+  JsonValue,
 } from './types.js'

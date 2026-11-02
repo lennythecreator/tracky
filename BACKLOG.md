@@ -177,6 +177,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-008 — Migrate analytics events to the approved envelope
 
+**Status:** Complete. Component events already used the top-level `component` object. `track(eventType, context, payload)` now sends a JSON-safe `payload` (`JsonValue`) whose shape callers can name with a type parameter.
+
 **Priority:** After T-007
 **GitHub:** [#10](https://github.com/lennythecreator/tracky/issues/10)
 
@@ -198,6 +200,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - Docs and tests describe the shipped shape, not a future one.
 
 ### T-009 — Split page-wide capture into independent opt-in switches
+
+**Status:** Complete. `options.capture` has `pageViews`, `clicks`, `formSubmits`, and `inputChanges`, each off by default and attached only while on. `capturePageViews` and `captureInteractions` remain as deprecated aliases; an explicit `capture` key wins. Each category lives in `src/capture/`.
 
 **Priority:** After T-008
 **GitHub:** [#11](https://github.com/lennythecreator/tracky/issues/11)
@@ -222,6 +226,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-010 — Capture navigation with an optional route resolver
 
+**Status:** Complete. `resolveRoute(location)` returns the route or `null` and also sets each event's `route`. One shared observer in `src/capture/navigation.ts` wraps the History API once for every subscriber, checks one task after a change, and restores the originals when the last subscriber leaves.
+
 **Priority:** After T-009 (page-view switch)
 **GitHub:** [#12](https://github.com/lennythecreator/tracky/issues/12)
 
@@ -244,6 +250,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - No route data beyond path plus query (or the resolver's output) is sent.
 
 ### T-011 — Detect frustration clicks
+
+**Status:** Complete. `capture.frustrationClicks` sends one `frustration_click` per burst of 3+ pointer clicks within 1 second on one live element, or across elements that share a `data-analytics-name`. It listens independently of `capture.clicks`.
 
 **Priority:** After T-009 (click switch)
 **GitHub:** [#13](https://github.com/lennythecreator/tracky/issues/13)
@@ -269,6 +277,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-012 — Aggregate cursor heat map summaries
 
+**Status:** Complete. `capture.heatMaps` aggregates `pointerMs`, `clicks`, and `focusEntries` on a 10×10 viewport grid in `src/capture/heatmap.ts`. The payload type is `HeatMapSummary`.
+
 **Priority:** After T-010
 **GitHub:** [#14](https://github.com/lennythecreator/tracky/issues/14)
 
@@ -293,6 +303,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-013 — Deliver heat map summaries on route change and exit
 
+**Status:** Complete. Summaries are sent on route change (recorded against the route the visitor left), on `pagehide` or hidden `visibilitychange`, every 30 seconds, and when capture stops. Each send resets the period, so grids are never resent.
+
 **Priority:** After T-012
 **GitHub:** [#15](https://github.com/lennythecreator/tracky/issues/15)
 
@@ -315,6 +327,8 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - Interval and payload scope are documented alongside the heat map payload type.
 
 ### T-014 — Capture scroll depth independently of heat maps
+
+**Status:** Complete. `capture.scrollDepth` sends a `ScrollDepthSummary` with the deepest 25% bucket per route visit. It sends on route change, page exit, and when capture stops, and only when the visit got deeper, so a visit sends at most five events. There is no periodic flush.
 
 **Priority:** After T-009; independent of T-012 and T-013
 **GitHub:** [#16](https://github.com/lennythecreator/tracky/issues/16)

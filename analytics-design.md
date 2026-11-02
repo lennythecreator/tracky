@@ -22,12 +22,13 @@ interface AnalyticsEvent {
   sessionId: string
   context: Record<string, string | number | boolean | null>
   component?: { name: string; action: string }
-  payload?: unknown // Define a concrete type for each structured payload.
+  payload?: JsonValue // Define a concrete type for each structured payload.
 }
 ```
 
 - `eventType` identifies the event, for example `pageview`, `click`, or `component_interaction`.
 - Component events put `{ name, action }` in the top-level `component` object, alongside `eventType` and `context`. Keep `context` for small, JSON-safe developer metadata and safe target metadata.
+- `track(eventType, context, payload)` sets `payload`. Callers name its shape with the type parameter, for example `track<ExportSummary>(…)`.
 - Heat map summaries use a typed `payload`, not `context`. Define a concrete TypeScript payload type when implementing the feature.
 - `route` is path plus query by default. Hash-only changes do not create page views by default. Support a developer-provided route resolver for hash-based or custom routers.
 - `sessionId` remains a random identifier scoped to the browser tab/session. Do not add cross-tab identity, user identity, cookies, or persistent identifiers.
@@ -79,7 +80,7 @@ Build a per-visit, per-route summary on a normalized 10×10 grid of the visible 
 - Send summaries on route change and page exit, with a bounded periodic flush for long visits. Delivery is best-effort; periodic flushes should limit data lost when a page closes unexpectedly.
 - The configured endpoint is responsible for combining per-visit summaries into cross-visit heat maps.
 
-The exact grid payload fields and periodic flush interval are implementation details to define in the public types and documentation. Preserve the approved aggregation and privacy behavior above.
+The grid payload is `HeatMapSummary` in `src/types.ts`, and the periodic flush interval is 30 seconds (see README). Preserve the approved aggregation and privacy behavior above.
 
 ## Delivery and runtime constraints
 

@@ -1,6 +1,6 @@
 # Tracky
 
-A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, an opt-in automatic interaction capture mode, page-view capture, buffered delivery, retry with backoff, and a session-scoped anonymous ID.
+A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped anonymous ID.
 
 ## Status
 
@@ -41,7 +41,7 @@ export function AppAnalytics({ children }: { children: React.ReactNode }) {
   return (
     <AnalyticsProvider
       endpoint="https://your-api.example.com/events"
-      options={{ capturePageViews: true }}
+      options={{ capture: { pageViews: true } }}
     >
       {children}
     </AnalyticsProvider>
@@ -49,19 +49,91 @@ export function AppAnalytics({ children }: { children: React.ReactNode }) {
 }
 ```
 
+With `capture.pageViews`, Tracky sends one `pageview` for the current page and one for each route change through `pushState`, `replaceState`, or back/forward. The route is path plus query, so hash-only changes don't count unless you pass `resolveRoute`. Tracky reads `document.title` one task after the history change, which gives the router time to render the new page. Several changes in the same task, such as a redirect, count once, at the final route.
+
+For hash-based or custom routers, pass `resolveRoute`. It receives `window.location` and returns the route to record, or `null` to ignore the location (for example, a redirect page). Tracky uses its result for page views and for the `route` field on every event. If the resolver throws, Tracky falls back to path plus query.
+
+```tsx
+<AnalyticsProvider
+  endpoint="/api/events"
+  options={{
+    capture: { pageViews: true },
+    resolveRoute: (location) => (location.hash.startsWith('#/') ? location.hash.slice(1) : '/'),
+  }}
+>
+```
+
+Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then turn on the `capture` switches you need once you have consent. Turning an option off removes its listeners.
+
 The provider uses browser APIs after mounting, so it can be rendered inside a React app or a Next.js client boundary. In Next.js App Router, put it in a small Client Component and render that component from the server layout.
 
 ## Event shape
 
 Events contain `eventType`, ISO UTC `timestamp`, relative `route`, a `context` object, and a random `sessionId` stored in `sessionStorage`. Component events also carry a top-level `component` object.
 
+`context` is flat: string, number, boolean, or `null` values only. For structured data, pass a third argument to `track()`. Tracky sends it as a top-level `payload` field and leaves `context` alone:
+
+```ts
+type ExportSummary = { rows: number; columns: string[] }
+
+analytics.track<ExportSummary>('report_exported', { format: 'csv' }, { rows: 120, columns: ['date', 'total'] })
+```
+
+The payload must be JSON-safe (`JsonValue`). The type parameter is optional and checks the shape at compile time. Events without a payload have no `payload` field.
+
 Call `analytics.trackComponentEvent(component, action, context)` from an explicit component action handler to send a `component_interaction` event. The call above produces `component: { name: "save_button", action: "activate" }` with `location: "toolbar"` in `context`. Use stable component and action names; pass only small, JSON-safe metadata. Tracky does not inspect component props or read field values.
 
-Explicit component events are sent when you call the method. The `captureInteractions` option controls only automatic DOM interaction capture.
+Explicit component events are sent when you call the method. The `capture` switches control only automatic, page-wide capture.
+
+## Page-wide capture
+
+Each switch in `options.capture` is independent and off by default. Tracky attaches a category's listeners only while its switch is on.
+
+| Switch | Event | What it records |
+| --- | --- | --- |
+| `pageViews` | `pageview` | Initial load and each route change, with `title` in `context`. |
+| `clicks` | `click` | Clicks on buttons, links, `role="button"`, and `data-analytics-name` elements. A link click is only a click; navigation shows up as a page view. |
+| `formSubmits` | `form_submit` | That a form was submitted, never its values. |
+| `inputChanges` | `input_interaction` | That an input, select, or textarea changed, never its value. Password and hidden inputs are skipped. |
+| `frustrationClicks` | `frustration_click` | One event when the same target gets 3 or more pointer clicks within 1 second. Works without `clicks`. |
+| `heatMaps` | `heatmap` | A per-visit `HeatMapSummary` payload of pointer time, clicks, and keyboard focus on a 10 × 10 viewport grid. |
+| `scrollDepth` | `scroll_depth` | A per-visit `ScrollDepthSummary` payload with the deepest 25% bucket reached. Independent of `heatMaps`. |
+
+```tsx
+<AnalyticsProvider endpoint="/api/events" options={{ capture: { pageViews: true, clicks: true } }}>
+```
+
+A frustration click's target is the clicked control, or the clicked element itself when it isn't a control, so repeated clicks on a non-interactive image count too. Elements that share a `data-analytics-name` are grouped across instances. A burst sends one event however long it lasts, with the same safe metadata as `click`. Keyboard activation doesn't count. Tracky never looks at text, labels, or whether the page responded.
+
+### Heat maps
+
+With `capture.heatMaps`, the browser builds the heat map itself and sends only the totals. The visible viewport is split into a 10 × 10 grid; each grid is a row-major array of 100 numbers, with index 0 at the top left.
+
+- `pointerMs`: Tracky samples the mouse or pen position every 250 ms while the pointer is over the visible page, and adds 250 ms to that region. Touch movement doesn't count.
+- `clicks`: pointer clicks and touch taps per region. Keyboard activation doesn't count.
+- `focusEntries`: keyboard focus moving into a region, located at the focused element's center. Focus caused by a pointer press doesn't count, and the key used is never recorded.
+
+A summary covers one period of one visit to one route. Tracky sends it when the route changes, when the page is hidden or unloaded, every 30 seconds during a long visit, and when the switch turns off. Each send resets the grids, so periods never overlap, and an empty period is not sent. The event's `route` is the route the visit was on, even when the summary is sent after navigation. To build a cross-visit heat map, sum the grids on your endpoint by `route`, or by `visitId` for a single visit.
+
+Raw coordinates, cursor trails, pointer IDs, and viewport size are never sent. `data-analytics="ignore"` subtrees don't count.
+
+### Scroll depth
+
+With `capture.scrollDepth`, Tracky records how far down the page each visit got: the bottom of the viewport as a share of the page height, rounded down to 0, 25, 50, 75, or 100. A page shorter than the viewport counts as 100. Scrolling back up doesn't lower the value.
+
+Tracky sends the summary when the route changes, when the page is hidden or unloaded, and when the switch turns off. It sends again only if the visit got deeper since the last send, so a visit sends at most five events; keep the largest `maxDepthPercent` per `visitId`. There's no periodic flush: the page-hidden signal also covers closing the tab and switching apps on mobile. Raw scroll positions, page text, and DOM paths are never sent.
+
+After navigation, the new visit is measured on its first scroll, resize, or exit, because the router may not have scrolled the new page yet.
+
+The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 
 Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable event name.
 
-The browser sends batches with `fetch` and `keepalive` when possible. Failed requests are retried with capped exponential backoff while the page remains open. For durable delivery, validate and queue events on your own endpoint.
+The browser sends batches with `fetch` and `keepalive`. Each request carries at most `batchSize` events. Inside an `AnalyticsProvider`, Tracky also sends buffered events when the page is hidden or unloaded, so they don't wait for the flush interval.
+
+Failed requests are retried with capped exponential backoff while the page remains open. That covers network errors, `5xx`, `408`, and `429`. Tracky doesn't retry any other `4xx` response, because the endpoint rejected the request itself. In both cases `onDeliveryError` receives the error.
+
+Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the queue. When the queue is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
 
 ## Component source
 
