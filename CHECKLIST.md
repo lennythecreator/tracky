@@ -59,7 +59,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [x] Local event preview intercepts the SDK request at a non-routable endpoint.
 - [x] No telemetry leaves the page.
 - [x] Disabled and keyboard states are explorable.
-- [~] Keyboard pass covered every tab stop in Chromium per `BACKLOG.md`; this was manual and is not reproducible from CI.
+- [x] Keyboard pass covered every tab stop in Chromium per `BACKLOG.md`, now automated by `test/playground-keyboard.test.ts` in `npm test`.
 
 ### T-006 — Component distribution path (#6)
 
@@ -166,7 +166,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [ ] Decide whether the no-listener guarantee in T-009 should exclude the always-on flush listeners or be reworded.
 - [ ] Add an explicit contenteditable guard to input-change capture, or document why the `change`-only listener is sufficient.
 - [ ] Define heat-map/scroll behavior when `resolveRoute` returns `null` at mount instead of using an empty route.
-- [ ] Add an automated or scripted keyboard check for the playground.
+- [x] Add an automated or scripted keyboard check for the playground: `test/playground-keyboard.test.ts`, driving the installed Chrome via `puppeteer-core`.
 - [ ] Publish the package or document the supported local/link workflow for consumers of installed primitives.
 - [ ] Prune merged remote branches (`t-002-*`, `t-005-*`, `t-006-*`, `t-007-*`, `t-008-*`, and the T-008–T-014 stack) after confirming nothing else depends on them.
 

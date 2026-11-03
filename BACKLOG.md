@@ -105,6 +105,8 @@ Confirm this inventory in T-001 before implementation. Keep the first pass focus
 
 **Status:** Complete. The playground renders the registry source with the SDK provider and a local event preview, and it ships with the site at `https://tracky-ivory.vercel.app/playground/`. The keyboard pass covered every tab stop in Chromium: each control is reachable in document order with a visible focus ring, Enter and Space activate `Button`, Space toggles `Checkbox` and `Switch`, arrow keys change `Select`, and every disabled example is skipped by Tab. Typing into `Input` or `Textarea` produces no event.
 
+That pass is now automated: `test/playground-keyboard.test.ts` starts the playground's Vite server, drives the locally installed Chrome through `puppeteer-core`, and asserts the same claims on every run of `npm test`. It downloads no browser, and it fails with an actionable message when Chrome or `CHROME_PATH` is missing.
+
 **Priority:** After T-003; can proceed alongside T-004
 **GitHub:** [#5](https://github.com/lennythecreator/tracky/issues/5)
 
