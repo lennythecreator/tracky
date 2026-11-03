@@ -682,3 +682,35 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - Result count is announced and focus returns to the opener.
 
 **Out of scope:** hosted search, typo tolerance beyond simple matching, and filtering by component or version.
+
+### T-029 — Refine the landing page visual system and refresh social assets
+
+**Status:** Open. Polish only; layout, copy, and section order stay.
+
+**Priority:** Independent of the docs track; before the next public push
+**GitHub:** [#51](https://github.com/lennythecreator/tracky/issues/51)
+
+**Goal:** Make the landing page follow `DESIGN.md` instead of approximating it: one type scale, one spacing rhythm, one border and shadow set, consistent control states, a finished diagram, and matching share assets.
+
+**Scope:**
+
+- A modular type scale with consistent tracking and measure caps, and no selector-specific sizes.
+- A 4px-based spacing scale applied across every section.
+- Border, radius, and shadow tokens replacing the current near-duplicate hexes and one-off shadows, diagram colors included.
+- One hover, active, and focus-visible treatment across buttons, links, and icon controls.
+- One section heading pattern (kicker, heading, intro) and a consistent edge where tinted bands meet white.
+- Diagram and component-preview finish: alignment, connector weight, pause affordance, and a stacked layout below 520 px.
+- One motion timing and easing set, all of it collapsing under reduced motion.
+- Contrast pass on muted text over tinted and dark surfaces, 24px minimum target sizes, and Escape-to-close on the mobile nav.
+- Regenerated `og-image.png` at 1200×630, a favicon legibility review, and updated image alt text.
+
+**Acceptance criteria:**
+
+- Visual values come from tokens; no new literal hex outside `:root` and SVG artwork.
+- Keyboard-only tab-through shows hover, active, and focus-visible on every control.
+- AA contrast in tinted and white areas, with measured ratios in the pull request.
+- Screenshots at 375, 768, 1280, and 1440 px show no overflow and no clipped labels.
+- Lighthouse performance and accessibility measured before and after with no regression, and CLS at zero.
+- Copy unchanged apart from typographic normalization; `DESIGN.md` updated where a pinned value moved.
+
+**Out of scope:** new sections, landing-page dark mode, restyling the playground or docs, extra animation, and any change to status or privacy claims.
