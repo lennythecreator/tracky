@@ -172,7 +172,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [x] An ignored location starts no heat-map or scroll visit; both begin at the next route the resolver accepts. Covered by `test/heatmap.test.tsx` and `test/scroll-depth.test.tsx`, documented in `README.md` and `analytics-design.md`. PR #35.
 - [x] Add an automated or scripted keyboard check for the playground: `test/playground-keyboard.test.ts`, driving the installed Chrome via `puppeteer-core`. PR #33.
 - [ ] Publish the package or document the supported local/link workflow for consumers of installed primitives.
-- [ ] Prune merged remote branches (`t-002-*`, `t-005-*`, `t-006-*`, `t-007-*`, `t-008-*`, and the T-008–T-014 stack) after confirming nothing else depends on them.
+- [x] Prune merged remote branches (`t-002-*`, `t-005-*`, `t-006-*`, `t-007-*`, `t-008-*`, and the T-008–T-014 stack) after confirming nothing else depends on them. Every branch had a merged pull request (#8–#32); the T-series and `capture-guarantees`, `glossary-and-cli-coverage` are deleted locally and on the remote. `copilot/t-001-*` and the two `fix/*` branches are merged too but left alone.
 
 ## Re-verify
 
