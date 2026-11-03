@@ -154,19 +154,21 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 
 | Check | Result | Where |
 | --- | --- | --- |
-| `npm test` | 92/92 pass, 11 files | `main` @ `291d210` |
-| `npm run lint` | pass | `main` @ `291d210` |
-| `npm run build` | pass | `main` @ `291d210` |
+| `npm test` | 100/100 pass, 12 files | `main` @ `3680b91` |
+| `npm run lint` | pass | `main` @ `3680b91` |
+| `npm run build` | pass | `main` @ `3680b91` |
 | Merge of stack into `main` | no conflicts | PR #32 |
+| Keyboard check in a real browser | 7/7 pass in CI | PR #33 |
+| Contenteditable capture reasoning | documented and tested | PR #34 |
 
 ## Follow-ups
 
-- [x] Update the future-tense wording in `product.md` (navigation and element interaction bullets) and the status header in `analytics-design.md`. Not yet committed.
-- [x] Repair the `HeatMapSummary` JSDoc so the payload type keeps its description in generated declarations. Fixed and verified in `dist/types.d.ts`; not yet committed.
+- [x] Update the future-tense wording in `product.md` (navigation and element interaction bullets) and the status header in `analytics-design.md`.
+- [x] Repair the `HeatMapSummary` JSDoc so the payload type keeps its description in generated declarations. Fixed and verified in `dist/types.d.ts`.
 - [ ] Decide whether the no-listener guarantee in T-009 should exclude the always-on flush listeners or be reworded.
-- [ ] Add an explicit contenteditable guard to input-change capture, or document why the `change`-only listener is sufficient.
+- [x] Document why the `change`-only listener is sufficient for contenteditable: the form-control gate excludes editors, and a test dispatches edit events at one to prove nothing is sent. PR #34.
 - [ ] Define heat-map/scroll behavior when `resolveRoute` returns `null` at mount instead of using an empty route.
-- [x] Add an automated or scripted keyboard check for the playground: `test/playground-keyboard.test.ts`, driving the installed Chrome via `puppeteer-core`.
+- [x] Add an automated or scripted keyboard check for the playground: `test/playground-keyboard.test.ts`, driving the installed Chrome via `puppeteer-core`. PR #33.
 - [ ] Publish the package or document the supported local/link workflow for consumers of installed primitives.
 - [ ] Prune merged remote branches (`t-002-*`, `t-005-*`, `t-006-*`, `t-007-*`, `t-008-*`, and the T-008–T-014 stack) after confirming nothing else depends on them.
 
