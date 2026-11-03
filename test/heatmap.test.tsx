@@ -222,3 +222,51 @@ describe('delivery', () => {
     expect(summaries()).toEqual([])
   })
 })
+
+describe('ignored locations', () => {
+  const skipLogin = (location: Location) => location.pathname === '/login' ? null : location.pathname
+
+  function Redirect({ capture = { heatMaps: true } }: { capture?: CaptureOptions }) {
+    return (
+      <AnalyticsProvider endpoint={ENDPOINT} options={{ capture, flushIntervalMs: 100, resolveRoute: skipLogin }}>
+        <button id="save" type="button">Save</button>
+      </AnalyticsProvider>
+    )
+  }
+
+  it('starts no visit for a location the resolver ignores at mount', async () => {
+    window.history.replaceState(null, '', '/login')
+    render(<Redirect />)
+    move(CENTER.x, CENTER.y)
+    await vi.advanceTimersByTimeAsync(1_000)
+    pointerClick(CENTER.x, CENTER.y)
+    await exitPage()
+
+    expect(summaries()).toEqual([])
+
+    await navigate('/dashboard')
+    pointerClick(TOP_LEFT.x, TOP_LEFT.y)
+    await exitPage()
+
+    const sent = summaries()
+    expect(sent.map((summary) => summary.route)).toEqual(['/dashboard'])
+    expect(sent[0].clicks[TOP_LEFT.region]).toBe(1)
+  })
+
+  it('ends the visit instead of attributing an ignored location to the next route', async () => {
+    render(<Redirect />)
+    pointerClick(CENTER.x, CENTER.y)
+    await navigate('/login')
+    pointerClick(TOP_LEFT.x, TOP_LEFT.y)
+    pointerClick(TOP_LEFT.x, TOP_LEFT.y)
+    await exitPage()
+    await navigate('/dashboard')
+    pointerClick(TOP_LEFT.x, TOP_LEFT.y)
+    await exitPage()
+
+    const sent = summaries()
+    expect(sent.map((summary) => summary.route)).toEqual(['/', '/dashboard'])
+    expect(sent[0].clicks[CENTER.region]).toBe(1)
+    expect(sent.reduce((total, summary) => total + summary.clicks[TOP_LEFT.region], 0)).toBe(1)
+  })
+})

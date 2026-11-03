@@ -23,5 +23,8 @@ export function capturePageViews(
 
   const initial = resolve()
   if (initial !== null) track(initial)
-  return subscribeToRoute(resolve, track)
+  // The subscription also reports a change to `null`, an ignored location.
+  return subscribeToRoute(resolve, (route) => {
+    if (route !== null) track(route)
+  })
 }
