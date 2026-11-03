@@ -37,7 +37,9 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
   }, [client, capture.pageViews])
 
   // Send buffered events when the page is hidden or unloaded. `keepalive`
-  // lets these requests outlive the page; the flush interval would not.
+  // lets these requests outlive the page; the flush interval would not. These
+  // two listeners are delivery, not capture: they stay attached with every
+  // capture switch off, read no DOM data, and create no events.
   useEffect(() => {
     const onPageHide = () => { void client.flush() }
     const onVisibilityChange = () => {

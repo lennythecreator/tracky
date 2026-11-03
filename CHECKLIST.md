@@ -9,7 +9,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 
 ## Release gate
 
-- [x] `npm test` passes offline (125/125 tests, 15 files: jsdom suites, node CLI tests, and the Chrome check).
+- [x] `npm test` passes offline (129/129 tests, 15 files: jsdom suites, node CLI tests, and the Chrome check).
 - [x] `npm run lint` passes the SDK and test typechecks.
 - [x] `npm run build` emits the ESM package to `dist/`.
 - [x] Package exports point at `dist/index.js` and `dist/index.d.ts`.
@@ -98,7 +98,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [x] Clicks: safe metadata only; link clicks are not page views.
 - [x] Form submits: metadata only; input changes: metadata only; values never read.
 - [x] Password and hidden inputs skipped; `data-analytics="ignore"` honored in every category.
-- [~] With every capture switch off, the provider still attaches `pagehide` and `visibilitychange` for flushing. These collect nothing; the test asserts no capture listeners (`click`/`change`/`submit`/`popstate`) and an unwrapped History API.
+- [x] With every capture switch off, no page-wide capture listeners attach. The always-on `pagehide` and `visibilitychange` listeners are delivery, not capture: they read no DOM data, create no events, and flush buffered explicit events. The test asserts no capture listeners (`click`/`change`/`submit`/`popstate`) and an unwrapped History API.
 - [~] Contenteditable is excluded implicitly because only `change` on input/select/textarea is observed; there is no explicit contenteditable guard.
 
 ### T-010 — Navigation and route resolver (#12)
@@ -148,26 +148,28 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [x] Only deeper values resend, so a visit sends at most five events.
 - [x] Resets per route/visit; the next page is measured on its first scroll/resize/exit.
 - [x] No raw positions, text, or DOM paths in the payload.
-- [~] If the resolver returns `null` at mount, the initial visit uses `route: ""` for heat-map/scroll summaries. Unspecified by the ticket; page views correctly ignore the location.
+- [x] An ignored location (`null` route) is not a visit: heat-map/scroll capture starts no visit for it, at mount or after navigation, and the next visit begins at the first accepted route. No summary is sent for an ignored location.
 
 ## Verification record
 
 | Check | Result | Where |
 | --- | --- | --- |
-| `npm test` | 100/100 pass, 12 files | `main` @ `3680b91` |
-| `npm run lint` | pass | `main` @ `3680b91` |
-| `npm run build` | pass | `main` @ `3680b91` |
+| `npm test` | 129/129 pass, 15 files | `glossary-and-cli-coverage` @ `a6dffa7` + `main` @ `bfe4855` |
+| `npm run lint` | pass | same |
+| `npm run build` | pass | same |
+| `npm run check:terms` | 38 files match the glossary | same |
 | Merge of stack into `main` | no conflicts | PR #32 |
 | Keyboard check in a real browser | 7/7 pass in CI | PR #33 |
 | Contenteditable capture reasoning | documented and tested | PR #34 |
+| Ignored locations and heat-map/scroll visits | merged, tests cover mount and non-attribution | PR #35 |
 
 ## Follow-ups
 
 - [x] Update the future-tense wording in `product.md` (navigation and element interaction bullets) and the status header in `analytics-design.md`.
 - [x] Repair the `HeatMapSummary` JSDoc so the payload type keeps its description in generated declarations. Fixed and verified in `dist/types.d.ts`.
-- [ ] Decide whether the no-listener guarantee in T-009 should exclude the always-on flush listeners or be reworded.
+- [x] The no-listener guarantee is scoped to capture listeners; the always-on flush listeners are named as delivery in T-009, `src/react.tsx`, and `README.md`.
 - [x] Document why the `change`-only listener is sufficient for contenteditable: the form-control gate excludes editors, and a test dispatches edit events at one to prove nothing is sent. PR #34.
-- [ ] Define heat-map/scroll behavior when `resolveRoute` returns `null` at mount instead of starting a visit for an ignored location.
+- [x] An ignored location starts no heat-map or scroll visit; both begin at the next route the resolver accepts. Covered by `test/heatmap.test.tsx` and `test/scroll-depth.test.tsx`, documented in `README.md` and `analytics-design.md`. PR #35.
 - [x] Add an automated or scripted keyboard check for the playground: `test/playground-keyboard.test.ts`, driving the installed Chrome via `puppeteer-core`. PR #33.
 - [ ] Publish the package or document the supported local/link workflow for consumers of installed primitives.
 - [ ] Prune merged remote branches (`t-002-*`, `t-005-*`, `t-006-*`, `t-007-*`, `t-008-*`, and the T-008–T-014 stack) after confirming nothing else depends on them.
@@ -177,6 +179,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 ```sh
 npm install
 npm run lint
+npm run check:terms
 npm test
 npm run build
 ```

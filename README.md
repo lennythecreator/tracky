@@ -53,6 +53,8 @@ With `capture.pageViews`, Tracky sends one `pageview` for the current page and o
 
 For hash-based or custom routers, pass `resolveRoute`. It receives `window.location` and returns the route to record, or `null` to ignore the location (for example, a redirect page). Tracky uses its result for page views and for the `route` field on every event. If the resolver throws, Tracky falls back to path plus query.
 
+An ignored location is not a route visit. Page views skip it, and heat maps and scroll depth start no visit for it: nothing is measured while it is current, no summary carries its activity, and the next visit begins at the first route the resolver accepts. On mount that means the first heat-map or scroll summary covers the first accepted route, not an empty one.
+
 ```tsx
 <AnalyticsProvider
   endpoint="/api/events"
@@ -63,7 +65,7 @@ For hash-based or custom routers, pass `resolveRoute`. It receives `window.locat
 >
 ```
 
-Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then turn on the `capture` switches you need once you have consent. Turning an option off removes its listeners.
+Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then turn on the `capture` switches you need once you have consent. Turning an option off removes its capture listeners. The page-hidden flush listeners below stay attached, because they deliver explicit events rather than collect.
 
 The provider uses browser APIs after mounting, so it can be rendered inside a React app or a Next.js client boundary. In Next.js App Router, put it in a small Client Component and render that component from the server layout.
 
@@ -113,7 +115,7 @@ With `capture.heatMaps`, the browser builds the heat map itself and sends only t
 - `clicks`: pointer clicks and touch taps per region. Keyboard activation doesn't count.
 - `focusEntries`: keyboard focus moving into a region, located at the focused element's center. Focus caused by a pointer press doesn't count, and the key used is never recorded.
 
-A summary covers one period of one visit to one route. Tracky sends it when the route changes, when the page is hidden or unloaded, every 30 seconds during a long visit, and when the switch turns off. Each send resets the grids, so periods never overlap, and an empty period is not sent. The event's `route` is the route the visit was on, even when the summary is sent after navigation. To build a cross-visit heat map, sum the grids on your endpoint by `route`, or by `visitId` for a single visit.
+A summary covers one period of one visit to one route. A route that `resolveRoute` ignores has no visit and therefore no summary. Tracky sends it when the route changes, when the page is hidden or unloaded, every 30 seconds during a long visit, and when the switch turns off. Each send resets the grids, so periods never overlap, and an empty period is not sent. The event's `route` is the route the visit was on, even when the summary is sent after navigation. To build a cross-visit heat map, sum the grids on your endpoint by `route`, or by `visitId` for a single visit.
 
 Raw coordinates, cursor trails, pointer IDs, and viewport size are never sent. `data-analytics="ignore"` subtrees don't count.
 
@@ -123,7 +125,7 @@ With `capture.scrollDepth`, Tracky records how far down the page each visit got:
 
 Tracky sends the summary when the route changes, when the page is hidden or unloaded, and when the switch turns off. It sends again only if the visit got deeper since the last send, so a visit sends at most five events; keep the largest `maxDepthPercent` per `visitId`. There's no periodic flush: the page-hidden signal also covers closing the tab and switching apps on mobile. Raw scroll positions, page text, and DOM paths are never sent.
 
-After navigation, the new visit is measured on its first scroll, resize, or exit, because the router may not have scrolled the new page yet.
+After navigation, the new visit is measured on its first scroll, resize, or exit, because the router may not have scrolled the new page yet. A route that `resolveRoute` ignores has no visit, so its scroll position is never measured or carried into the next route.
 
 The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 

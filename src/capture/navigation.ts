@@ -50,13 +50,15 @@ function onHistoryChange(listener: () => void): () => void {
 }
 
 /**
- * Call `onChange` when the resolved route changes. The check runs one task
- * after a history change, so the router can render the new page first and a
- * redirect within one task counts once. A `null` route is ignored.
+ * Call `onChange` when the resolved route changes, including a change to
+ * `null`. `null` means the resolver ignores that location, so a subscriber can
+ * end its current route visit instead of attributing it to another route. The
+ * check runs one task after a history change, so the router can render the new
+ * page first and a redirect within one task counts once.
  */
 export function subscribeToRoute(
   resolve: () => string | null,
-  onChange: (route: string, previous: string | null) => void,
+  onChange: (route: string | null, previous: string | null) => void,
 ): () => void {
   let last = resolve()
   let pending: ReturnType<typeof setTimeout> | undefined
@@ -64,7 +66,7 @@ export function subscribeToRoute(
   const check = () => {
     pending = undefined
     const route = resolve()
-    if (route === null || route === last) return
+    if (route === last) return
     const previous = last
     last = route
     onChange(route, previous)

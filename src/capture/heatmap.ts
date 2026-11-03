@@ -38,6 +38,11 @@ function startVisit(route: string): Visit {
   }
 }
 
+/** A location the resolver ignores has no visit, so nothing is measured for it. */
+function visitFor(route: string | null): Visit | null {
+  return route === null ? null : startVisit(route)
+}
+
 /** Region index for a viewport point, or -1 outside the visible viewport. */
 function regionAt(x: number, y: number): number {
   const width = window.innerWidth
@@ -54,15 +59,16 @@ function regionAt(x: number, y: number): number {
  * and when capture stops. Raw coordinates never leave this function.
  */
 export function captureHeatMaps(client: AnalyticsClient, resolve: () => string | null): () => void {
-  let visit = startVisit(resolve() ?? '')
+  let visit = visitFor(resolve())
   let pointer: { x: number; y: number; target: Element | null } | null = null
   let sampler: ReturnType<typeof setInterval> | undefined
   let lastPointerDown = Number.NEGATIVE_INFINITY
 
   const send = () => {
-    if (visit.empty) return
+    if (visit === null || visit.empty) return
+    const route = visit.route
     const periodEndedAt = new Date().toISOString()
-    trackForRoute(client, visit.route, 'heatmap', {
+    trackForRoute(client, route, 'heatmap', {
       visitId: visit.visitId,
       visitStartedAt: visit.visitStartedAt,
       periodStartedAt: visit.periodStartedAt,
@@ -85,13 +91,13 @@ export function captureHeatMaps(client: AnalyticsClient, resolve: () => string |
   }
 
   const count = (grid: number[], region: number, amount = 1) => {
-    if (region < 0) return
+    if (visit === null || region < 0) return
     grid[region] += amount
     visit.empty = false
   }
 
   const sample = () => {
-    if (!pointer || document.visibilityState !== 'visible') return
+    if (visit === null || !pointer || document.visibilityState !== 'visible') return
     if (pointer.target && isIgnored(pointer.target)) return
     count(visit.pointerMs, regionAt(pointer.x, pointer.y), HEAT_MAP_SAMPLE_INTERVAL_MS)
   }
@@ -105,6 +111,7 @@ export function captureHeatMaps(client: AnalyticsClient, resolve: () => string |
   const onPointerMove = (event: PointerEvent) => {
     // Touch movement is scrolling or dragging, not cursor attention.
     if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return
+    if (visit === null) return
     pointer = { x: event.clientX, y: event.clientY, target: event.target instanceof Element ? event.target : null }
     sampler ??= setInterval(sample, HEAT_MAP_SAMPLE_INTERVAL_MS)
   }
@@ -117,6 +124,7 @@ export function captureHeatMaps(client: AnalyticsClient, resolve: () => string |
   const onPointerDown = () => { lastPointerDown = performance.now() }
 
   const onClick = (event: MouseEvent) => {
+    if (visit === null) return
     // Keyboard activation sends clicks with `detail` 0 at no real position.
     if (event.detail === 0) return
     if (event.target instanceof Element && isIgnored(event.target)) return
@@ -124,6 +132,7 @@ export function captureHeatMaps(client: AnalyticsClient, resolve: () => string |
   }
 
   const onFocusIn = (event: FocusEvent) => {
+    if (visit === null) return
     const target = event.target
     if (!(target instanceof Element) || isIgnored(target)) return
     if (performance.now() - lastPointerDown < POINTER_FOCUS_MS) return
@@ -145,7 +154,7 @@ export function captureHeatMaps(client: AnalyticsClient, resolve: () => string |
   const unsubscribe = subscribeToRoute(resolve, (route) => {
     stopSampling()
     send()
-    visit = startVisit(route)
+    visit = visitFor(route)
   })
   const periodic = setInterval(send, HEAT_MAP_FLUSH_INTERVAL_MS)
 

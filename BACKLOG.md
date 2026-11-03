@@ -213,7 +213,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 **Scope:**
 
 - Define grouped options for page views, clicks, form submissions, input changes, frustration clicks, cursor heat maps, and scroll depth. Decide and document how the previous `captureInteractions` option migrates.
-- Attach listeners only for enabled categories. Mounting a provider or using a Tracky component must not enable page-wide capture.
+- Attach capture listeners only for enabled categories. Mounting a provider or using a Tracky component must not enable page-wide capture.
 - Clicks: safe element metadata only; a link click is not navigation unless the route changes.
 - Form submissions: event metadata only, never submitted values.
 - Input changes: metadata only; never values, text, or keystrokes. Skip password and hidden inputs, contenteditable, and ignored subtrees.
@@ -222,7 +222,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 **Acceptance criteria:**
 
 - Enabling one category does not enable any other.
-- With all categories off, the SDK attaches no page-wide listeners.
+- With all categories off, the SDK attaches no page-wide capture listeners. The always-on `pagehide` and `visibilitychange` listeners belong to delivery, not capture: they read no DOM data, create no events, and exist so buffered explicit events still leave before the page closes.
 - Input and form capture never read or send values.
 - Defaults, option names, and privacy behavior are documented and tested.
 

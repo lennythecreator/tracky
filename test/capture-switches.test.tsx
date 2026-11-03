@@ -56,7 +56,10 @@ describe('capture switches', () => {
     expect(await exercise()).toEqual(expected)
   })
 
-  it('attaches no page-wide listeners when every switch is off', () => {
+  // The provider's `pagehide` and `visibilitychange` listeners are delivery
+  // plumbing: they flush explicit events and read no DOM data, so the
+  // no-listener guarantee covers capture listeners only.
+  it('attaches no page-wide capture listeners when every switch is off', () => {
     const documentListeners = vi.spyOn(document, 'addEventListener')
     const windowListeners = vi.spyOn(window, 'addEventListener')
     const { pushState } = window.history

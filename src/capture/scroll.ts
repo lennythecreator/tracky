@@ -6,6 +6,14 @@ export const SCROLL_DEPTH_BUCKET_PERCENT = 25
 
 type Depth = ScrollDepthSummary['maxDepthPercent']
 
+interface Visit {
+  route: string
+  visitId: string
+  visitStartedAt: string
+  deepest: Depth | -1
+  sent: Depth | -1
+}
+
 /** Deepest visible point of the page, rounded down to a 25% bucket. */
 function currentDepth(): Depth {
   const root = document.documentElement
@@ -26,22 +34,26 @@ export function captureScrollDepth(client: AnalyticsClient, resolve: () => strin
   // `deepest` is -1 until the visit is measured. A visit that starts after
   // navigation waits for its first scroll, resize, or exit: right after a
   // route change the scroll position still belongs to the previous page.
-  const startVisit = (route: string, deepest: Depth | -1) => ({
+  const startVisit = (route: string, deepest: Depth | -1): Visit => ({
     route,
     visitId: randomId(),
     visitStartedAt: new Date().toISOString(),
     deepest,
     sent: -1,
   })
-  let visit = startVisit(resolve() ?? '', currentDepth())
+  // A location the resolver ignores has no visit, so nothing is measured for
+  // it and nothing is attributed to the next route.
+  const initial = resolve()
+  let visit: Visit | null = initial === null ? null : startVisit(initial, currentDepth())
 
   const measure = () => {
+    if (visit === null) return
     const depth = currentDepth()
     if (depth > visit.deepest) visit.deepest = depth
   }
 
   const sendDeepest = () => {
-    if (visit.deepest <= visit.sent) return
+    if (visit === null || visit.deepest <= visit.sent) return
     visit.sent = visit.deepest
     trackForRoute(client, visit.route, 'scroll_depth', {
       visitId: visit.visitId,
@@ -67,7 +79,7 @@ export function captureScrollDepth(client: AnalyticsClient, resolve: () => strin
     // The location already changed and the old page may be gone, so send what
     // was measured before navigation instead of measuring again.
     sendDeepest()
-    visit = startVisit(route, -1)
+    visit = route === null ? null : startVisit(route, -1)
   })
 
   window.addEventListener('scroll', measure, { passive: true })
