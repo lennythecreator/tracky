@@ -2,7 +2,7 @@
 
 Tracks completion of the GitHub tickets against the shipped code.
 
-**Last verified:** 2026-11-02, `main` at `291d210` (merge of PR #32).
+**Last verified:** 2026-11-03, `main` at `a7c03ae` (after the merges of PR #35 and PR #36).
 **Ticket index:** [#1](https://github.com/lennythecreator/tracky/issues/1) through [#6](https://github.com/lennythecreator/tracky/issues/6), and [#9](https://github.com/lennythecreator/tracky/issues/9) through [#16](https://github.com/lennythecreator/tracky/issues/16). All 14 are closed as completed.
 
 Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a recorded caveat.
@@ -154,14 +154,15 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 
 | Check | Result | Where |
 | --- | --- | --- |
-| `npm test` | 129/129 pass, 15 files | `glossary-and-cli-coverage` @ `a6dffa7` + `main` @ `bfe4855` |
-| `npm run lint` | pass | same |
-| `npm run build` | pass | same |
-| `npm run check:terms` | 38 files match the glossary | same |
-| Merge of stack into `main` | no conflicts | PR #32 |
-| Keyboard check in a real browser | 7/7 pass in CI | PR #33 |
+| `npm test` | 129/129 pass, 15 files | `main` @ `a7c03ae` |
+| `npm run lint` | pass | `main` @ `a7c03ae` |
+| `npm run check:terms` | 38 files match the glossary | `main` @ `a7c03ae` |
+| `npm run build` | pass | `main` @ `a7c03ae` |
+| Keyboard check in a real browser | 7 cases, part of `npm test` | PR #33 |
 | Contenteditable capture reasoning | documented and tested | PR #34 |
-| Ignored locations and heat-map/scroll visits | merged, tests cover mount and non-attribution | PR #35 |
+| Ignored locations and heat-map/scroll visits | tests cover mount and non-attribution | PR #35 |
+| CLI argument parsing and exit codes | covered through the exported `run()` | PR #36 |
+| Merge of stack into `main` | no conflicts | PR #32 |
 
 ## Follow-ups
 
