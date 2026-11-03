@@ -160,6 +160,30 @@ describe('interaction capture', () => {
     expect(contexts).not.toContainEqual(expect.objectContaining({ id: 'ignored-input' }))
   })
 
+  it('never reports a contenteditable editor', async () => {
+    render(<Page options={{ captureInteractions: true }} />)
+
+    const editor = document.createElement('div')
+    editor.id = 'editor'
+    editor.setAttribute('contenteditable', 'true')
+    editor.textContent = 'draft only'
+    document.body.append(editor)
+
+    try {
+      act(() => {
+        editor.textContent = 'draft only, edited by hand'
+        editor.dispatchEvent(new Event('input', { bubbles: true }))
+        editor.dispatchEvent(new Event('change', { bubbles: true }))
+      })
+      await settle()
+
+      expect(fetch.events().some((event) => event.eventType === 'input_interaction')).toBe(false)
+      expect(fetch.bodies().join('\n')).not.toContain('draft only')
+    } finally {
+      editor.remove()
+    }
+  })
+
   it('does not send a generic click for a Tracky component', async () => {
     render(<Page options={{ captureInteractions: true }} />)
     click(byId('tracky-button'))

@@ -94,7 +94,7 @@ Each switch in `options.capture` is independent and off by default. Tracky attac
 | `pageViews` | `pageview` | Initial load and each route change, with `title` in `context`. |
 | `clicks` | `click` | Clicks on buttons, links, `role="button"`, and `data-analytics-name` elements. A link click is only a click; navigation shows up as a page view. |
 | `formSubmits` | `form_submit` | That a form was submitted, never its values. |
-| `inputChanges` | `input_interaction` | That an input, select, or textarea changed, never its value. Password and hidden inputs are skipped. |
+| `inputChanges` | `input_interaction` | That an input, select, or textarea changed, never its value. Password and hidden inputs are skipped. A contenteditable editor is not a form control, so it never sends this event. |
 | `frustrationClicks` | `frustration_click` | One event when the same target gets 3 or more pointer clicks within 1 second. Works without `clicks`. |
 | `heatMaps` | `heatmap` | A per-visit `HeatMapSummary` payload of pointer time, clicks, and keyboard focus on a 10 × 10 viewport grid. |
 | `scrollDepth` | `scroll_depth` | A per-visit `ScrollDepthSummary` payload with the deepest 25% bucket reached. Independent of `heatMaps`. |
@@ -195,7 +195,7 @@ Colors, radii, and font family come from CSS variables. [`registry/theme/tokens.
 
 ## Privacy and security
 
-Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK does not collect text typed into fields, and ignores password inputs, editable elements, and ignored subtrees. Review your consent and retention requirements before enabling collection. Never put secrets in event context. The endpoint must accept JSON POST requests from your app's origin.
+Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK does not collect text typed into fields, and ignores password inputs, editable elements, and ignored subtrees. Input-change capture listens for `change` on `input`, `select`, and `textarea` only: a contenteditable editor never produces an event, even if a script dispatches a `change` at it, and nothing reads a field value or an editor's text. Review your consent and retention requirements before enabling collection. Never put secrets in event context. The endpoint must accept JSON POST requests from your app's origin.
 
 ## Development
 

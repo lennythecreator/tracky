@@ -27,6 +27,13 @@ export function captureFormSubmits(client: AnalyticsClient): () => void {
 }
 
 export function captureInputChanges(client: AnalyticsClient): () => void {
+  /**
+   * `change` fires for form controls, so a contenteditable editor never reaches
+   * this listener: its `change` (when a script dispatches one) has a non-control
+   * target and is dropped by the gate below. That gate, not an
+   * `isContentEditable` check, is what keeps editor text out of the event, and
+   * `targetMetadata` reads no values or text from anything it lets through.
+   */
   const onChange = (event: Event) => {
     const target = event.target
     if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return
