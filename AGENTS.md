@@ -4,6 +4,8 @@
 
 Before changing this project, read `product.md` and `README.md`. Treat `product.md` as the product boundary and status record; it separates shipped behavior from future direction. If code and docs disagree, inspect the implementation and update the relevant documentation in the same change.
 
+Use `CONTEXT.md` for the project's vocabulary. It records what each term means, such as session versus visit, and the words to avoid for it. Name things as it does, and update it when a term changes.
+
 Before changing analytics capture, event schemas, or delivery, also read `analytics-design.md`. It records the approved target contract and distinguishes it from features that are not implemented yet.
 
 When planning or implementing the component library, follow the ordered tickets in `BACKLOG.md`. Treat them as implementation planning; `product.md` remains the source of truth for product scope and status.
