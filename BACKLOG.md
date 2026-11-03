@@ -501,3 +501,184 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - One document exists, every requirement is checkable, and each matches what the shipped seven already do.
 - ADR 0001 is referenced and not contradicted.
 - No component or registry entry is added here.
+
+### T-021 — Scaffold the docs app and record the docs architecture
+
+**Status:** Open. Adds the docs surface at `/docs/`; no page content yet.
+
+**Priority:** Before the rest of the docs track
+**GitHub:** [#43](https://github.com/lennythecreator/tracky/issues/43)
+**Background:** [website/research/docs-site-patterns.md](website/research/docs-site-patterns.md) compares shadcn/ui, TanStack Query, Fumadocs, Starlight, and VitePress against this repository.
+
+**Goal:** Stand up one Vite + React app whose pages are MDX files, reusing the playground toolchain and the registry tokens, and record why that stack beat the alternatives.
+
+**Scope:**
+
+- `website/docs/` with source in `app/` and output in `dist/`, mirroring the playground; `dev:docs` and `build:docs` scripts that typecheck first.
+- Routes from MDX via `import.meta.glob`; frontmatter for title and description; `meta.json` for authored section order.
+- One set of chrome: sectioned sidebar, on-this-page TOC, previous/next pager, mobile drawer, skip link.
+- Existing Tailwind and CSS variables only; no new palette.
+- `vercel.json` builds docs with a client-route fallback; landing page and playground link to `/docs/`.
+- ADR 0004 records the choice, rejected options, and the no-per-page-HTML trade-off.
+- CI builds docs; `product.md`, `README.md`, and `website/README.md` record the surface.
+
+**Acceptance criteria:**
+
+- An index page and one nested page prove routing, order, TOC, and the pager.
+- A content file missing from `meta.json` fails the build naming the file.
+- The docs site mounts no provider and makes no request, and `exports`/`files` are unchanged.
+- Every new dependency is a devDependency, and ADR 0004 exists.
+
+### T-022 — Define the docs authoring contract and validate it in CI
+
+**Status:** Open.
+
+**Priority:** After T-021
+**GitHub:** [#44](https://github.com/lennythecreator/tracky/issues/44)
+
+**Goal:** Make a page predictable to write and review, and catch broken structure in CI rather than in production.
+
+**Scope:**
+
+- Frontmatter contract: required `title` and `description`, optional `order`, `since`, and `status`.
+- MDX components: `Callout`, `Steps`, `Kbd`, `PropsTable`, `PageHeader`, each documented with a usage example.
+- Unique, stable heading slugs so TOC entries and deep links resolve.
+- `npm run check:docs` in CI, failing on missing frontmatter, files unlisted or listed twice in `meta.json`, meta entries with no file, duplicate slugs, and dead internal links or anchors.
+
+**Acceptance criteria:**
+
+- Each failure mode has a fixture that fails with the file, line, and reason.
+- The check runs offline with no browser and no network.
+- Routes come only from a validated table, never from runtime filesystem discovery.
+
+### T-023 — Add build-time highlighted, copyable code blocks
+
+**Status:** Open.
+
+**Priority:** After T-021
+**GitHub:** [#45](https://github.com/lennythecreator/tracky/issues/45)
+
+**Goal:** Make every example copyable and readable, with highlighting that costs the browser nothing.
+
+**Scope:**
+
+- Shiki at build time with one theme derived from the landing page palette; inline code from the same tokens.
+- `CodeBlock` with an optional filename label, a copy button with an announced success state, and optional highlighted lines.
+- `CodeTabs` for one change expressed several ways, as a real tablist with arrow-key support.
+- Clipboard failure announced, no clipboard call on mount, and no highlighter shipped to the client.
+
+**Acceptance criteria:**
+
+- The build emits no highlighter chunk; the client code is copy and tabs only.
+- Copied text matches the source exactly, including indentation.
+- Tabs work with arrows, Home, and End; a long line scrolls inside the block without widening the page.
+
+### T-024 — Render live component examples in docs pages
+
+**Status:** Open.
+
+**Priority:** After T-021; before T-027
+**GitHub:** [#46](https://github.com/lennythecreator/tracky/issues/46)
+
+**Goal:** Show the primitives working in the docs and prove what they send, using the same source `tracky add` installs.
+
+**Scope:**
+
+- `Example` MDX component renders one example file and prints the same file through a raw import, so demo and code cannot drift.
+- Examples live in `website/docs/app/examples/` and import `registry/components/ui/*` plus the registry theme.
+- The playground's in-page request interception is shared, not reimplemented, so an interaction shows the event and nothing leaves the page.
+- Recorded actions use the playground labels; the toggle has `aria-expanded` and `aria-controls`.
+
+**Acceptance criteria:**
+
+- Each event-sending primitive has a live example whose displayed source matches its file.
+- A jsdom test asserts the preview shows an event and `fetch` was never called.
+- Examples import registry source, never SDK runtime exports, and show an empty preview state before interaction.
+
+### T-025 — Add a dark theme to the docs site
+
+**Status:** Open.
+
+**Priority:** After T-021
+**GitHub:** [#47](https://github.com/lennythecreator/tracky/issues/47)
+
+**Goal:** A readable dark theme with no flash on load, no second palette, and no analytics side effects.
+
+**Scope:**
+
+- `[data-theme="dark"]` token overrides using the existing variable names; no literal hex values in docs components.
+- A labelled, keyboard-operable toggle that reports the current theme.
+- System preference on first visit, persisted choice afterwards, and a pre-paint script that never flashes light.
+- Contrast pass over text, muted text, borders, focus rings, code surfaces, callouts, and the event preview.
+
+**Acceptance criteria:**
+
+- No flash of light content on reload in dark mode; storage failures leave the system theme and do not throw.
+- WCAG AA contrast in both themes, checked against the token values.
+- Toggling sends no event and does not enable capture.
+
+### T-026 — Write the SDK documentation pages
+
+**Status:** Open. Content only; depends on the pages from T-022 and T-023.
+
+**Priority:** After T-021 through T-023
+**GitHub:** [#48](https://github.com/lennythecreator/tracky/issues/48)
+
+**Goal:** A developer can install, configure, and verify Tracky without reading the source.
+
+**Scope:**
+
+- Overview, Getting started, Tracking events, Capture switches, Event contract, Privacy and exclusions, Delivery and retries — each with frontmatter, a TOC, and a next step.
+- State the unpublished status at every install step, and name the endpoint's responsibilities beside the delivery claim.
+- Document `data-analytics="ignore"` with a working example.
+
+**Acceptance criteria:**
+
+- Every export in `src/index.ts` appears at least once with its defaults and side effects, and each stated default matches the source.
+- No page claims npm availability, hosted collection, guaranteed delivery, consent management, or legal compliance.
+- Pages follow `WRITING.md` and link only to routes the site has.
+
+### T-027 — Document each registry component
+
+**Status:** Open. Depends on T-024 for live examples.
+
+**Priority:** After T-024
+**GitHub:** [#49](https://github.com/lennythecreator/tracky/issues/49)
+
+**Goal:** One page per primitive covering props, documented action, and accessibility, so a developer can decide without opening the source.
+
+**Scope:**
+
+- `/docs/components` index: registry distribution, the four event-sending primitives and the three silent ones.
+- One page per component with the `tracky add` command, live examples, a props table with defaults, the exact action string, keyboard and screen-reader behavior, and the tokens used.
+- One shared explanation of `analyticsName`, the `data-tracky-component` marker, and provider-absent behavior.
+
+**Acceptance criteria:**
+
+- All seven components have a page in registry order, and each props table matches `registry/components/ui/`.
+- Action pages name the exact string and state that no values, labels, or text are sent; silent pages say so explicitly.
+- Each page links to its source file and sends nothing off the page.
+
+### T-028 — Add keyboard-first docs search
+
+**Status:** Open. Sequenced after the first docs release.
+
+**Priority:** After T-021 and T-022
+**GitHub:** [#50](https://github.com/lennythecreator/tracky/issues/50)
+
+**Goal:** Search the docs from the keyboard without a hosted service.
+
+**Scope:**
+
+- A build step emits `search-index.json` from titles, descriptions, headings, and body text, with code fences excluded and a bounded size.
+- `SearchDialog`: Cmd/Ctrl+K and a header button, native `<dialog>`, labelled input, grouped results, arrow keys, Enter to open at the anchor, Escape restores focus.
+- The index loads lazily on first open; nothing loads on mount and nothing third-party is contacted.
+- The build fails if the index cannot be generated or exceeds its size budget.
+
+**Acceptance criteria:**
+
+- Opening search makes exactly one request, and no page body is duplicated into the client bundle.
+- A term present only under a subheading resolves to that anchor.
+- Result count is announced and focus returns to the opener.
+
+**Out of scope:** hosted search, typo tolerance beyond simple matching, and filtering by component or version.
