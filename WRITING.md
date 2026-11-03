@@ -30,7 +30,7 @@ Keep current behavior separate from roadmap direction:
 
 - Describe the analytics SDK as an early-development scaffold. Do not imply that it is published or ready to install from npm.
 - Describe the component library as source installed by the `tracky` CLI, not as runtime exports of the SDK. Do not imply that the package is published yet.
-- Keep the destination explicit: developers configure the endpoint, and that endpoint owns validation, storage, dashboards, access controls, and retention.
+- Keep the endpoint explicit: developers configure it, and it owns validation, storage, dashboards, access controls, and retention.
 
 ## By content type
 
@@ -68,7 +68,7 @@ Keep current behavior separate from roadmap direction:
 - Use **Tracky** for the product, **analytics SDK** or **SDK** for the package implemented in the current scaffold, and **component library** for the source the `tracky` CLI installs. Do not imply that either package is publicly released.
 - Use **event** for one record, **batch** for a group of events sent together, **context** for developer-supplied metadata, and **endpoint** for the URL the developer configures.
 - Format API names and code values as code: `AnalyticsProvider`, `useAnalytics()`, `analytics.track()`, `eventType`, `sessionId`, and `data-analytics="ignore"`.
-- Use sentence case for headings and controls. Keep code identifiers, event names, and schema keys in their exact casing.
+- Use sentence case for headings and controls. Keep code identifiers, `eventType` values, and schema keys in their exact casing.
 - Prefer concrete examples such as `report_exported` and `format: 'csv'`. Label sample data as illustrative.
 
 ## Product and privacy claims

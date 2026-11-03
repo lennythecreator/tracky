@@ -1,6 +1,6 @@
 # Tracky
 
-A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped anonymous ID.
+A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped random ID.
 
 ## Status
 
@@ -129,13 +129,13 @@ After navigation, the new visit is measured on its first scroll, resize, or exit
 
 The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 
-Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable event name.
+Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable analytics name.
 
 The browser sends batches with `fetch` and `keepalive`. Each request carries at most `batchSize` events. Inside an `AnalyticsProvider`, Tracky also sends buffered events when the page is hidden or unloaded, so they don't wait for the flush interval.
 
 Failed requests are retried with capped exponential backoff while the page remains open. That covers network errors, `5xx`, `408`, and `429`. Tracky doesn't retry any other `4xx` response, because the endpoint rejected the request itself. In both cases `onDeliveryError` receives the error.
 
-Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the queue. When the queue is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
+Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the buffer. When the buffer is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
 
 ## Component source
 
@@ -204,11 +204,14 @@ Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK
 ```sh
 npm install
 npm run lint
+npm run check:terms
 npm test
 npm run build
 ```
 
-`npm test` runs the Vitest suite in jsdom without network access. It checks the event envelope, batching and retry, and the privacy defaults: no capture without an opt-in, no field values, and no password, hidden, or ignored fields.
+`npm test` runs every suite without network access. The SDK suites run in jsdom and check the event envelope, batching and retry, and the privacy defaults: no capture without an opt-in, no field values, and no password, hidden, or ignored fields.
 
 `test/playground-keyboard.test.ts` also drives the playground in a real browser, because jsdom has no tab order and no computed focus styles. It starts the playground's Vite server on a loopback port, launches the installed Chrome through `puppeteer-core`, and checks tab order, focus indicators, keyboard activation, and that typing sends no event. It downloads no browser: install Google Chrome, or set `CHROME_PATH` to a Chrome or Chromium binary if the check cannot find one.
+
+`test/cli-init.test.ts` and `test/cli-add.test.ts` cover the installer in a temporary consumer project, served the committed `registry/r` payloads from a loopback server. They check the files, the lockfile, and the failure paths: an existing config without `--force`, a missing tsconfig or stylesheet, a mismatched alias, an edited file without `--overwrite`, an unknown component, and adding the theme directly. `test/cli-main.test.ts` covers argument parsing and exit codes through the exported `run()`, so those checks need neither a build nor a spawned process.
 

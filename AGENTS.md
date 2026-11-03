@@ -4,6 +4,8 @@
 
 Before changing this project, read `product.md` and `README.md`. Treat `product.md` as the product boundary and status record; it separates shipped behavior from future direction. If code and docs disagree, inspect the implementation and update the relevant documentation in the same change.
 
+Use `CONTEXT.md` for the project's vocabulary. It records what each term means, such as session versus visit, and the words to avoid for it. Name things as it does, and update it when a term changes.
+
 Before changing analytics capture, event schemas, or delivery, also read `analytics-design.md`. It records the approved target contract and distinguishes it from features that are not implemented yet.
 
 When planning or implementing the component library, follow the ordered tickets in `BACKLOG.md`. Treat them as implementation planning; `product.md` remains the source of truth for product scope and status.
@@ -23,7 +25,7 @@ When writing or editing developer-facing content, also read `WRITING.md` and fol
 - Keep page-wide collection opt-in and off by default. Tracky components may emit their documented action events as specified in `analytics-design.md`; component tracking must not enable page-wide capture.
 - Never collect field values, keystrokes, passwords, contenteditable text, or arbitrary page text.
 - Preserve and document the `data-analytics="ignore"` exclusion mechanism.
-- Do not add hidden destinations, cookies, identity stitching, or persistent cross-session identifiers.
+- Do not add hidden endpoints, cookies, identity stitching, or persistent cross-session identifiers.
 - Treat custom event context as developer-supplied JSON-safe metadata; do not add secret or personal data automatically.
 - Keep delivery bounded and non-blocking. Tracky sends to the configured endpoint; durable storage and guaranteed delivery are endpoint responsibilities.
 - Hosted license verification is a future proposal. Do not add a network license check or block event delivery without a documented product decision and an implemented service contract.
@@ -31,7 +33,7 @@ When writing or editing developer-facing content, also read `WRITING.md` and fol
 ## Implementation guidance
 
 - Keep browser-only APIs out of module initialization and render-time code. Access `window`, `document`, storage, and history only in browser execution paths such as effects or event calls.
-- Keep event names, schema fields, defaults, and endpoint payloads aligned across `src/`, `README.md`, and `product.md`.
+- Keep event types, schema fields, defaults, and endpoint payloads aligned across `src/`, `README.md`, and `product.md`.
 - Avoid collecting more DOM metadata than the product requires.
 - Preserve React 18+ compatibility and avoid assuming a particular router or backend.
 - When changing public exports or package metadata, update the quick-start documentation.
@@ -40,5 +42,6 @@ When writing or editing developer-facing content, also read `WRITING.md` and fol
 
 - `npm run build` compiles the distributable package.
 - `npm run lint` runs TypeScript's no-emit check on the SDK and the tests.
-- `npm test` runs the Vitest suite in jsdom. It runs offline and covers the event envelope, delivery, and privacy defaults; add a test when you change capture or delivery.
+- `npm test` runs the Vitest suite offline: jsdom for the SDK, node for the CLI tests and the browser check. Add a test when you change capture, delivery, or the CLI.
+- `npm run check:terms` fails when the docs, registry READMEs, or website copy use a word `CONTEXT.md` rules out. Add the term to the glossary before adding a rule in `scripts/check-terms.mjs`.
 - Report only checks that were actually run; do not describe a build as tested if it was not run.

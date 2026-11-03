@@ -62,7 +62,7 @@ Use separate switches so developers can enable one category without enabling the
 
 Track the initial page view and actual route changes, including back/forward navigation. Use path plus query as the default route. Ignore hash-only changes unless the app's route resolver identifies them as real route changes. A link click without a route change is only a click.
 
-When the resolver returns `null` for the current location, treat that location as not being a route visit. Page views skip it. Heat maps and scroll depth start no visit for it, so nothing is measured while it is current, no summary uses an empty route, and its activity is never attributed to a later route. This applies at mount and on a later change to an ignored location.
+When the resolver returns `null` for the current location, treat that location as not being a route visit. Page views skip it. Heat maps and scroll depth start no visit for it, so nothing is measured while it is current, no summary is sent for it, and its activity is never attributed to a later route. This applies at mount and on a later change to an ignored location.
 
 ### Frustration clicks
 
@@ -88,7 +88,7 @@ The grid payload is `HeatMapSummary` in `src/types.ts`, and the periodic flush i
 ## Delivery and runtime constraints
 
 - Keep delivery asynchronous, bounded, and non-blocking. A slow endpoint must not block rendering or input handling.
-- Send only to the developer-configured endpoint. Do not add hidden destinations or remote vendor calls.
+- Send only to the developer-configured endpoint. Do not add hidden endpoints or remote vendor calls.
 - Retry only within a bounded policy. The receiving endpoint owns durable storage and guaranteed delivery.
 - Use browser APIs only in browser execution paths such as effects and event handlers, not during module initialization or render.
 - Keep React 18+ compatibility, ESM/NodeNext import conventions, and a small runtime dependency footprint.
@@ -103,6 +103,6 @@ When implementing or changing tracking behavior:
 
 1. Check whether the behavior is current scaffold capability or approved future direction in `product.md`.
 2. Update TypeScript event types and runtime behavior together.
-3. Keep `src/`, `README.md`, `product.md`, and this guide aligned on event names, payload fields, defaults, and privacy behavior.
+3. Keep `src/`, `README.md`, `product.md`, and this guide aligned on event types, payload fields, defaults, and privacy behavior.
 4. Update the quick start when public setup or exports change.
 5. Do not claim an unimplemented capability is shipped.

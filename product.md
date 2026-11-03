@@ -28,7 +28,7 @@ An event has these fields:
 
 | Field | Meaning |
 | --- | --- |
-| `eventType` | Stable event name such as `pageview`, `click`, or a developer-defined name. |
+| `eventType` | Stable event type, such as `pageview`, `click`, or a developer-defined type name. |
 | `timestamp` | Client event time as an ISO-8601 UTC string. |
 | `route` | Current relative path and query string. |
 | `context` | Small, JSON-safe developer context and safe target metadata, such as an element tag, optional ID, explicit analytics name, or bounded class name. |
@@ -62,7 +62,7 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 - Documented component actions from the initial primitives: `button` activate, `checkbox` toggle, `switch` toggle, and `select` change.
 - Optional page-view tracking for initial load and History API navigation, keyed by path plus query, so hash-only changes don't count. A `resolveRoute` option supports hash-based and custom routers and can return `null` to ignore a location; an ignored location is not a route visit, so page views, heat maps, and scroll depth record nothing for it and its activity is never attributed to the next route. Capture options can be turned on or off after mount, for example once consent is given.
 - Independent, opt-in `capture` switches for page views, clicks, form submits, input changes, frustration clicks (3+ pointer clicks on one target within 1 second), cursor heat maps (`HeatMapSummary` payloads aggregated in the browser on a 10 × 10 grid), and scroll depth (`ScrollDepthSummary`, the deepest 25% bucket per visit). The earlier `capturePageViews` and `captureInteractions` flags are kept as deprecated aliases.
-- Event buffering, JSON batch POST, a flush when the page is hidden or unloaded, bounded exponential retry for transient failures, a bounded queue, and a delivery error callback.
+- Event buffering, JSON batch POST, a flush when the page is hidden or unloaded, bounded exponential retry for transient failures, a bounded buffer, and a delivery error callback.
 - Random session ID held in `sessionStorage` when available.
 
 Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet.
@@ -86,7 +86,7 @@ Initial primitive source is implemented and the `tracky` CLI installs it into a 
 - Never collect input values, keystrokes, password data, contenteditable text, or arbitrary inner text.
 - Ignore password and hidden inputs and support an explicit `data-analytics="ignore"` exclusion boundary.
 - Do not introduce persistent cross-session identifiers or identity stitching without an explicit, documented opt-in design.
-- Do not add cookies, remote vendor calls, or hidden telemetry destinations.
+- Do not add cookies, remote vendor calls, or hidden telemetry endpoints.
 - The integrator is responsible for consent, endpoint access control, data retention, and compliance with their applicable requirements.
 
 ## Licensing direction

@@ -27,6 +27,9 @@ jobs:
       - name: Typecheck
         run: npm run lint
 
+      - name: Check terminology
+        run: npm run check:terms
+
       - name: Test
         run: npm test
 

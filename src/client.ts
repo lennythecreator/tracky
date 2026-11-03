@@ -83,7 +83,7 @@ const enqueuers = new WeakMap<AnalyticsClient, Enqueue>()
 
 /**
  * Track an event for `route` instead of the current location. Summaries use
- * this after navigation, when they describe the page the visitor just left.
+ * this after navigation, when they describe the page the visit just left.
  */
 export function trackForRoute(
   client: AnalyticsClient,

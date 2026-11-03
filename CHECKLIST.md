@@ -9,12 +9,12 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 
 ## Release gate
 
-- [x] `npm test` passes offline in jsdom (92/92 tests, 11 files).
+- [x] `npm test` passes offline (129/129 tests, 15 files: jsdom suites, node CLI tests, and the Chrome check).
 - [x] `npm run lint` passes the SDK and test typechecks.
 - [x] `npm run build` emits the ESM package to `dist/`.
 - [x] Package exports point at `dist/index.js` and `dist/index.d.ts`.
 - [x] React remains a peer dependency; no runtime dependency was added.
-- [x] Page-wide capture is off by default; no hidden destination or persistent cross-session identifier.
+- [x] Page-wide capture is off by default; no hidden endpoint or persistent cross-session identifier.
 - [ ] Package is published to npm (explicitly not done; README documents the checkout build).
 
 ## Component foundation
@@ -134,10 +134,10 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 ### T-013 — Heat map delivery (#15)
 
 - [x] Sent on route change, `pagehide`, hidden `visibilitychange`, every 30 seconds, and when capture stops.
-- [x] Route/visit scope documented; summaries are recorded against the route the visitor left.
+- [x] Route/visit scope documented; summaries are recorded against the route the visit left.
 - [x] Each send resets the grids, so periods never overlap and repeat flushes do not resend.
 - [x] Empty periods are not sent.
-- [x] Delivery uses only the configured endpoint, existing queue, and retry limits.
+- [x] Delivery uses only the configured endpoint, existing buffer, and retry limits.
 - [x] Interval and payload scope documented in README.
 
 ### T-014 — Scroll depth (#16)
@@ -148,18 +148,20 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [x] Only deeper values resend, so a visit sends at most five events.
 - [x] Resets per route/visit; the next page is measured on its first scroll/resize/exit.
 - [x] No raw positions, text, or DOM paths in the payload.
-- [x] An ignored location (`null` route) is not a visit: heat-map/scroll capture starts no visit for it, at mount or after navigation, and the next visit begins at the first accepted route. No summary carries an empty route.
+- [x] An ignored location (`null` route) is not a visit: heat-map/scroll capture starts no visit for it, at mount or after navigation, and the next visit begins at the first accepted route. No summary is sent for an ignored location.
 
 ## Verification record
 
 | Check | Result | Where |
 | --- | --- | --- |
-| `npm test` | 100/100 pass, 12 files | `main` @ `3680b91` |
-| `npm run lint` | pass | `main` @ `3680b91` |
-| `npm run build` | pass | `main` @ `3680b91` |
+| `npm test` | 129/129 pass, 15 files | `glossary-and-cli-coverage` @ `a6dffa7` + `main` @ `bfe4855` |
+| `npm run lint` | pass | same |
+| `npm run build` | pass | same |
+| `npm run check:terms` | 38 files match the glossary | same |
 | Merge of stack into `main` | no conflicts | PR #32 |
 | Keyboard check in a real browser | 7/7 pass in CI | PR #33 |
 | Contenteditable capture reasoning | documented and tested | PR #34 |
+| Ignored locations and heat-map/scroll visits | merged, tests cover mount and non-attribution | PR #35 |
 
 ## Follow-ups
 
@@ -167,7 +169,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [x] Repair the `HeatMapSummary` JSDoc so the payload type keeps its description in generated declarations. Fixed and verified in `dist/types.d.ts`.
 - [x] The no-listener guarantee is scoped to capture listeners; the always-on flush listeners are named as delivery in T-009, `src/react.tsx`, and `README.md`.
 - [x] Document why the `change`-only listener is sufficient for contenteditable: the form-control gate excludes editors, and a test dispatches edit events at one to prove nothing is sent. PR #34.
-- [x] An ignored location starts no heat-map or scroll visit; both begin at the next route the resolver accepts. Covered by `test/heatmap.test.tsx` and `test/scroll-depth.test.tsx`, documented in `README.md` and `analytics-design.md`.
+- [x] An ignored location starts no heat-map or scroll visit; both begin at the next route the resolver accepts. Covered by `test/heatmap.test.tsx` and `test/scroll-depth.test.tsx`, documented in `README.md` and `analytics-design.md`. PR #35.
 - [x] Add an automated or scripted keyboard check for the playground: `test/playground-keyboard.test.ts`, driving the installed Chrome via `puppeteer-core`. PR #33.
 - [ ] Publish the package or document the supported local/link workflow for consumers of installed primitives.
 - [ ] Prune merged remote branches (`t-002-*`, `t-005-*`, `t-006-*`, `t-007-*`, `t-008-*`, and the T-008–T-014 stack) after confirming nothing else depends on them.
@@ -177,6 +179,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 ```sh
 npm install
 npm run lint
+npm run check:terms
 npm test
 npm run build
 ```
