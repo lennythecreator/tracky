@@ -351,3 +351,31 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - The payload contains only a bounded summary, with no raw positions, text, or DOM paths.
 - The measure resets per route/visit and is documented with its payload type.
 - Enabling it does not enable cursor heat maps or any other capture.
+
+### T-015 — Define engagement and performance measures
+
+**Status:** Open. Defines active session, feature usage, and the LCP, CLS, and INP measures, plus the compute boundary and the bundle budget. No capture code ships in this ticket.
+
+**Priority:** Before any engagement or performance capture; independent of route adapters and conversion helpers
+**GitHub:** [#37](https://github.com/lennythecreator/tracky/issues/37)
+
+**Goal:** Decide and document what Tracky measures for engagement and performance, where each measure is computed, and the limits that keep capture cheap, before any capture code exists.
+
+**Scope:**
+
+- Define the measures: active session (what counts as active, whether idle time is excluded and by what threshold), feature usage, and the engagement figures the endpoint can derive from events Tracky already sends.
+- Fix the compute boundary for each measure: what the SDK emits and what the endpoint derives. The endpoint owns cross-visit comparison, dashboards, and retention.
+- Choose the modular shape: one `capture.engagement` switch for foreground time, and LCP, CLS, and INP behind a separate `tracky/performance` import so an app that never imports it loads no performance code.
+- Define payload types and volume bounds: one foreground-time summary per visit and one performance summary per page view. No polling, no per-frame or per-scroll timers, and at most one added timer while a tab is visible.
+- State the privacy bounds: no identity, no cross-session identifiers, no keystrokes, field values, or text, and no raw event streams. Bounded numbers only.
+- Record the decision in ADR 0003 and update `product.md`, `analytics-design.md`, and `README.md` wherever an API surface is named.
+- Name what stays out: route adapters, conversion-flow helpers, and licensing verification.
+
+**Acceptance criteria:**
+
+- A written definition of active session, feature usage, and each engagement measure, with its computation side and its limits.
+- LCP, CLS, and INP named as the performance measures in scope; every other performance measure explicitly out.
+- The DX budget stated as a rule a reviewer can check: no new required setup, nothing captured by default, no polling, and no bundle cost for apps that never import `tracky/performance`.
+- A recorded list of collected fields per measure, confirming that none identifies a person or spans sessions.
+- No runtime capture code; the event contract is defined for the follow-up implementation tickets.
+- ADR 0003 records the compute boundary and the modular entry decision.
