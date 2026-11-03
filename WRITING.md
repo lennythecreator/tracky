@@ -30,7 +30,7 @@ Keep current behavior separate from roadmap direction:
 
 - Describe the analytics SDK as an early-development scaffold. Do not imply that it is published or ready to install from npm.
 - Describe the component library as source installed by the `tracky` CLI, not as runtime exports of the SDK. Do not imply that the package is published yet.
-- Keep the destination explicit: developers configure the endpoint, and that endpoint owns validation, storage, dashboards, access controls, and retention.
+- Keep the endpoint explicit: developers configure it, and it owns validation, storage, dashboards, access controls, and retention.
 
 ## By content type
 

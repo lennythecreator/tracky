@@ -110,4 +110,4 @@ Sizes and weights stay on standard utilities (`text-sm`, `text-base`, `font-medi
 | `--tracky-radius-*` | Controls that use `rounded-sm`, `rounded-md`, or `rounded-lg` |
 | `--tracky-font-sans` | Text-bearing controls |
 
-Theme overrides only affect presentation. They do not enable analytics, change which events are sent, or add a destination.
+Theme overrides only affect presentation. They do not enable analytics, change which events are sent, or add an endpoint.

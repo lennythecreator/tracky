@@ -14,7 +14,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [x] `npm run build` emits the ESM package to `dist/`.
 - [x] Package exports point at `dist/index.js` and `dist/index.d.ts`.
 - [x] React remains a peer dependency; no runtime dependency was added.
-- [x] Page-wide capture is off by default; no hidden destination or persistent cross-session identifier.
+- [x] Page-wide capture is off by default; no hidden endpoint or persistent cross-session identifier.
 - [ ] Package is published to npm (explicitly not done; README documents the checkout build).
 
 ## Component foundation
@@ -134,10 +134,10 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 ### T-013 — Heat map delivery (#15)
 
 - [x] Sent on route change, `pagehide`, hidden `visibilitychange`, every 30 seconds, and when capture stops.
-- [x] Route/visit scope documented; summaries are recorded against the route the visitor left.
+- [x] Route/visit scope documented; summaries are recorded against the route the visit left.
 - [x] Each send resets the grids, so periods never overlap and repeat flushes do not resend.
 - [x] Empty periods are not sent.
-- [x] Delivery uses only the configured endpoint, existing queue, and retry limits.
+- [x] Delivery uses only the configured endpoint, existing buffer, and retry limits.
 - [x] Interval and payload scope documented in README.
 
 ### T-014 — Scroll depth (#16)

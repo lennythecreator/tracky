@@ -1,6 +1,6 @@
 # Tracky
 
-A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped anonymous ID.
+A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped random ID.
 
 ## Status
 
@@ -133,7 +133,7 @@ The browser sends batches with `fetch` and `keepalive`. Each request carries at 
 
 Failed requests are retried with capped exponential backoff while the page remains open. That covers network errors, `5xx`, `408`, and `429`. Tracky doesn't retry any other `4xx` response, because the endpoint rejected the request itself. In both cases `onDeliveryError` receives the error.
 
-Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the queue. When the queue is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
+Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the buffer. When the buffer is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
 
 ## Component source
 

@@ -179,7 +179,7 @@ export function App() {
           <p className="max-w-[70ch]">
             Each component reads the nearest provider through <code>useAnalyticsOptional()</code>, so it
             stays usable without one. The preview answers the SDK&apos;s own request; it does not
-            configure a destination or collect data.
+            configure an endpoint or collect data.
           </p>
           <p className="font-mono text-[10px] uppercase tracking-[0.1em]">tracky 0.1.0</p>
         </footer>

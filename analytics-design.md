@@ -85,7 +85,7 @@ The grid payload is `HeatMapSummary` in `src/types.ts`, and the periodic flush i
 ## Delivery and runtime constraints
 
 - Keep delivery asynchronous, bounded, and non-blocking. A slow endpoint must not block rendering or input handling.
-- Send only to the developer-configured endpoint. Do not add hidden destinations or remote vendor calls.
+- Send only to the developer-configured endpoint. Do not add hidden endpoints or remote vendor calls.
 - Retry only within a bounded policy. The receiving endpoint owns durable storage and guaranteed delivery.
 - Use browser APIs only in browser execution paths such as effects and event handlers, not during module initialization or render.
 - Keep React 18+ compatibility, ESM/NodeNext import conventions, and a small runtime dependency footprint.
@@ -100,6 +100,6 @@ When implementing or changing tracking behavior:
 
 1. Check whether the behavior is current scaffold capability or approved future direction in `product.md`.
 2. Update TypeScript event types and runtime behavior together.
-3. Keep `src/`, `README.md`, `product.md`, and this guide aligned on event names, payload fields, defaults, and privacy behavior.
+3. Keep `src/`, `README.md`, `product.md`, and this guide aligned on event types, payload fields, defaults, and privacy behavior.
 4. Update the quick start when public setup or exports change.
 5. Do not claim an unimplemented capability is shipped.

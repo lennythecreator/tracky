@@ -62,6 +62,10 @@ _Avoid_: queue, chunk, payload.
 Sending the currently buffered events now instead of waiting for the batch to fill or the timer to elapse.
 _Avoid_: send, commit, sync, drain.
 
+**Buffer**:
+The events held in memory between being tracked and being sent, bounded so a stalled endpoint cannot grow it without limit.
+_Avoid_: queue, backlog, spool, cache.
+
 **Bounded retry**:
 A fixed, limited run of attempts to resend a failed batch, after which the failure is reported and those events are dropped.
 _Avoid_: guaranteed delivery, durable queue, at-least-once, exactly-once.
@@ -75,6 +79,10 @@ _Avoid_: tracking, auto tracking, global tracking, telemetry, instrumentation.
 **Capture switch**:
 One independent on/off choice for one page-wide capture category; each stays off until the integrator enables it.
 _Avoid_: flag, toggle, setting, option.
+
+**Analytics name** (`data-analytics-name`):
+A stable label the integrator attaches to a control so events from its different rendered instances group together.
+_Avoid_: event name, label, id, selector, key.
 
 **Frustration click**:
 Three or more clicks on the same element within one second, recorded as its own event type when that switch is on.

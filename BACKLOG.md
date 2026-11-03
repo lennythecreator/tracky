@@ -305,7 +305,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-013 — Deliver heat map summaries on route change and exit
 
-**Status:** Complete. Summaries are sent on route change (recorded against the route the visitor left), on `pagehide` or hidden `visibilitychange`, every 30 seconds, and when capture stops. Each send resets the period, so grids are never resent.
+**Status:** Complete. Summaries are sent on route change (recorded against the route the visit left), on `pagehide` or hidden `visibilitychange`, every 30 seconds, and when capture stops. Each send resets the period, so grids are never resent.
 
 **Priority:** After T-012
 **GitHub:** [#15](https://github.com/lennythecreator/tracky/issues/15)
@@ -317,7 +317,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - Send the current route's summary on route change, on page exit (`pagehide` and hidden `visibilitychange`), and on a bounded periodic flush for long visits.
 - Define and document the periodic interval and how a summary is scoped to one route/visit.
 - Keep delivery asynchronous and best-effort; do not block rendering, input, or navigation.
-- Use only the configured endpoint and existing queue/retry behavior. The endpoint combines per-visit summaries into cross-visit heat maps.
+- Use only the configured endpoint and existing buffer/retry behavior. The endpoint combines per-visit summaries into cross-visit heat maps.
 - Clear or reset the summary after sending so repeat flushes do not duplicate grid data.
 - Add tests with fake timers for route change, exit, and periodic delivery.
 
@@ -325,7 +325,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 - A summary is delivered at most once per flush scope; repeat flushes do not resend the same grid.
 - Exit and route-change sends fit within the existing retry limits.
-- No raw cursor data or additional destination is introduced.
+- No raw cursor data or additional endpoint is introduced.
 - Interval and payload scope are documented alongside the heat map payload type.
 
 ### T-014 — Capture scroll depth independently of heat maps
