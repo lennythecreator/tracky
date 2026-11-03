@@ -408,3 +408,96 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - The guide states that capture is off by default and that consent comes from a persisted decision.
 - The privacy review lists every stored and sent field before and after consent.
 - `product.md` drops the consent story from missing direction once this ships.
+
+### T-017 — Capture active session time behind its own switch
+
+**Status:** Open. Blocked by [#37](https://github.com/lennythecreator/tracky/issues/37) until the measures, idle rule, and payload fields are defined.
+
+**Priority:** After T-015
+**GitHub:** [#39](https://github.com/lennythecreator/tracky/issues/39)
+
+**Goal:** Send a bounded foreground-time summary per route visit behind its own switch, without identity and without a second API for developers to learn.
+
+**Scope:**
+
+- Add `capture.engagement`, off by default, enabling nothing else.
+- Count only while the tab is visible, with at most one interval, and exclude idle time by the T-015 rule.
+- Send an `EngagementSummary` scoped to one route visit on route change, page exit, and capture stop, at most once per visit.
+- Ignored locations start no visit and send nothing.
+- Document the switch, payload, and idle rule; add tests for the switch, visibility cycles, ignored locations, and unmount.
+
+**Acceptance criteria:**
+
+- Hidden time never counts toward `activeMs`, and several hide/show cycles accumulate correctly.
+- One summary per visit with bounded numeric fields only.
+- No timer or listener is added while the switch is off.
+
+### T-018 — Ship Core Web Vitals from a separate performance entry
+
+**Status:** Open. Blocked by [#37](https://github.com/lennythecreator/tracky/issues/37) for the in-scope measures and their bounds.
+
+**Priority:** After T-015
+**GitHub:** [#40](https://github.com/lennythecreator/tracky/issues/40)
+
+**Goal:** Send LCP, CLS, and INP once per page view from a `tracky/performance` entry, so apps that never import it pay nothing.
+
+**Scope:**
+
+- Expose `observePerformance(analytics)` from `tracky/performance`, called once in an effect with the client from `useAnalytics()`.
+- Use `PerformanceObserver` for the three measures. No polling, no intervals, no module-load browser access.
+- Send one `performance` event per page view with only the metrics that are available; do nothing in a browser without the APIs.
+- Add the entry to `exports` and `files`; confirm the default entry does not pull it in.
+- Document the import, payload, and support; test with a stubbed observer.
+
+**Acceptance criteria:**
+
+- Importing only `tracky` loads no observer code.
+- One event per page view with no raw entries, selectors, or URLs.
+- The returned cleanup disconnects every observer.
+
+### T-019 — Make route resolvers easy for common routers
+
+**Status:** Open. The resolver hook exists; this ticket adds helpers and recipes.
+
+**Priority:** After T-010; independent of the engagement tickets
+**GitHub:** [#41](https://github.com/lennythecreator/tracky/issues/41)
+
+**Goal:** Make common routers one documented step instead of a hand-written resolver, without adding a router dependency.
+
+**Scope:**
+
+- Ship dependency-free helpers for path-only routes, hash routes, and a base path.
+- Document recipes that feed router state into `resolveRoute` for React Router, the Next.js App Router, and the Pages Router.
+- Show why passing the router's location beats reading `window.location`, which can miss a client-side change.
+- Test the helpers and the recipe shapes; keep `resolveRoute` the only integration hook.
+
+**Acceptance criteria:**
+
+- No dependency or peer dependency is added, and nothing imports a router package.
+- The hash helper produces one page view per hash change; the path-only helper still ignores hash changes.
+- Recipes name the router versions they target.
+
+**Out of scope:** full-navigation behavior beyond the load that already counts as a page view.
+
+### T-020 — Define conventions for components added after the first seven
+
+**Status:** Open. Documents the contract the next primitives follow.
+
+**Priority:** Before the next primitive
+**GitHub:** [#42](https://github.com/lennythecreator/tracky/issues/42)
+
+**Goal:** Write down what a new primitive must satisfy, so the conventions the first seven established survive the next seven.
+
+**Scope:**
+
+- Analytics contract: lowercase names, one action per control behavior, the `data-tracky-component` marker, documented actions, and no values, labels, props, or text.
+- Registry contract: item type, files, `requires` and `dependencies`, theme tokens instead of palette values, and a recorded reason for any runtime dependency.
+- Accessibility bar: native element where one exists, label association, keyboard operation, visible focus, disabled and invalid states.
+- Test and surface bar: a component test per documented action and for the no-value rule, keyboard expectations where they apply, and a playground demo with a snippet.
+- One conventions document, linked from `AGENTS.md`, `registry/components/ui/README.md`, and this file, pointing at ADR 0001.
+
+**Acceptance criteria:**
+
+- One document exists, every requirement is checkable, and each matches what the shipped seven already do.
+- ADR 0001 is referenced and not contradicted.
+- No component or registry entry is added here.
