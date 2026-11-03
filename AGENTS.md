@@ -43,4 +43,5 @@ When writing or editing developer-facing content, also read `WRITING.md` and fol
 - `npm run build` compiles the distributable package.
 - `npm run lint` runs TypeScript's no-emit check on the SDK and the tests.
 - `npm test` runs the Vitest suite offline: jsdom for the SDK, node for the CLI tests and the browser check. Add a test when you change capture, delivery, or the CLI.
+- `npm run check:terms` fails when the docs, registry READMEs, or website copy use a word `CONTEXT.md` rules out. Add the term to the glossary before adding a rule in `scripts/check-terms.mjs`.
 - Report only checks that were actually run; do not describe a build as tested if it was not run.

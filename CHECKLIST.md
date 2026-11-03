@@ -167,7 +167,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 - [x] Repair the `HeatMapSummary` JSDoc so the payload type keeps its description in generated declarations. Fixed and verified in `dist/types.d.ts`.
 - [ ] Decide whether the no-listener guarantee in T-009 should exclude the always-on flush listeners or be reworded.
 - [x] Document why the `change`-only listener is sufficient for contenteditable: the form-control gate excludes editors, and a test dispatches edit events at one to prove nothing is sent. PR #34.
-- [ ] Define heat-map/scroll behavior when `resolveRoute` returns `null` at mount instead of using an empty route.
+- [ ] Define heat-map/scroll behavior when `resolveRoute` returns `null` at mount instead of starting a visit for an ignored location.
 - [x] Add an automated or scripted keyboard check for the playground: `test/playground-keyboard.test.ts`, driving the installed Chrome via `puppeteer-core`. PR #33.
 - [ ] Publish the package or document the supported local/link workflow for consumers of installed primitives.
 - [ ] Prune merged remote branches (`t-002-*`, `t-005-*`, `t-006-*`, `t-007-*`, `t-008-*`, and the T-008–T-014 stack) after confirming nothing else depends on them.

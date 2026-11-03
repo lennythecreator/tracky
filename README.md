@@ -127,7 +127,7 @@ After navigation, the new visit is measured on its first scroll, resize, or exit
 
 The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 
-Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable event name.
+Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable analytics name.
 
 The browser sends batches with `fetch` and `keepalive`. Each request carries at most `batchSize` events. Inside an `AnalyticsProvider`, Tracky also sends buffered events when the page is hidden or unloaded, so they don't wait for the flush interval.
 
@@ -202,6 +202,7 @@ Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK
 ```sh
 npm install
 npm run lint
+npm run check:terms
 npm test
 npm run build
 ```

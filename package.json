@@ -25,6 +25,7 @@
     "dev:playground": "vite --config website/playground/vite.config.ts",
     "build:playground": "tsc --noEmit -p website/playground/tsconfig.json && vite build --config website/playground/vite.config.ts",
     "lint": "tsc --noEmit -p tsconfig.json && tsc -p test/tsconfig.json",
+    "check:terms": "node scripts/check-terms.mjs",
     "test": "vitest run"
   },
   "peerDependencies": {
