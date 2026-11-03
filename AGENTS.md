@@ -42,5 +42,5 @@ When writing or editing developer-facing content, also read `WRITING.md` and fol
 
 - `npm run build` compiles the distributable package.
 - `npm run lint` runs TypeScript's no-emit check on the SDK and the tests.
-- `npm test` runs the Vitest suite in jsdom. It runs offline and covers the event envelope, delivery, and privacy defaults; add a test when you change capture or delivery.
+- `npm test` runs the Vitest suite offline: jsdom for the SDK, node for the CLI tests and the browser check. Add a test when you change capture, delivery, or the CLI.
 - Report only checks that were actually run; do not describe a build as tested if it was not run.

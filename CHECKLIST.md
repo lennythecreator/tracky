@@ -9,7 +9,7 @@ Legend: `[x]` verified in the repository · `[ ]` not done · `[~]` done with a 
 
 ## Release gate
 
-- [x] `npm test` passes offline in jsdom (92/92 tests, 11 files).
+- [x] `npm test` passes offline (125/125 tests, 15 files: jsdom suites, node CLI tests, and the Chrome check).
 - [x] `npm run lint` passes the SDK and test typechecks.
 - [x] `npm run build` emits the ESM package to `dist/`.
 - [x] Package exports point at `dist/index.js` and `dist/index.d.ts`.

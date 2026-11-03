@@ -206,7 +206,9 @@ npm test
 npm run build
 ```
 
-`npm test` runs the Vitest suite in jsdom without network access. It checks the event envelope, batching and retry, and the privacy defaults: no capture without an opt-in, no field values, and no password, hidden, or ignored fields.
+`npm test` runs every suite without network access. The SDK suites run in jsdom and check the event envelope, batching and retry, and the privacy defaults: no capture without an opt-in, no field values, and no password, hidden, or ignored fields.
 
 `test/playground-keyboard.test.ts` also drives the playground in a real browser, because jsdom has no tab order and no computed focus styles. It starts the playground's Vite server on a loopback port, launches the installed Chrome through `puppeteer-core`, and checks tab order, focus indicators, keyboard activation, and that typing sends no event. It downloads no browser: install Google Chrome, or set `CHROME_PATH` to a Chrome or Chromium binary if the check cannot find one.
+
+`test/cli-init.test.ts` and `test/cli-add.test.ts` cover the installer in a temporary consumer project, served the committed `registry/r` payloads from a loopback server. They check the files, the lockfile, and the failure paths: an existing config without `--force`, a missing tsconfig or stylesheet, a mismatched alias, an edited file without `--overwrite`, an unknown component, and adding the theme directly. `test/cli-main.test.ts` covers argument parsing and exit codes through the exported `run()`, so those checks need neither a build nor a spawned process.
 
