@@ -154,3 +154,40 @@ describe('delivery', () => {
     expect(depths()).toEqual([])
   })
 })
+
+describe('ignored locations', () => {
+  const skipLogin = (location: Location) => location.pathname === '/login' ? null : location.pathname
+
+  function Redirect({ capture = { scrollDepth: true } }: { capture?: CaptureOptions }) {
+    return (
+      <AnalyticsProvider endpoint={ENDPOINT} options={{ capture, resolveRoute: skipLogin }}>{null}</AnalyticsProvider>
+    )
+  }
+
+  it('starts no visit for a location the resolver ignores at mount', async () => {
+    window.history.replaceState(null, '', '/login')
+    render(<Redirect />)
+    scrollTo(1_600)
+    await exitPage()
+
+    expect(depths()).toEqual([])
+
+    act(() => window.history.pushState(null, '', '/dashboard'))
+    await vi.advanceTimersByTimeAsync(0)
+    scrollTo(1_600)
+    await exitPage()
+
+    expect(depths().map((depth) => [depth.route, depth.maxDepthPercent])).toEqual([['/dashboard', 75]])
+  })
+
+  it('ends the visit instead of deepening it from an ignored location', async () => {
+    render(<Redirect />)
+    scrollTo(1_600)
+    act(() => window.history.pushState(null, '', '/login'))
+    await vi.advanceTimersByTimeAsync(0)
+    scrollTo(2_304)
+    await exitPage()
+
+    expect(depths().map((depth) => [depth.route, depth.maxDepthPercent])).toEqual([['/', 75]])
+  })
+})

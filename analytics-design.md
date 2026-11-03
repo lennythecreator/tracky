@@ -62,6 +62,8 @@ Use separate switches so developers can enable one category without enabling the
 
 Track the initial page view and actual route changes, including back/forward navigation. Use path plus query as the default route. Ignore hash-only changes unless the app's route resolver identifies them as real route changes. A link click without a route change is only a click.
 
+When the resolver returns `null` for the current location, treat that location as not being a route visit. Page views skip it. Heat maps and scroll depth start no visit for it, so nothing is measured while it is current, no summary uses an empty route, and its activity is never attributed to a later route. This applies at mount and on a later change to an ignored location.
+
 ### Frustration clicks
 
 Count 3 or more clicks on the same live DOM element instance within a 1-second window as a frustration-click event. Do not infer frustration from labels, text, DOM ancestry, or whether the page responded. Let this detector consume click signals internally when enabled, even if ordinary click events are disabled.
@@ -78,6 +80,7 @@ Build a per-visit, per-route summary on a normalized 10×10 grid of the visible 
 - Do not treat touch movement as cursor movement. Touch clicks may contribute to click counts.
 - Represent summary values in a concrete, typed `payload` with route/visit scope and grid data. Do not put the grid in `context`.
 - Send summaries on route change and page exit, with a bounded periodic flush for long visits. Delivery is best-effort; periodic flushes should limit data lost when a page closes unexpectedly.
+- Start no heat-map visit for a location the resolver ignores; the next accepted route begins the next visit.
 - The configured endpoint is responsible for combining per-visit summaries into cross-visit heat maps.
 
 The grid payload is `HeatMapSummary` in `src/types.ts`, and the periodic flush interval is 30 seconds (see README). Preserve the approved aggregation and privacy behavior above.
