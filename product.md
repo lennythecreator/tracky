@@ -20,7 +20,7 @@ Tracky is for React developers and small product teams who need to understand pa
 
 ## Core experience
 
-A developer wraps the relevant client-side React tree in `AnalyticsProvider`, configures an endpoint or serverless function, and calls `useAnalytics().track(name, context)` for product-specific events. Tracky components emit stable, documented action events when used with a provider. Developers separately opt in to page views and each page-wide capture type. Their endpoint receives batches and is responsible for validating, persisting, and querying events. The SDK workflow and the component installer are implemented in the current scaffold; publishing and several approved tracking capabilities remain future work.
+A developer wraps the relevant client-side React tree in `AnalyticsProvider`, configures an endpoint or serverless function, and calls `useAnalytics().track(name, context)` for product-specific events. Tracky components emit stable, documented action events when used with a provider. Developers separately opt in to page views and each page-wide capture type. Their endpoint receives batches and is responsible for validating, persisting, and querying events. The SDK workflow and the component installer are implemented in the current scaffold; publishing, engagement metrics, and conversion helpers remain future work.
 
 ## Event model
 
@@ -42,8 +42,8 @@ The event context is not a place for credentials, personal data, form values, ar
 
 ## Core tracking capabilities
 
-- **Navigation and views:** The target captures the initial page view and actual route changes, including back/forward, when enabled. Path plus query is the default; a route resolver supports apps with custom route state.
-- **Element interactions:** The target offers separate opt-in capture for safe clicks, form submissions, input-change metadata, frustration clicks, cursor heat maps, and scroll depth. It never captures field values or text.
+- **Navigation and views:** Tracky captures the initial page view and actual route changes, including back/forward, when `capture.pageViews` is on. Path plus query is the default; `resolveRoute` supports apps with custom route state and can ignore a location.
+- **Element interactions:** A separate, opt-in `capture` switch controls each of safe clicks, form submissions, input-change metadata, frustration clicks, cursor heat maps, and scroll depth. Tracky never captures field values or text.
 - **Component interactions:** Tracky components emit documented actions. `trackComponentEvent(component, action, context)` supports explicit application-defined actions. The event puts `{ name, action }` in a top-level `component` object and keeps `context` for developer metadata.
 - **Conversion flows:** Developers can compose a flow today from named events. Dedicated form lifecycle helpers are future work.
 - **Engagement and performance:** The concept includes active-session and feature-usage signals plus frontend performance metrics. These metrics need defined measures, privacy bounds, and APIs before implementation; they are not current capabilities.

@@ -38,12 +38,6 @@ export interface CaptureOptions {
 }
 
 /**
- * Payload of a `heatmap` event: one period of one visit to one route. The
- * event's `route` is the route the visit was on. Each grid is row-major,
- * `columns × rows` long, over the visible viewport (index 0 is top left).
- * Periods of the same `visitId` do not overlap; sum them for the visit.
- */
-/**
  * Payload of a `scroll_depth` event: the deepest point of the page a visit has
  * shown, as a bucket. A visit can send several events as it gets deeper; keep
  * the largest `maxDepthPercent` per `visitId`.
@@ -56,6 +50,12 @@ export type ScrollDepthSummary = {
   maxDepthPercent: 0 | 25 | 50 | 75 | 100
 }
 
+/**
+ * Payload of a `heatmap` event: one period of one visit to one route. The
+ * event's `route` is the route the visit was on. Each grid is row-major,
+ * `columns × rows` long, over the visible viewport (index 0 is top left).
+ * Periods of the same `visitId` do not overlap; sum them for the visit.
+ */
 export type HeatMapSummary = {
   /** Random ID for this visit to the route. Not stored and not reused. */
   visitId: string

@@ -1,6 +1,6 @@
 # Tracky Analytics Design
 
-**Status:** Approved product direction; implementation is in progress. This document is the working contract for agents changing analytics capture, event schemas, or delivery. It describes target behavior, not a claim that every feature already exists.
+**Status:** Implemented. The event envelope, capture switches, navigation handling, frustration clicks, heat maps, scroll depth, and delivery behavior described here are in the current SDK. This document is the working contract for agents changing analytics capture, event schemas, or delivery; if `src/` and this guide disagree, treat it as a defect and fix both together. Product scope and status remain in `product.md`.
 
 Before changing analytics tracking, read this guide together with `product.md`, `README.md`, and `AGENTS.md`. Update the implementation and relevant documentation together. Keep current scaffold status in `product.md` accurate.
 
