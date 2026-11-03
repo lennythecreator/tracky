@@ -379,3 +379,32 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 - A recorded list of collected fields per measure, confirming that none identifies a person or spans sessions.
 - No runtime capture code; the event contract is defined for the follow-up implementation tickets.
 - ADR 0003 records the compute boundary and the modular entry decision.
+
+### T-016 — Document the consent integration and defer analytics storage until consent
+
+**Status:** Open. Makes the SDK store nothing before consent and documents one copyable consent pattern. Nothing shipped yet.
+
+**Priority:** After T-015; independent of route adapters and conversion helpers
+**GitHub:** [#38](https://github.com/lennythecreator/tracky/issues/38)
+
+**Goal:** Give developers one consent pattern they can copy, and make the SDK store nothing before consent, so the opt-in promise holds for storage as well as for capture.
+
+`getSessionId()` currently writes `ui-analytics-session-id` to `sessionStorage` when the client is created, before any consent decision. Nothing is captured, but a strict review still has to explain the write.
+
+**Scope:**
+
+- Defer the session ID: create or read it on the first captured event rather than at client creation. Keep it random and session-scoped; no cookies, no cross-session identifier, no identity.
+- Document the pattern: render the provider without capture switches, then apply them once the consent manager reports a persisted decision. Include a custom-banner recipe, one named-manager recipe (Cookiebot's `CookieConsent` callback), and a vendor-neutral paragraph.
+- Name the trap: consent must come from the manager's stored decision, so a click that a reload forgets cannot start capture.
+- Record the privacy review as a table: stored and sent fields before and after consent, what the endpoint owns, and what Tracky does not decide.
+- Update `analytics-design.md`, `README.md`, and `product.md` in the same change.
+- Add tests for the deferral and for the switch-on-after-consent path.
+
+**Acceptance criteria:**
+
+- No `sessionStorage` write when nothing is captured and `track()` is never called.
+- The session ID stays random and tab-scoped, with no cookie, cross-session identifier, or identity.
+- A copy-paste recipe exists for a custom banner and one named manager, plus a vendor-neutral paragraph.
+- The guide states that capture is off by default and that consent comes from a persisted decision.
+- The privacy review lists every stored and sent field before and after consent.
+- `product.md` drops the consent story from missing direction once this ships.
