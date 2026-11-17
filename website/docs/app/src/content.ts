@@ -1,5 +1,10 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { buildNav, folderOf, readMeta, routeFor, type FolderMeta } from '../../shared/meta'
+
+/** Props an MDX page accepts, so the shell can map Markdown tags to components. */
+export interface MdxContentProps {
+  components?: Record<string, ComponentType<{ children?: ReactNode }>>
+}
 
 export interface PageFrontmatter {
   title: string
@@ -8,7 +13,7 @@ export interface PageFrontmatter {
 }
 
 interface MdxModule {
-  default: ComponentType
+  default: ComponentType<MdxContentProps>
   frontmatter?: PageFrontmatter
 }
 
@@ -42,7 +47,7 @@ export interface DocsPage {
   title: string
   description: string
   order?: number
-  Component: ComponentType
+  Component: ComponentType<MdxContentProps>
 }
 
 export interface DocsSection {

@@ -4,6 +4,7 @@ import { flatPages, pagesByRoute, sectionFor, sections } from './content'
 import { hrefFor, useRoute } from './router'
 import { FOCUS } from './focus'
 import { Toc } from './Toc'
+import { CodeBlock } from './CodeBlock'
 
 interface SidebarProps {
   current: string
@@ -161,7 +162,7 @@ export function App() {
               <h1 className="text-3xl font-bold tracking-[-0.02em]">{page.title}</h1>
               {page.description ? <p className="mt-3 max-w-2xl text-base text-muted-foreground">{page.description}</p> : null}
               <article className="docs-prose mt-8">
-                <page.Component />
+                <page.Component components={{ pre: CodeBlock }} />
               </article>
 
               <nav aria-label="Previous and next pages" className="mt-12 flex flex-wrap justify-between gap-4 border-t border-border pt-6 text-sm">

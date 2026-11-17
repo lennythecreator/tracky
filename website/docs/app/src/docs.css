@@ -238,3 +238,33 @@
   border: 0;
   border-top: 1px solid var(--tracky-border);
 }
+
+/*
+ * Code tokens, from the same palette: blue for structure, the danger hue for
+ * strings, a violet mix for literals, and muted slate for comments. Highlighting
+ * costs a few spans per block and no theme dependency, and the text is still the
+ * author's fenced source.
+ */
+.docs-prose {
+  --docs-token-string: color-mix(in srgb, var(--tracky-destructive) 82%, var(--tracky-foreground));
+  --docs-token-literal: color-mix(in srgb, var(--tracky-primary) 55%, var(--tracky-destructive));
+}
+
+.docs-token-comment {
+  color: var(--tracky-muted-foreground);
+  font-style: italic;
+}
+
+.docs-token-keyword,
+.docs-token-tag {
+  color: var(--tracky-primary);
+}
+
+.docs-token-string {
+  color: var(--docs-token-string);
+}
+
+.docs-token-number,
+.docs-token-literal {
+  color: var(--docs-token-literal);
+}
