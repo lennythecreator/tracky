@@ -11,7 +11,10 @@ export function appBase(): string {
 }
 
 export function currentRoute(): string {
-  const path = window.location.pathname.slice(appBase().length).replace(/^\/dist(?=\/|$)/, '')
+  const path = window.location.pathname
+    .slice(appBase().length)
+    .replace(/^\/dist(?=\/|$)/, '')
+    .replace(/\/+$/, '')
   return path || '/'
 }
 
