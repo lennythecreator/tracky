@@ -6,6 +6,23 @@
     <meta name="robots" content="noindex" />
     <meta name="description" content="Documentation for the Tracky React analytics SDK and component library." />
     <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script>
+      /* Set the scheme before the stylesheet and React load, so a dark reader never sees a light frame. */
+      (function () {
+        var root = document.documentElement;
+        try {
+          var stored = localStorage.getItem('tracky-docs-theme');
+          if (stored === 'light' || stored === 'dark') {
+            root.dataset.theme = stored;
+            return;
+          }
+        } catch (error) {
+          /* A blocked storage read leaves the system preference in charge. */
+        }
+        var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
     <title>Tracky documentation</title>
   </head>
   <body>

@@ -46,8 +46,41 @@
 }
 
 :root {
+  color-scheme: light;
+  /*
+   * One step darker than the registry default so 12px code chrome and callout
+   * labels clear AA on the muted surface. The name, not the value, is what the
+   * components use; the dark block below keeps the same name.
+   */
+  --tracky-muted-foreground: #55677c;
   --tracky-font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
   --docs-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/*
+ * The dark scheme overrides the same semantic names, so registry components,
+ * prose, code surfaces, callouts, and the event preview all follow it without
+ * a second palette or per-component dark classes. The pre-paint script in
+ * `app/index.html` sets the attribute before the first frame.
+ */
+[data-theme='dark'] {
+  color-scheme: dark;
+  --tracky-background: #0b1220;
+  --tracky-foreground: #e6edf7;
+  --tracky-primary: #8fbdf3;
+  --tracky-primary-foreground: #0b1220;
+  --tracky-primary-hover: #a9ccf7;
+  --tracky-secondary: #1c2a3d;
+  --tracky-secondary-foreground: #e6edf7;
+  --tracky-secondary-hover: #26374e;
+  --tracky-muted: #172233;
+  --tracky-muted-foreground: #a7b7ca;
+  --tracky-destructive: #f2a6a6;
+  --tracky-destructive-foreground: #1a0a0a;
+  --tracky-destructive-hover: #f8c4c4;
+  --tracky-border: #5b728c;
+  --tracky-switch-thumb: #f4f8ff;
+  --tracky-ring: #8fbdf3;
 }
 
 @layer base {
@@ -355,4 +388,9 @@
 .docs-code-tab:focus-visible {
   outline: 2px solid var(--tracky-ring);
   outline-offset: 2px;
+}
+
+/* Theme changes are a colour swap only; no transition keeps it predictable. */
+.docs-example-readout {
+  background: var(--tracky-background);
 }
