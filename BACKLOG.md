@@ -411,7 +411,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-017 — Capture active session time behind its own switch
 
-**Status:** Open. Blocked by [#37](https://github.com/lennythecreator/tracky/issues/37) until the measures, idle rule, and payload fields are defined.
+**Status:** Complete. `capture.engagement` sends one cumulative `EngagementSummary` per visit, counting only visible time on an accepted route with activity inside the 30-second idle threshold. It owns one one-second interval and one passive activity listener set while the switch is on, and enables no other capture.
 
 **Priority:** After T-015
 **GitHub:** [#39](https://github.com/lennythecreator/tracky/issues/39)

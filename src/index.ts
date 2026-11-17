@@ -8,6 +8,7 @@ export type {
   AnalyticsOptions,
   AnalyticsProviderProps,
   CaptureOptions,
+  EngagementSummary,
   HeatMapSummary,
   ScrollDepthSummary,
   JsonValue,

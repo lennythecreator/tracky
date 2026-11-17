@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react'
+import { captureEngagement } from './capture/engagement.js'
 import { captureFrustrationClicks } from './capture/frustration.js'
 import { captureHeatMaps } from './capture/heatmap.js'
 import { captureClicks, captureFormSubmits, captureInputChanges } from './capture/interactions.js'
@@ -65,6 +66,10 @@ export function AnalyticsProvider({ endpoint, options, children }: AnalyticsProv
     if (!capture.scrollDepth) return
     return captureScrollDepth(client, () => resolveRoute(optionsRef.current?.resolveRoute))
   }, [client, capture.scrollDepth])
+  useEffect(() => {
+    if (!capture.engagement) return
+    return captureEngagement(client, () => resolveRoute(optionsRef.current?.resolveRoute))
+  }, [client, capture.engagement])
 
   return <AnalyticsContextValue.Provider value={client}>{children}</AnalyticsContextValue.Provider>
 }

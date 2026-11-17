@@ -100,6 +100,7 @@ Each switch in `options.capture` is independent and off by default. Tracky attac
 | `frustrationClicks` | `frustration_click` | One event when the same target gets 3 or more pointer clicks within 1 second. Works without `clicks`. |
 | `heatMaps` | `heatmap` | A per-visit `HeatMapSummary` payload of pointer time, clicks, and keyboard focus on a 10 × 10 viewport grid. |
 | `scrollDepth` | `scroll_depth` | A per-visit `ScrollDepthSummary` payload with the deepest 25% bucket reached. Independent of `heatMaps`. |
+| `engagement` | `engagement` | A per-visit `EngagementSummary` payload with foreground time and the part of it that passed with recent activity. Independent of every other switch. |
 
 ```tsx
 <AnalyticsProvider endpoint="/api/events" options={{ capture: { pageViews: true, clicks: true } }}>
@@ -127,6 +128,25 @@ Tracky sends the summary when the route changes, when the page is hidden or unlo
 
 After navigation, the new visit is measured on its first scroll, resize, or exit, because the router may not have scrolled the new page yet. A route that `resolveRoute` ignores has no visit, so its scroll position is never measured or carried into the next route.
 
+### Engagement time
+
+With `capture.engagement`, Tracky measures how long each visit held attention, without identity and without reading anything typed or clicked. A second counts toward `activeMs` only when the tab is visible, the route is accepted, and the most recent pointer press, key press, scroll, or touch was within 30 seconds. Time in a hidden tab never counts. After 30 seconds without activity, counting pauses until activity resumes, so an abandoned tab stops accumulating.
+
+`foregroundMs` is the same period without the idle rule, so `activeMs / foregroundMs` shows how much of the visible time was active. Both are cumulative for the visit, and a visit that resumes after being hidden keeps its `visitId` and totals.
+
+The summary goes out when the visit ends: on a route change, on page exit, and when the switch turns off. It sends again only if the totals grew since the last send, so keep the largest `activeMs` per `visitId` on your endpoint.
+
+The measure costs one one-second interval and one passive activity listener set, both removed when the switch turns off or the tab is hidden. The listeners record only the time of the last activity. No keystrokes, key names, field values, page text, pointer positions, or identity are recorded.
+
+```ts
+type EngagementSummary = {
+  visitId: string
+  visitStartedAt: string
+  activeMs: number
+  foregroundMs: number
+}
+```
+
 The earlier flags still work but are deprecated: `capturePageViews` maps to `capture.pageViews`, and `captureInteractions` maps to `clicks`, `formSubmits`, and `inputChanges`. A key set in `capture` overrides the flag.
 
 Automatic capture records basic element metadata and never reads input values. Add `data-analytics="ignore"` to exclude a subtree; add `data-analytics-name="checkout_continue"` to give a control a stable analytics name.
@@ -137,9 +157,9 @@ Failed requests are retried with capped exponential backoff while the page remai
 
 Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the buffer. When the buffer is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
 
-### Engagement and performance (planned)
+### Performance (planned)
 
-Tracky's engagement and performance surfaces are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) and not implemented yet, so there is nothing to configure today. Two changes are planned. `capture.engagement` would send one cumulative foreground-time summary per visit, counting only visible time on an accepted route and excluding idle time after 30 seconds without activity. A separate `tracky/performance` entry would send LCP, CLS, and INP once per page view, and an app that never imports it would load none of that code. Both would stay off by default.
+The Core Web Vitals LCP, CLS, and INP are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) and not implemented yet. A separate `tracky/performance` entry would send them once per page view, and an app that never imports it would load none of that code. Engagement time, the other measure in that record, ships as `capture.engagement` above.
 
 ## Consent
 
