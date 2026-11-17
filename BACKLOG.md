@@ -481,7 +481,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-020 — Define conventions for components added after the first seven
 
-**Status:** Open. Documents the contract the next primitives follow.
+**Status:** Complete. [`docs/component-conventions.md`](docs/component-conventions.md) records the analytics contract, registry item fields, accessibility bar, test and surface bar, and a definition-of-done checklist; `AGENTS.md` and the registry README link to it, and it points at ADR 0001 instead of restating it.
 
 **Priority:** Before the next primitive
 **GitHub:** [#42](https://github.com/lennythecreator/tracky/issues/42)

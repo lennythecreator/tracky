@@ -10,6 +10,8 @@ Before changing analytics capture, event schemas, or delivery, also read `analyt
 
 When planning or implementing the component library, follow the ordered tickets in `BACKLOG.md`. Treat them as implementation planning; `product.md` remains the source of truth for product scope and status.
 
+Before adding or changing a primitive, read `docs/component-conventions.md`. It is the checkable bar for a new component's analytics contract, registry entry, accessibility, tests, and playground surface, and it points at ADR 0001 rather than restating it.
+
 When writing or editing developer-facing content, also read `WRITING.md` and follow its voice, terminology, and product-claim rules.
 
 ## Project shape

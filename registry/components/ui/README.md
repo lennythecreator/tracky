@@ -4,6 +4,8 @@ These files are copied into your application, not imported from the `tracky` pac
 
 ## Conventions
 
+The full bar for a new primitive is [`docs/component-conventions.md`](../../../docs/component-conventions.md); it covers the analytics contract, the registry entry, accessibility, and the test and playground surface. The short version follows.
+
 - One component per file with a named export and an exported props type, such as `Button` and `ButtonProps`.
 - Wrap native elements (`button`, `input`, `textarea`, `select`, `label`) instead of rebuilding their behavior. Spread native props and forward the ref, so `id`, `name`, `form`, `aria-*`, handlers, and the rest keep working.
 - Use `cn()` from `utils.ts` to append your `className` after the defaults, so callers can override individual utilities.
