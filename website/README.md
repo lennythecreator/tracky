@@ -33,6 +33,14 @@ The dev server serves the app at `http://localhost:5173`, and the built output i
 
 `index.html` carries the canonical URL, description, Open Graph and Twitter card tags, and the theme colour. `og-image.png` is the 1200×630 share image named by `og:image`.
 
+Regenerate the share image and the icon set from the same design with the locally installed Chrome:
+
+```sh
+node scripts/site-assets.mjs
+```
+
+The script writes `og-image.png` at 1200×630, `favicon.ico` at 16/32/48, and `apple-touch-icon.png` at 180×180. It downloads no browser, contacts no network, and accepts `CHROME_PATH` when Chrome is not in its default location.
+
 The icon set lives at the root of this folder: `favicon.svg` (primary, the blue route mark), `favicon.ico` (16/32/48 fallback), and `apple-touch-icon.png` (180×180, square so iOS can apply its own rounding). The playground reuses these files; `playground/vite.config.ts` copies them into `playground/dist/` and serves them in dev, so there is no second copy to keep in sync.
 
 Canonical, Open Graph, and Twitter URLs point at `https://tracky-ivory.vercel.app/`. Update them together with `og-image.png` if the site moves to a custom domain or the page copy changes.

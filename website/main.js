@@ -1,14 +1,17 @@
 const routeDiagram = document.querySelector('#route-diagram');
 const traceButton = document.querySelector('#trace-button');
 const traceButtonLabel = document.querySelector('#trace-button-label');
+const traceStatus = document.querySelector('#trace-status');
 const copyStatus = document.querySelector('#copy-status');
 
 traceButton?.addEventListener('click', () => {
   if (!routeDiagram) return;
   const paused = routeDiagram.classList.toggle('is-paused');
   traceButton.classList.toggle('is-paused', paused);
+  traceButton.setAttribute('aria-pressed', String(paused));
   traceButton.setAttribute('aria-label', paused ? 'Play the event flow animation' : 'Pause the event flow animation');
   if (traceButtonLabel) traceButtonLabel.textContent = paused ? 'Play animation' : 'Pause animation';
+  if (traceStatus) traceStatus.textContent = paused ? 'Paused · illustration only · no data is sent' : 'Illustration only · no data is sent';
 });
 
 document.querySelectorAll('[data-copy]').forEach((button) => {
@@ -96,5 +99,15 @@ document.querySelectorAll('.mobile-nav-panel a').forEach((link) => {
   link.addEventListener('click', () => {
     const menu = link.closest('details');
     if (menu) menu.open = false;
+  });
+});
+
+// Escape closes the mobile navigation and returns focus to its summary.
+document.querySelectorAll('.mobile-nav').forEach((menu) => {
+  const summary = menu.querySelector('summary');
+  menu.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !menu.open) return;
+    menu.open = false;
+    summary?.focus();
   });
 });
