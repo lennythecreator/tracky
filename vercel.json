@@ -1,6 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "npm run build:playground",
-  "outputDirectory": "website"
+  "buildCommand": "npm run build:playground && npm run build:docs",
+  "outputDirectory": "website",
+  "rewrites": [
+    { "source": "/docs", "destination": "/docs/dist/index.html" },
+    { "source": "/docs/:path*", "destination": "/docs/dist/index.html" }
+  ]
 }

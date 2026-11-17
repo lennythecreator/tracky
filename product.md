@@ -67,7 +67,8 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 
 Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet.
 
-- A website playground that renders the initial primitives with variant, state, and snippet examples. Its event preview intercepts the SDK's request inside the page, so it shows the documented actions without sending events anywhere.
+- A website playground that renders the initial primitives with variant, state, and snippet examples.
+- A docs app at `website/docs/`, built from MDX files with a Vite + React app that reuses the playground toolchain and the registry tokens. It serves the sidebar, on-this-page table of contents, and previous/next pager from authored `meta.json` files, and it mounts no analytics provider. Page content, search, dark mode, and live examples are still to come. Its event preview intercepts the SDK's request inside the page, so it shows the documented actions without sending events anywhere.
 - Initial source-owned primitives: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, and `Select` in `registry/components/ui/`. They use native elements, preserve native props and refs, and emit only the documented component actions listed above, never values, labels, or props. Focus-visible, disabled, and `aria-invalid` states are styled consistently and documented with the source. Their colors, radii, and font family come from CSS variables in `registry/theme/`, with a Tailwind preset and documented setup so consumers can theme them. The `tracky` CLI installs the source into the project; the primitives are not included in the SDK package.
 
 ### Product direction, not yet complete
