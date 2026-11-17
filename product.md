@@ -20,7 +20,7 @@ Tracky is for React developers and small product teams who need to understand pa
 
 ## Core experience
 
-A developer wraps the relevant client-side React tree in `AnalyticsProvider`, configures an endpoint or serverless function, and calls `useAnalytics().track(name, context)` for product-specific events. Tracky components emit stable, documented action events when used with a provider. Developers separately opt in to page views and each page-wide capture type. Their endpoint receives batches and is responsible for validating, persisting, and querying events. The SDK workflow and the component installer are implemented in the current scaffold; publishing, engagement metrics, and conversion helpers remain future work.
+A developer wraps the relevant client-side React tree in `AnalyticsProvider`, configures an endpoint or serverless function, and calls `useAnalytics().track(name, context)` for product-specific events. Tracky components emit stable, documented action events when used with a provider. Developers separately opt in to page views and each page-wide capture type. Their endpoint receives batches and is responsible for validating, persisting, and querying events. The SDK workflow and the component installer are implemented in the current scaffold; publishing, conversion helpers, and a production privacy review remain future work.
 
 ## Event model
 
@@ -46,7 +46,7 @@ The event context is not a place for credentials, personal data, form values, ar
 - **Element interactions:** A separate, opt-in `capture` switch controls each of safe clicks, form submissions, input-change metadata, frustration clicks, cursor heat maps, and scroll depth. Tracky never captures field values or text.
 - **Component interactions:** Tracky components emit documented actions. `trackComponentEvent(component, action, context)` supports explicit application-defined actions. The event puts `{ name, action }` in a top-level `component` object and keeps `context` for developer metadata.
 - **Conversion flows:** Developers can compose a flow today from named events. Dedicated form lifecycle helpers are future work.
-- **Engagement and performance:** Active session time is captured per visit; feature usage is derived at the endpoint; and the Core Web Vitals LCP, CLS, and INP are defined but not implemented. [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) fixes every measure, payload, compute boundary, and bound.
+- **Engagement and performance:** Active session time is captured per visit; feature usage is derived at the endpoint; and the Core Web Vitals LCP, CLS, and INP ship from the separate `tracky/performance` entry. [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) fixes every measure, payload, compute boundary, and bound.
 
 ## Component library direction
 
@@ -63,6 +63,7 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 - Optional page-view tracking for initial load and History API navigation, keyed by path plus query, so hash-only changes don't count. A `resolveRoute` option supports hash-based and custom routers and can return `null` to ignore a location; an ignored location is not a route visit, so page views, heat maps, and scroll depth record nothing for it and its activity is never attributed to the next route. Capture options can be turned on or off after mount, for example once consent is given.
 - Independent, opt-in `capture` switches for page views, clicks, form submits, input changes, frustration clicks (3+ pointer clicks on one target within 1 second), cursor heat maps (`HeatMapSummary` payloads aggregated in the browser on a 10 × 10 grid), scroll depth (`ScrollDepthSummary`, the deepest 25% bucket per visit), and engagement (`EngagementSummary`, cumulative foreground time per visit). The earlier `capturePageViews` and `captureInteractions` flags are kept as deprecated aliases.
 - Engagement time counts only while the tab is visible, on an accepted route, and with activity inside a 30-second idle threshold, so idle and hidden time never reach `activeMs`. One summary is sent per visit, cumulatively, on route change, page exit, and when the switch turns off. The measure costs one one-second interval and one passive activity listener set while the switch is on.
+- Frontend performance from the separate `tracky/performance` entry: `observePerformance(analytics)` sends one `performance` event when the page is hidden or unloaded, with a `PerformanceSummary` payload carrying only the LCP, CLS, and INP values the browser reported. It uses buffered observers, never polls, and adds nothing to the root entry, so an app that imports only `tracky` loads no performance code.
 - Event buffering, JSON batch POST, a flush when the page is hidden or unloaded, bounded exponential retry for transient failures, a bounded buffer, and a delivery error callback.
 - Random session ID held in `sessionStorage` when available. It is created on the first event, so a page that captures nothing and tracks nothing writes no browser storage.
 - A documented consent pattern: render the provider with capture off, read the consent manager's stored decision, then apply the switches it allows. `README.md` carries a custom-banner recipe, a Cookiebot recipe, and a vendor-neutral fallback, and `analytics-design.md` records the privacy review of what is stored and sent before and after consent.
@@ -76,7 +77,7 @@ Initial primitive source is implemented and the `tracky` CLI installs it into a 
 
 - Route adapters for popular routers and more complete full-navigation behavior.
 - Conventions for components added after the initial seven.
-- Frontend performance capture: LCP, CLS, and INP from the separate `tracky/performance` entry defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md); no capture code ships yet.
+- Frontend performance beyond LCP, CLS, and INP, such as TTFB, paint timings, and custom user timing.
 - Conversion-flow helpers and richer typed event conventions.
 - Deeper production privacy review beyond the documented consent pattern.
 - Build, release, and package publishing workflow.
