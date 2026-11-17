@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { FOCUS } from './focus'
 
 interface Heading {
   id: string
@@ -52,7 +53,7 @@ export function Toc({ route }: { route: string }) {
           <li key={heading.id} className={heading.level === 3 ? 'pl-3' : undefined}>
             <a
               href={`#${heading.id}`}
-              className="block border-l border-border py-1 pl-3 text-muted-foreground hover:border-primary hover:text-foreground"
+              className={`block border-l border-border py-1 pl-3 text-muted-foreground hover:border-primary hover:text-foreground ${FOCUS}`}
             >
               {heading.text}
             </a>

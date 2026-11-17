@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { flatPages, pagesByRoute, sectionFor, sections } from './content'
 import { hrefFor, useRoute } from './router'
+import { FOCUS } from './focus'
 import { Toc } from './Toc'
+import { CodeBlock } from './CodeBlock'
 
 interface SidebarProps {
   current: string
@@ -29,8 +31,8 @@ function Sidebar({ current, onNavigate }: SidebarProps) {
                     }}
                     className={
                       active
-                        ? 'block rounded-sm bg-muted px-3 py-1.5 font-semibold text-foreground'
-                        : 'block rounded-sm px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground'
+                        ? `block bg-muted px-3 py-1.5 font-semibold text-foreground ${FOCUS}`
+                        : `block px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground ${FOCUS}`
                     }
                   >
                     {page.title}
@@ -46,11 +48,15 @@ function Sidebar({ current, onNavigate }: SidebarProps) {
 }
 
 const LABEL = 'text-sm font-semibold'
+
+const SKIP = `${FOCUS} focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground`
 const BUTTON = 'inline-flex min-h-9 items-center rounded-sm border border-border px-3 text-sm font-semibold text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
 
 export function App() {
   const { route, navigate } = useRoute()
   const [navOpen, setNavOpen] = useState(false)
+  const menuButton = useRef<HTMLButtonElement>(null)
+  const previousRoute = useRef(route)
   const page = pagesByRoute.get(route)
   const index = page ? flatPages.indexOf(page) : -1
   const previous = index > 0 ? flatPages[index - 1] : undefined
@@ -73,9 +79,17 @@ export function App() {
   }, [route])
 
   useEffect(() => {
+    if (previousRoute.current === route) return
+    previousRoute.current = route
+    document.getElementById('docs-article')?.focus()
+  }, [route])
+
+  useEffect(() => {
     if (!navOpen) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setNavOpen(false)
+      if (event.key !== 'Escape') return
+      setNavOpen(false)
+      menuButton.current?.focus()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -92,28 +106,29 @@ export function App() {
     <div className="min-h-dvh bg-background text-foreground">
       <a
         href="#docs-article"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"
+        className={`sr-only ${SKIP}`}
       >
         Skip to content
       </a>
 
       <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-[1200px] items-center gap-3 px-4 py-3">
-          <a href={hrefFor('/')} onClick={(event) => go(event, '/')} className="flex items-baseline gap-2">
+          <a href={hrefFor('/')} onClick={(event) => go(event, '/')} className={`flex items-baseline gap-2 ${FOCUS}`}>
             <span className={LABEL}>Tracky</span>
             <span className="rounded-full border border-border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
               Docs
             </span>
           </a>
           <div className="ml-auto flex items-center gap-2">
-            <a href="../playground/dist/" className="hidden text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline">
+            <a href="/playground/dist/" className={`hidden text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline ${FOCUS}`}>
               Playground
             </a>
-            <a href="../" className="hidden text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline">
+            <a href="/" className={`hidden text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline ${FOCUS}`}>
               Home
             </a>
             <button
               type="button"
+              ref={menuButton}
               className={`${BUTTON} lg:hidden`}
               aria-expanded={navOpen}
               aria-controls="docs-mobile-nav"
@@ -124,7 +139,10 @@ export function App() {
           </div>
         </div>
         {navOpen ? (
-          <div id="docs-mobile-nav" className="border-t border-border px-4 py-4 lg:hidden">
+          <div
+            id="docs-mobile-nav"
+            className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-border bg-background px-4 py-4 lg:hidden"
+          >
             {nav}
           </div>
         ) : null}
@@ -135,7 +153,7 @@ export function App() {
           <div className="sticky top-24">{nav}</div>
         </aside>
 
-        <main id="docs-article" className="min-w-0 flex-1">
+        <main id="docs-article" tabIndex={-1} className="mx-auto min-w-0 max-w-[42rem] flex-1 outline-none">
           {page ? (
             <>
               {section ? (
@@ -144,7 +162,7 @@ export function App() {
               <h1 className="text-3xl font-bold tracking-[-0.02em]">{page.title}</h1>
               {page.description ? <p className="mt-3 max-w-2xl text-base text-muted-foreground">{page.description}</p> : null}
               <article className="docs-prose mt-8">
-                <page.Component />
+                <page.Component components={{ pre: CodeBlock }} />
               </article>
 
               <nav aria-label="Previous and next pages" className="mt-12 flex flex-wrap justify-between gap-4 border-t border-border pt-6 text-sm">
@@ -152,7 +170,7 @@ export function App() {
                   <a
                     href={hrefFor(previous.route)}
                     onClick={(event) => go(event, previous.route)}
-                    className="font-semibold text-muted-foreground hover:text-foreground"
+                    className={`font-semibold text-muted-foreground hover:text-foreground ${FOCUS}`}
                   >
                     ← {previous.title}
                   </a>
@@ -163,7 +181,7 @@ export function App() {
                   <a
                     href={hrefFor(next.route)}
                     onClick={(event) => go(event, next.route)}
-                    className="text-right font-semibold text-muted-foreground hover:text-foreground"
+                    className={`text-right font-semibold text-muted-foreground hover:text-foreground ${FOCUS}`}
                   >
                     {next.title} →
                   </a>
@@ -179,7 +197,7 @@ export function App() {
                 No page is authored at <code className="rounded-sm bg-muted px-1 py-0.5">{route}</code>.
               </p>
               <p className="mt-6">
-                <a href={hrefFor('/')} onClick={(event) => go(event, '/')} className="font-semibold text-primary hover:underline">
+                <a href={hrefFor('/')} onClick={(event) => go(event, '/')} className={`font-semibold text-primary hover:underline ${FOCUS}`}>
                   Open the docs index
                 </a>
               </p>

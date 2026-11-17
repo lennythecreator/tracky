@@ -8,14 +8,74 @@ order: 1
 
 The docs cover the analytics SDK and the component library that the `tracky` CLI installs as source. They do not describe a hosted service: your endpoint receives every event, and it owns validation, storage, retention, and access.
 
-This scaffold ships two pages. The sidebar on the left is authored by `meta.json` in each content folder, and the list on the right is built from the headings on the page you are reading. The pager at the bottom follows the same order.
+The sidebar on the left is authored by `meta.json` in each content folder, and the list on the right is built from the headings on the page you are reading. The pager at the bottom follows the same order.
+
+## Install
+
+The package is not published yet. Once a release is available:
+
+```sh
+npm install tracky
+```
+
+React 18 or newer is a peer dependency. Tracky has no other runtime dependency.
+
+## Render the provider
+
+`AnalyticsProvider` takes the endpoint that receives events. It renders no UI, makes no request on its own, and turns on no page-wide capture: you choose each switch.
+
+```tsx
+import { AnalyticsProvider } from 'tracky'
+
+export function App({ children }: { children: React.ReactNode }) {
+  return (
+    <AnalyticsProvider
+      endpoint="https://your-api.example.com/events"
+      options={{ capture: { pageViews: true } }}
+    >
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+The provider uses browser APIs after mounting, so it works in a React app or behind a Next.js client boundary. Only `endpoint` recreates the client; other options can change after mount and apply to the next event.
+
+## Send an event
+
+`useAnalytics()` returns the client inside the provider. `track()` takes the event type, flat context, and an optional structured payload.
+
+```tsx
+import { useAnalytics } from 'tracky'
+
+type ExportSummary = { rows: number; columns: string[] }
+
+export function ExportButton() {
+  const analytics = useAnalytics()
+
+  const onExport = () =>
+    analytics.track<ExportSummary>(
+      'report_exported',
+      { format: 'csv' },
+      { rows: 120, columns: ['date', 'total'] },
+    )
+
+  return (
+    <button type="button" onClick={onExport}>
+      Export
+    </button>
+  )
+}
+```
+
+Explicit events send when you call the method. The capture switches control only automatic page-wide capture, so `track()` works with every switch off.
 
 ## Where to start
 
 - If you are choosing what to collect, start with the capture switches guide.
-- If you are wiring an endpoint, the SDK quick start in the repository README is the shortest path to a first event.
+- If you are wiring an endpoint, the event shape in the repository README is the contract.
 - If you are adding a primitive, read the component conventions before you write a file.
 
 ## What the docs do not do
 
-The pages send nothing. This app mounts no analytics provider and makes no request of its own, so reading the docs is not a visit to your endpoint.
+The pages send nothing. This app mounts no analytics provider and makes no request of its own, so reading the docs never reaches your endpoint.

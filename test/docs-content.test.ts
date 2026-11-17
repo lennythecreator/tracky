@@ -50,7 +50,7 @@ describe('docs content structure', () => {
 
 describe('docs app', () => {
   it('mounts no analytics provider and sends no request', () => {
-    for (const file of ['App.tsx', 'main.tsx', 'content.ts', 'router.ts', 'Toc.tsx']) {
+    for (const file of ['App.tsx', 'CodeBlock.tsx', 'highlight.ts', 'main.tsx', 'content.ts', 'router.ts', 'Toc.tsx']) {
       const source = readFileSync(`website/docs/app/src/${file}`, 'utf8')
       expect(source).not.toMatch(/from 'tracky'|AnalyticsProvider|useAnalytics|fetch\(|XMLHttpRequest|sendBeacon/)
     }
