@@ -100,6 +100,28 @@ _Avoid_: scroll position, scroll percent, read depth.
 A page subtree whose interactions Tracky never captures, including everything inside it.
 _Avoid_: blocklist, opt-out, do-not-track, filter.
 
+### Engagement and performance
+
+**Active time** (`activeMs`):
+The part of a visit's foreground time that passed with the tab visible, the route accepted, and recent activity.
+_Avoid_: session duration, time on page, dwell time, engaged time.
+
+**Idle**:
+A visible visit with no pointer, key, scroll, or touch activity for 30 seconds, which stops adding to active time until activity resumes.
+_Avoid_: inactivity, away time, timeout, abandonment.
+
+**Engagement summary** (`EngagementSummary`):
+The per-visit payload that reports `activeMs` and `foregroundMs` for one visit.
+_Avoid_: session event, heartbeat, ping, activity log.
+
+**Feature usage**:
+The count of developer-named events and documented component actions in a visit, which the endpoint derives.
+_Avoid_: adoption, usage metric, interaction count.
+
+**Performance summary** (`PerformanceSummary`):
+The per-page-view payload that reports LCP, CLS, and INP when the browser provides them.
+_Avoid_: vitals event, speed score, performance metric.
+
 ### Product surfaces
 
 **SDK**:

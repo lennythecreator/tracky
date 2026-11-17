@@ -46,7 +46,7 @@ The event context is not a place for credentials, personal data, form values, ar
 - **Element interactions:** A separate, opt-in `capture` switch controls each of safe clicks, form submissions, input-change metadata, frustration clicks, cursor heat maps, and scroll depth. Tracky never captures field values or text.
 - **Component interactions:** Tracky components emit documented actions. `trackComponentEvent(component, action, context)` supports explicit application-defined actions. The event puts `{ name, action }` in a top-level `component` object and keeps `context` for developer metadata.
 - **Conversion flows:** Developers can compose a flow today from named events. Dedicated form lifecycle helpers are future work.
-- **Engagement and performance:** The concept includes active-session and feature-usage signals plus frontend performance metrics. These metrics need defined measures, privacy bounds, and APIs before implementation; they are not current capabilities.
+- **Engagement and performance:** Active session time, feature usage, and the Core Web Vitals LCP, CLS, and INP have defined measures, payloads, compute boundaries, and bounds in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md). Capture is not implemented yet.
 
 ## Component library direction
 
@@ -74,7 +74,7 @@ Initial primitive source is implemented and the `tracky` CLI installs it into a 
 
 - Route adapters for popular routers and more complete full-navigation behavior.
 - Conventions for components added after the initial seven.
-- Engagement, active-session, and frontend performance measurements.
+- Engagement and performance capture. The measures, compute boundary, payloads, and bundle budget are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md); no capture code ships yet.
 - Conversion-flow helpers and richer typed event conventions.
 - A complete consent integration story and production privacy review.
 - Build, release, and package publishing workflow.
