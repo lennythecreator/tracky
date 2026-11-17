@@ -46,6 +46,10 @@ _Avoid_: route, URL, path.
 The developer-supplied function that decides which locations count as routes and what each one is called.
 _Avoid_: router, adapter, middleware, route mapper.
 
+**Route resolver helper** (`pathResolver`, `hashResolver`):
+A dependency-free function that returns a route resolver for a common router shape, such as path plus query or a hash route, or strips a base path from one.
+_Avoid_: router adapter, plugin, integration package, router library.
+
 **Ignored location**:
 A location the resolver refuses by returning `null`; it is not a route visit, so nothing is measured for it and its activity is never attributed to a later route.
 _Avoid_: empty route, null route, blank route, skipped page, hidden route.

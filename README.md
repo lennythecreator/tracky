@@ -65,6 +65,68 @@ An ignored location is not a route visit. Page views skip it, and heat maps and 
 >
 ```
 
+### Common routers
+
+Three helpers cover the usual shapes without importing a router:
+
+```ts
+import { hashResolver, pathResolver, stripBasePath } from 'tracky'
+
+pathResolver()                        // path plus query, ignores hash changes
+pathResolver({ basePath: '/app' })    // the same, with the app's base path removed
+hashResolver()                        // '#/settings' becomes '/settings'
+```
+
+`resolveRoute` stays the only integration hook. Tracky imports no router, and none of these helpers is required.
+
+A resolver that reads the address bar misses a route the app keeps somewhere else. A path that never reaches `window.location` — a memory router, or a screen the app renders without changing the URL — produces no route change for Tracky to observe, so pass the router's own location instead, and track that page view yourself.
+
+**React Router** (v6.4 through v7). With `<BrowserRouter>`, the default already works. With `<HashRouter>`, pass `hashResolver()`. With `<BrowserRouter basename="/app">`, pass `pathResolver({ basePath: '/app' })` so the route does not repeat the base path. For a memory router, pass its location through a ref:
+
+```tsx
+import { useRef } from 'react'
+import { useLocation } from 'react-router-dom'
+
+const location = useLocation()
+const current = useRef(location)
+current.current = location
+
+// <AnalyticsProvider options={{ resolveRoute: () => `${current.current.pathname}${current.current.search}` }}>
+```
+
+**Next.js App Router** (13.4 and later). `usePathname()` and `useSearchParams()` give the rendered route, with the configured `basePath` already removed. `useSearchParams()` needs a `Suspense` boundary above it in statically rendered pages.
+
+```tsx
+'use client'
+
+import { useRef } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+
+const pathname = usePathname()
+const query = useSearchParams().toString()
+const current = useRef('/')
+current.current = query ? `${pathname}?${query}` : pathname
+
+// <AnalyticsProvider options={{ resolveRoute: () => current.current }}>
+```
+
+If the resolver runs before the router has rendered the new page, it returns the previous route. When the URL already carries the route, `pathResolver()` is the timing-safe choice; use `pathResolver({ basePath })` when the app sets one.
+
+**Next.js Pages Router** (12 and later). `asPath` is the path the app rendered, including the query. Strip the base path with the helper, which does nothing when it is already gone:
+
+```tsx
+'use client'
+
+import { useRouter } from 'next/router'
+import { stripBasePath } from 'tracky'
+
+const router = useRouter()
+
+// <AnalyticsProvider options={{ resolveRoute: () => stripBasePath(router.asPath, '/app') }}>
+```
+
+Each recipe renders the provider inside the router, so the router's location is available where the provider is set up.
+
 Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then turn on the `capture` switches you need once you have consent. [Consent](#consent) has copyable recipes. Turning an option off removes its capture listeners. The page-hidden flush listeners below stay attached, because they deliver explicit events rather than collect.
 
 The provider uses browser APIs after mounting, so it can be rendered inside a React app or a Next.js client boundary. In Next.js App Router, put it in a small Client Component and render that component from the server layout.
