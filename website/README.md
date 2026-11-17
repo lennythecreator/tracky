@@ -27,7 +27,7 @@ npm run dev:docs
 npm run build:docs
 ```
 
-The dev server serves the app at `http://localhost:5173`, and the built output is in `docs/dist/`. On the site the docs are at `/docs/`, which the deployment config rewrites to the app, so a deep link or a reload lands on the same page. The shell mounts no analytics provider and sends no requests; the live examples mount one against a reserved `.invalid` endpoint that the page answers itself. The docs have light and dark schemes over the same theme tokens: the first visit follows the system preference, the header toggle stores an explicit choice, and a pre-paint script applies either one before the first frame. The stack, the alternatives that were rejected, and the no-per-page-HTML trade-off are in [`../docs/adr/0004-docs-site.md`](../docs/adr/0004-docs-site.md).
+The dev server serves the app at `http://localhost:5173`, and the built output is in `docs/dist/`. On the site the docs are at `/docs/`, which the deployment config rewrites to the app, so a deep link or a reload lands on the same page. The shell mounts no analytics provider and sends no analytics requests; search loads one static index when it first opens, and the live examples mount a provider against a reserved `.invalid` endpoint that the page answers itself. The docs have light and dark schemes over the same theme tokens: the first visit follows the system preference, the header toggle stores an explicit choice, and a pre-paint script applies either one before the first frame. The stack, the alternatives that were rejected, and the no-per-page-HTML trade-off are in [`../docs/adr/0004-docs-site.md`](../docs/adr/0004-docs-site.md).
 
 ## Page metadata and icons
 

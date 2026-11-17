@@ -166,6 +166,10 @@ website/docs/app/src/content/guides/capture-switches.mdx:12: no heading "forms" 
 
 Fix the page, not the checker. A check that is wrong for a real page is a change to this document and to `website/docs/shared/check.ts`, in the same pull request.
 
+## Search
+
+`npm run build:docs` emits `search-index.json` from each page's title, description, headings, and body text. Fenced code, imports, and the prop-only MDX components (`Example`, `CodeTabs`, `PropsTable`) are excluded, so an example is never searchable or copied into the payload. The build fails when the index cannot be generated or exceeds 64 KiB; the app fetches the file only when search first opens.
+
 ## Adding a page
 
 1. Create the `.mdx` file in a folder that has a `meta.json`.
