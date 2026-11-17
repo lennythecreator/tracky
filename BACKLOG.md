@@ -597,7 +597,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-025 — Add a dark theme to the docs site
 
-**Status:** Open.
+**Status:** Complete. `[data-theme="dark"]` overrides the same `--tracky-*` names the registry theme defines, and the pre-paint script in `website/docs/app/index.html` picks the stored choice or the system preference before the first frame. The header toggle is a native button whose pressed state reports the scheme, and it writes the choice without throwing when storage is blocked. `test/theme.test.ts` checks the choice and storage paths and computes WCAG AA contrast for every text pair, plus the 3:1 focus ring, from the token values in both schemes.
 
 **Priority:** After T-021
 **GitHub:** [#47](https://github.com/lennythecreator/tracky/issues/47)
