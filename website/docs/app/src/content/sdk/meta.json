@@ -1,0 +1,12 @@
+{
+  "label": "Analytics SDK",
+  "order": 1,
+  "pages": [
+    "getting-started",
+    "tracking-events",
+    "capture-switches",
+    "event-contract",
+    "privacy-and-exclusions",
+    "delivery-and-retries"
+  ]
+}

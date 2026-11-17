@@ -619,7 +619,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-026 — Write the SDK documentation pages
 
-**Status:** Open. Content only; depends on the pages from T-022 and T-023.
+**Status:** Complete. The SDK track has six pages under `website/docs/app/src/content/sdk/` plus an Overview at `/`: getting started, tracking events, capture switches, the event contract, privacy and exclusions, and delivery and retries. The Overview and every install step state that the package is unpublished and name the endpoint's responsibilities beside the delivery claims. `test/docs-sdk-pages.test.ts` fails when a root export is undocumented, a capture switch is missing, or a stated default drifts from `src/client.ts`.
 
 **Priority:** After T-021 through T-023
 **GitHub:** [#48](https://github.com/lennythecreator/tracky/issues/48)

@@ -1,0 +1,137 @@
+---
+title: Capture switches
+description: What each opt-in page-wide capture switch records, and what Tracky never reads.
+order: 3
+status: unreleased
+---
+
+## Every switch is off by default
+
+Automatic capture starts with nothing enabled. Rendering `AnalyticsProvider`, or using a Tracky primitive, turns on no page-wide capture. `options.capture` is a `CaptureOptions` object whose keys are independent, so enabling one category adds only that category's listeners.
+
+| Switch | Event type | What it records |
+| --- | --- | --- |
+| `pageViews` | `pageview` | The initial load and each real route change. |
+| `clicks` | `click` | Safe metadata for a button, link, or named element. |
+| `formSubmits` | `form_submit` | That a form was submitted, with form metadata. |
+| `inputChanges` | `input_interaction` | That a field changed, with field metadata. |
+| `frustrationClicks` | `frustration_click` | Three or more pointer clicks on one target within one second. |
+| `heatMaps` | `heatmap` | Aggregated pointer time, clicks, and focus entries on a grid. |
+| `scrollDepth` | `scroll_depth` | The deepest 25% bucket one visit reached. |
+| `engagement` | `engagement` | Foreground time for one visit, excluding hidden and idle time. |
+
+Every default is `false`.
+
+```tsx
+<AnalyticsProvider
+  endpoint="/api/events"
+  options={{ capture: { pageViews: true, clicks: true } }}
+/>
+```
+
+Turning a switch off removes its listeners on the next render. The provided `capturePageViews` and `captureInteractions` flags are deprecated aliases; an explicit `capture` key wins.
+
+## Page views and clicks
+
+`pageViews` records the initial load and each real route change, with path plus query as the route. Back and forward produce one page view each, and an intermediate or repeated location does not produce duplicates. `clicks` records safe element metadata for buttons, links, and named elements. A link click stays a click; navigation shows up as a page view when the route changes.
+
+A hash router needs a resolver, which also decides the `route` on every other event:
+
+```tsx
+import { hashResolver } from 'tracky'
+
+<AnalyticsProvider
+  endpoint="/api/events"
+  options={{
+    capture: { pageViews: true },
+    resolveRoute: hashResolver(),
+  }}
+/>
+```
+
+For path routes with a base path, use `pathResolver({ basePath: '/app' })`. To strip a base path yourself, call `stripBasePath(pathname, '/app')`. `resolveRoute` stays the only integration hook, takes a `Location`, and returns a route string or `null` to ignore the location.
+
+Returning `null` makes the location an ignored location: it is not a route visit, so page views, heat maps, scroll depth, and engagement record nothing for it and its activity is never attributed to the next route.
+
+## Forms and inputs
+
+`formSubmits` records that a form was submitted. `inputChanges` records that a field changed. Neither reads the value that was typed, submitted, or selected. Password inputs, hidden inputs, contenteditable text, and ignored subtrees never produce these events.
+
+```tsx
+<AnalyticsProvider
+  endpoint="/api/events"
+  options={{ capture: { formSubmits: true, inputChanges: true } }}
+/>
+```
+
+## Frustration clicks
+
+`frustrationClicks` sends one `frustration_click` when the same target receives three or more pointer clicks within one second. The target is one live element, or elements that share a `data-analytics-name`, so repeated clicks across instances of the same control group together. Keyboard activation does not count. The switch listens independently, so it works with `clicks` off, and enabling it does not enable ordinary click events.
+
+```tsx
+<AnalyticsProvider endpoint="/api/events" options={{ capture: { frustrationClicks: true } }} />
+```
+
+## Heat maps
+
+`heatMaps` aggregates pointer time, clicks, and keyboard focus entries on a 10 × 10 grid normalized to the visible viewport. Mouse and pen positions are sampled every 250 ms while the pointer is inside the page; touch movement is not cursor movement. Focus entries record the move, never the key that caused it. The summary is sent on route change, page exit, every 30 seconds, and when capture stops, and each send resets the period so a grid is never resent.
+
+Raw coordinates, pointer trails, and pointer identifiers do not leave the browser. The payload is a `HeatMapSummary`; see the [event contract](/sdk/event-contract).
+
+```tsx
+<AnalyticsProvider endpoint="/api/events" options={{ capture: { heatMaps: true } }} />
+```
+
+## Scroll depth
+
+`scrollDepth` records the deepest point of the page a visit has shown, rounded down to 0, 25, 50, 75, or 100 percent. It sends on route change, page exit, and when capture stops, and only when the visit got deeper, so one visit sends at most five events. It has no periodic flush and does not depend on `heatMaps`. The payload is a `ScrollDepthSummary`.
+
+```tsx
+<AnalyticsProvider endpoint="/api/events" options={{ capture: { scrollDepth: true } }} />
+```
+
+## Engagement
+
+`engagement` counts foreground time per visit: only while the tab is visible, only on an accepted route, and only while activity happened within the last 30 seconds. Hidden time and idle time never reach `activeMs`. One cumulative `EngagementSummary` is sent per visit on route change, page exit, and when the switch turns off. While the switch is on, the measure keeps one one-second interval and one passive activity listener set; with the switch off, it adds neither.
+
+```tsx
+<AnalyticsProvider endpoint="/api/events" options={{ capture: { engagement: true } }} />
+```
+
+## Changing switches after mount
+
+Capture options can change after mount. Render the provider with no switches, read your consent manager's stored decision, then set the switches that decision allows. A click that a reload forgets is not a consent decision.
+
+## What is never sent
+
+The SDK does not read field values, keystrokes, password data, hidden inputs, contenteditable text, or arbitrary page text. It records no key names and no selected options. Read [Privacy and exclusions](/sdk/privacy-and-exclusions) for the full boundary.
+
+### Ignored subtrees
+
+Add `data-analytics="ignore"` to a subtree to exclude it from every capture category. Nothing inside it produces an event, including clicks, focus, pointer time, and scroll depth.
+
+```tsx
+<section data-analytics="ignore">
+  <BillingForm />
+</section>
+```
+
+### Sensitive fields
+
+Password and hidden inputs are skipped even without the exclusion attribute, because the input listener never creates an event for them.
+
+```html
+<input type="password" autocomplete="current-password" />
+```
+
+### Explicit events are unaffected
+
+The switches govern automatic capture only. Calls to `track()` and `trackComponentEvent()` send when you make them, including inside an ignored subtree, so an intent you record explicitly is never silently dropped.
+
+```tsx
+const analytics = useAnalytics()
+
+analytics.trackComponentEvent('billing_form', 'submit', {
+  plan: 'team',
+})
+```
