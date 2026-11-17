@@ -434,7 +434,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-018 — Ship Core Web Vitals from a separate performance entry
 
-**Status:** Open. Blocked by [#37](https://github.com/lennythecreator/tracky/issues/37) for the in-scope measures and their bounds.
+**Status:** Complete. The separate `tracky/performance` entry exposes `observePerformance(analytics)`, which reads buffered LCP, CLS, and INP entries and sends one `performance` event per page view with only the metrics the browser reported. It adds no polling, disconnects its observers on cleanup, and nothing in the root entry imports it.
 
 **Priority:** After T-015
 **GitHub:** [#40](https://github.com/lennythecreator/tracky/issues/40)

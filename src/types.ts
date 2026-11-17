@@ -69,6 +69,20 @@ export type EngagementSummary = {
 }
 
 /**
+ * Payload of a `performance` event: the Core Web Vitals available for one page
+ * view. An absent field was not measured; it is not zero. Exported from
+ * `tracky/performance`, not from the root entry.
+ */
+export type PerformanceSummary = {
+  /** Largest Contentful Paint, in milliseconds. */
+  lcpMs?: number
+  /** Cumulative Layout Shift, rounded to four decimals. A measured zero is sent. */
+  cls?: number
+  /** Interaction to Next Paint: the 98th percentile interaction duration, in milliseconds. */
+  inpMs?: number
+}
+
+/**
  * Payload of a `heatmap` event: one period of one visit to one route. The
  * event's `route` is the route the visit was on. Each grid is row-major,
  * `columns × rows` long, over the visible viewport (index 0 is top left).

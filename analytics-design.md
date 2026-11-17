@@ -1,6 +1,6 @@
 # Tracky Analytics Design
 
-**Status:** Implemented. The event envelope, capture switches, navigation handling, frustration clicks, heat maps, scroll depth, and delivery behavior described here are in the current SDK. Engagement and performance are defined in ADR 0003 and not implemented. This document is the working contract for agents changing analytics capture, event schemas, or delivery; if `src/` and this guide disagree, treat it as a defect and fix both together. Product scope and status remain in `product.md`.
+**Status:** Implemented. The event envelope, capture switches, navigation handling, frustration clicks, heat maps, scroll depth, engagement, performance, and delivery behavior described here are in the current SDK. This document is the working contract for agents changing analytics capture, event schemas, or delivery; if `src/` and this guide disagree, treat it as a defect and fix both together. Product scope and status remain in `product.md`.
 
 Before changing analytics tracking, read this guide together with `product.md`, `README.md`, and `AGENTS.md`. Update the implementation and relevant documentation together. Keep current scaffold status in `product.md` accurate.
 
@@ -111,11 +111,11 @@ The grid payload is `HeatMapSummary` in `src/types.ts`, and the periodic flush i
 
 ### Engagement and performance
 
-[ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) fixes these measures. Engagement capture ships; performance capture does not yet.
+[ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) fixes these measures. Both capture surfaces ship.
 
 - **Active session.** `capture.engagement` is off by default and enables no other category. It sends one `engagement` event per visit with an `EngagementSummary` payload: `visitId`, `visitStartedAt`, `activeMs`, and `foregroundMs`. Time counts only while the tab is visible, the visit is on an accepted route, and the last pointer, key, scroll, or touch activity was within 30 seconds; hidden time never counts, and idle time stops counting. The payload is cumulative for the visit, so the endpoint keeps the largest `activeMs` per `visitId`, and a visit that resumes after being hidden keeps its ID and totals. The module owns one one-second interval, running only while the tab is visible, and one passive activity listener set that records a timestamp and reads nothing from the event; both are removed when the switch turns off.
 - **Feature usage.** Derived at the endpoint from `component_interaction` events and developer-named events. The SDK emits nothing extra.
-- **Performance.** The separate `tracky/performance` entry exposes `observePerformance(analytics)` and sends one `performance` event per page view with a `PerformanceSummary` payload: `lcpMs`, `cls`, and `inpMs`, each present only when the browser provided it. It reads buffered `PerformanceObserver` inputs, never polls, and adds nothing to the root entry.
+- **Performance.** The separate `tracky/performance` entry exposes `observePerformance(analytics)` and sends one `performance` event when the page is hidden or unloaded, with a `PerformanceSummary` payload: `lcpMs`, `cls`, and `inpMs`, each present only when the browser provided it. A measured CLS of zero is sent; an unmeasured metric is omitted. It reads buffered `largest-contentful-paint`, `layout-shift`, and `event` timing entries, never polls, and adds nothing to the root entry.
 
 The SDK sends measurements only. Cross-visit comparison, percentiles, dashboards, and retention belong to the endpoint. No measure identifies a person, spans sessions, or carries entry text, URLs, selectors, or keystrokes.
 

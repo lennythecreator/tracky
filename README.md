@@ -1,6 +1,6 @@
 # Tracky
 
-A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped random ID. Engagement and performance measures are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) and not implemented yet.
+A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped random ID. Engagement time and the Core Web Vitals ship opt-in, and [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) records their measures and bounds.
 
 ## Status
 
@@ -157,9 +157,43 @@ Failed requests are retried with capped exponential backoff while the page remai
 
 Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the buffer. When the buffer is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
 
-### Performance (planned)
+## Performance
 
-The Core Web Vitals LCP, CLS, and INP are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) and not implemented yet. A separate `tracky/performance` entry would send them once per page view, and an app that never imports it would load none of that code. Engagement time, the other measure in that record, ships as `capture.engagement` above.
+LCP, CLS, and INP ship from a separate entry, so an app that imports only `tracky` loads no observer code. Call `observePerformance` once in an effect with the client from `useAnalytics()`:
+
+```tsx
+'use client'
+
+import { useEffect } from 'react'
+import { useAnalytics } from 'tracky'
+import { observePerformance } from 'tracky/performance'
+
+export function PagePerformance() {
+  const analytics = useAnalytics()
+  useEffect(() => observePerformance(analytics), [analytics])
+  return null
+}
+```
+
+Render it inside `AnalyticsProvider`. The returned cleanup disconnects the observers, so the effect returns it as is.
+
+Tracky sends one `performance` event when the page is hidden or unloaded, or when the component unmounts. The payload carries only the metrics the browser reported:
+
+```ts
+type PerformanceSummary = {
+  lcpMs?: number
+  cls?: number
+  inpMs?: number
+}
+```
+
+`lcpMs` is the last largest contentful paint entry, `cls` is the layout shift total without recent input rounded to four decimals, and `inpMs` is the 98th percentile interaction duration. An absent field was not measured, while a measured CLS of zero is sent as `0`. No raw entries, URLs, element selectors, or text are sent.
+
+These are document-level measurements, so one summary covers the loaded document rather than each client-side route change.
+
+The entry needs `PerformanceObserver` with buffered `largest-contentful-paint`, `layout-shift`, and `event` timing entries. In a browser without them, `observePerformance` returns a cleanup and sends nothing. It reads no browser API at module load, so it is safe to import during a server render.
+
+Performance capture is separate from the `capture` switches and never turns one of them on.
 
 ## Consent
 
