@@ -382,7 +382,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-016 — Document the consent integration and defer analytics storage until consent
 
-**Status:** Open. Makes the SDK store nothing before consent and documents one copyable consent pattern. Nothing shipped yet.
+**Status:** Complete. The session ID is created on the first event, so a page that captures nothing writes no browser storage. `README.md` documents the custom-banner, Cookiebot, and vendor-neutral patterns; `analytics-design.md` records the privacy review of stored and sent fields before and after consent.
 
 **Priority:** After T-015; independent of route adapters and conversion helpers
 **GitHub:** [#38](https://github.com/lennythecreator/tracky/issues/38)
