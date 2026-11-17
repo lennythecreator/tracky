@@ -86,6 +86,8 @@ Use separate switches so developers can enable one category without enabling the
 
 Track the initial page view and actual route changes, including back/forward navigation. Use path plus query as the default route. Ignore hash-only changes unless the app's route resolver identifies them as real route changes. A link click without a route change is only a click.
 
+Keep `resolveRoute` the only integration hook. Ship dependency-free helpers for the common shapes (`pathResolver`, `hashResolver`, and `stripBasePath` for a base path) and document recipes that feed router state into the resolver; never import a router package, and never add a router dependency.
+
 When the resolver returns `null` for the current location, treat that location as not being a route visit. Page views skip it. Heat maps and scroll depth start no visit for it, so nothing is measured while it is current, no summary is sent for it, and its activity is never attributed to a later route. This applies at mount and on a later change to an ignored location.
 
 ### Frustration clicks

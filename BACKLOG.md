@@ -457,7 +457,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-019 — Make route resolvers easy for common routers
 
-**Status:** Open. The resolver hook exists; this ticket adds helpers and recipes.
+**Status:** Complete. `pathResolver`, `hashResolver`, and `stripBasePath` ship from the root entry with no router dependency, and `README.md` documents recipes for React Router v6.4+/v7, the Next.js App Router, and the Pages Router, including the route that never reaches the address bar.
 
 **Priority:** After T-010; independent of the engagement tickets
 **GitHub:** [#41](https://github.com/lennythecreator/tracky/issues/41)
