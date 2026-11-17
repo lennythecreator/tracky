@@ -56,6 +56,12 @@ export function App() {
               Provider connected
             </span>
             <a
+              href="../../docs/dist/"
+              className="text-[11px] font-bold text-[var(--pg-accent)] underline-offset-4 hover:underline"
+            >
+              Docs
+            </a>
+            <a
               href="../../index.html"
               className="text-[11px] font-bold text-[var(--pg-accent)] underline-offset-4 hover:underline"
             >

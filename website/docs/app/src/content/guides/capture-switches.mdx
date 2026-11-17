@@ -1,0 +1,29 @@
+---
+title: Capture switches
+description: What each opt-in page-wide capture switch records, and what Tracky never reads.
+order: 1
+---
+
+## Every switch is off by default
+
+Automatic capture starts with nothing enabled. Rendering `AnalyticsProvider`, or using a Tracky primitive, turns on no page-wide capture. Each switch in `options.capture` is independent, so enabling one category adds only that category's listeners.
+
+### Page views and clicks
+
+`pageViews` records the initial load and each real route change, with path plus query as the route. `clicks` records safe element metadata for buttons, links, and named elements. A link click stays a click; navigation shows up as a page view when the route actually changes.
+
+### Forms and inputs
+
+`formSubmits` records that a form was submitted. `inputChanges` records that a field changed. Neither reads the value that was typed, submitted, or selected.
+
+## What is never sent
+
+The SDK does not read field values, keystrokes, password data, hidden inputs, contenteditable text, or arbitrary page text. It records no key names and no selected options.
+
+### Ignored subtrees
+
+Add `data-analytics="ignore"` to a subtree to exclude it from every capture category. Nothing inside it produces an event, including clicks, focus, pointer time, and scroll depth.
+
+### Sensitive fields
+
+Password and hidden inputs are skipped even without the exclusion attribute, because the capture listener never creates an event for them.

@@ -199,6 +199,17 @@ Colors, radii, and font family come from CSS variables. [`registry/theme/tokens.
 
 Tracking is opt-in. Automatic interaction capture is off unless enabled. The SDK does not collect text typed into fields, and ignores password inputs, editable elements, and ignored subtrees. Input-change capture listens for `change` on `input`, `select`, and `textarea` only: a contenteditable editor never produces an event, even if a script dispatches a `change` at it, and nothing reads a field value or an editor's text. Review your consent and retention requirements before enabling collection. Never put secrets in event context. The endpoint must accept JSON POST requests from your app's origin.
 
+## Docs site
+
+The documentation app is in `website/docs/`: a Vite + React app whose pages are MDX files. Run it with hot reload, or build the static output it ships with the site:
+
+```sh
+npm run dev:docs
+npm run build:docs
+```
+
+Content lives in `website/docs/app/src/content/`. Each folder has a `meta.json` that lists its pages in order and names the sidebar section, so a new page is a file plus its entry in that list. The build fails with the file named when a page is missing from `meta.json` or a listed page has no file. The app sends no events: it mounts no analytics provider and makes no request of its own. The decision and its trade-offs are in [ADR 0004](docs/adr/0004-docs-site.md).
+
 ## Development
 
 ```sh
