@@ -7,6 +7,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig, type Plugin } from 'vite'
 import { checkDocs } from './shared/check.ts'
+import { buildSearchIndex } from './shared/search-index.ts'
 import { nodeNextSourceImports } from '../shared/node-next.ts'
 
 const docsDir = path.dirname(fileURLToPath(import.meta.url))
@@ -33,12 +34,57 @@ function docsContent(): Plugin {
   }
 }
 
+/**
+ * Build the search index once at build start, serve it in dev, and emit it as
+ * a static asset. A missing or oversized index fails the build instead of
+ * shipping a search box that cannot answer.
+ */
+function docsSearch(): Plugin {
+  let payload: string | undefined
+
+  const build = () => {
+    const built = buildSearchIndex(contentDir)
+    payload = built.json
+    return built
+  }
+
+  return {
+    name: 'tracky-docs-search',
+    buildStart() {
+      try {
+        build()
+      } catch (error) {
+        this.error(`Docs search index could not be generated: ${(error as Error).message}`)
+      }
+    },
+    configureServer(server) {
+      server.middlewares.use((request, response, next) => {
+        if ((request.url ?? '').split('?')[0] !== '/search-index.json') return next()
+
+        try {
+          const { json } = build()
+          response.setHeader('Content-Type', 'application/json')
+          response.end(json)
+        } catch (error) {
+          response.statusCode = 500
+          response.end(String(error))
+        }
+      })
+    },
+    generateBundle() {
+      if (!payload) return
+      this.emitFile({ type: 'asset', fileName: 'search-index.json', source: payload })
+    },
+  }
+}
+
 export default defineConfig(({ command }) => ({
   root: appDir,
   // On the site the app is served from `/docs/dist/`; in dev it is the root.
   base: command === 'serve' ? '/' : '/docs/dist/',
   plugins: [
     docsContent(),
+    docsSearch(),
     nodeNextSourceImports(),
     mdx({ remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter] }),
     react(),

@@ -6,6 +6,7 @@ import { FOCUS } from './focus'
 import { Toc } from './Toc'
 import { CodeBlock } from './CodeBlock'
 import { mdxComponents } from './mdx'
+import { SearchDialog } from './SearchDialog'
 import { ThemeToggle } from './ThemeToggle'
 
 interface SidebarProps {
@@ -128,6 +129,7 @@ export function App() {
             <a href="/" className={`hidden text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline ${FOCUS}`}>
               Home
             </a>
+            <SearchDialog navigate={navigate} className={BUTTON} />
             <ThemeToggle className={BUTTON} />
             <button
               type="button"

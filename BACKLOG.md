@@ -661,7 +661,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-028 — Add keyboard-first docs search
 
-**Status:** Open. Sequenced after the first docs release.
+**Status:** Complete. `search-index.json` is built from titles, descriptions, headings, and body text, with code fences and prop-only MDX components excluded, and the docs build fails when it cannot be generated or exceeds 64 KiB. `SearchDialog` is a labelled native dialog opened by Cmd/Ctrl+K or the header button; it fetches the index once on first open, groups results by page, moves the active result with arrows, opens the matching heading anchor on Enter, announces the count, and returns focus to the opener on close. `test/docs-search.test.ts` covers the index, the budget, and subheading anchors; `test/docs-search-dialog.test.tsx` covers the single request, Enter, arrows, and focus.
 
 **Priority:** After T-021 and T-022
 **GitHub:** [#50](https://github.com/lennythecreator/tracky/issues/50)
