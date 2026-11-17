@@ -1,0 +1,90 @@
+---
+title: Getting started
+description: Render the provider against your endpoint, send a first event, and check what the SDK posts.
+order: 1
+status: unreleased
+---
+
+## Before you start
+
+You need a client-side React app on React 18.2 or newer and an HTTP endpoint that accepts `POST` requests. Tracky has no other runtime dependency and React is a peer dependency.
+
+The package is not published yet. The install commands below apply once a release exists; there is nothing on npm to install today. Delivery and the event shape are implemented, and the [event contract](/sdk/event-contract) describes what your endpoint will receive.
+
+## Install
+
+<CodeTabs
+  tabs={[
+    { label: 'npm', language: 'sh', code: 'npm install tracky' },
+    { label: 'pnpm', language: 'sh', code: 'pnpm add tracky' },
+    { label: 'yarn', language: 'sh', code: 'yarn add tracky' },
+  ]}
+/>
+
+The package is ESM and ships type declarations. The root entry exports the provider, the hooks, the client factory, the route helpers, and the event types. Performance measurement lives in the separate `tracky/performance` entry.
+
+## Render the provider
+
+`AnalyticsProvider` takes the `AnalyticsProviderProps` shape: a required `endpoint`, an optional `options` object of type `AnalyticsOptions`, and your children.
+
+```tsx
+import { AnalyticsProvider } from 'tracky'
+
+export function App({ children }: { children: React.ReactNode }) {
+  return (
+    <AnalyticsProvider
+      endpoint="https://your-api.example.com/events"
+      options={{ context: { app: 'dashboard' } }}
+    >
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+The provider renders no UI and makes no request on mount. It also turns on no page-wide capture: every switch in `options.capture` starts off.
+
+Only `endpoint` recreates the client. Changing any other option after mount applies to the next event, which is what lets you turn a capture switch on after a consent decision. The provider uses browser APIs after mounting, so it fits a React app or a client component behind a framework boundary.
+
+If you need the client outside React, `createAnalyticsClient(endpoint, options)` returns the same `AnalyticsClient` interface the provider exposes. The provider is still the only place that attaches page-wide capture.
+
+## Send your first event
+
+`useAnalytics()` returns the client inside the provider. Call `track()` with an event type, a flat context, and an optional payload.
+
+```tsx
+import { useAnalytics } from 'tracky'
+
+type ExportSummary = { rows: number; columns: string[] }
+
+export function ExportButton() {
+  const analytics = useAnalytics()
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        analytics.track<ExportSummary>(
+          'report_exported',
+          { format: 'csv' },
+          { rows: 120, columns: ['date', 'total'] },
+        )
+      }
+    >
+      Export report
+    </button>
+  )
+}
+```
+
+`track()` sends when you call it, whatever the capture switches say. `useAnalytics()` throws outside a provider; use `useAnalyticsOptional()` if a component must render without one.
+
+## Check what was sent
+
+The SDK posts batches as JSON with a top-level `events` array. Your endpoint answers with a 2xx status for a successful batch. A failure is retried within the documented limits and then reported through `options.onDeliveryError`; see [Delivery and retries](/sdk/delivery-and-retries).
+
+To send the buffer immediately, call `await analytics.flush()`. The SDK also flushes when the page is hidden or unloaded, so short visits still deliver what they tracked.
+
+## Next step
+
+Continue with [Tracking events](/sdk/tracking-events) to choose between explicit events, component interactions, and structured payloads. Before you turn on automatic capture, read [Privacy and exclusions](/sdk/privacy-and-exclusions).

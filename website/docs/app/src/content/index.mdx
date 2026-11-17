@@ -1,85 +1,45 @@
 ---
-title: Tracky documentation
-description: How to install the analytics SDK, decide what it captures, and read what it sends.
+title: Overview
+description: What the Tracky analytics SDK sends, where every event goes, and which page records what.
 order: 1
+status: unreleased
 ---
 
-## What this site covers
+## What Tracky does
 
-The docs cover the analytics SDK and the component library that the `tracky` CLI installs as source. They do not describe a hosted service: your endpoint receives every event, and it owns validation, storage, retention, and access.
+Tracky is a React analytics SDK. You call `analytics.track()` for the product events you want to measure, and the SDK buffers them in the browser and posts a JSON batch to the endpoint you configure. Your endpoint owns validation, storage, retention, dashboards, and access.
 
-The sidebar on the left is authored by `meta.json` in each content folder, and the list on the right is built from the headings on the page you are reading. The pager at the bottom follows the same order.
+Tracky is not a hosted analytics service. It does not run a collector, a database, or a dashboard for you, and it never sends to an endpoint you did not configure.
 
-## Install
+The component library is separate: `tracky add` copies React primitive source into your app. The primitives are not exported by the SDK package. Neither the SDK nor the component library is published yet, so the install commands in these pages describe the release steps rather than a package you can install today.
 
-The package is not published yet. Once a release is available:
+## The event path
 
-<CodeTabs
-  tabs={[
-    { label: 'npm', language: 'sh', code: 'npm install tracky' },
-    { label: 'pnpm', language: 'sh', code: 'pnpm add tracky' },
-    { label: 'yarn', language: 'sh', code: 'yarn add tracky' },
-  ]}
-/>
+<Steps>
 
-React 18 or newer is a peer dependency. Tracky has no other runtime dependency.
+1. Your app calls `analytics.track()`, `analytics.trackComponentEvent()`, or a Tracky primitive emits its documented action.
+2. The SDK adds an ISO timestamp, the current route, your context, and a random tab-scoped session ID.
+3. The SDK holds the event in a bounded buffer and posts batches to the endpoint you set on `AnalyticsProvider`.
+4. Your endpoint validates, stores, and queries the events.
 
-## Render the provider
+</Steps>
 
-`AnalyticsProvider` takes the endpoint that receives events. It renders no UI, makes no request on its own, and turns on no page-wide capture: you choose each switch.
+Page-wide capture is a separate, opt-in layer. Mounting the provider or using a primitive turns on no clicks, forms, input changes, frustration clicks, heat maps, scroll depth, or engagement time.
 
-```tsx
-import { AnalyticsProvider } from 'tracky'
+## Which page records what
 
-export function App({ children }: { children: React.ReactNode }) {
-  return (
-    <AnalyticsProvider
-      endpoint="https://your-api.example.com/events"
-      options={{ capture: { pageViews: true } }}
-    >
-      {children}
-    </AnalyticsProvider>
-  )
-}
-```
+- [Getting started](/sdk/getting-started) installs the SDK, renders the provider, and sends a first event.
+- [Tracking events](/sdk/tracking-events) covers explicit events, component interactions, and structured payloads.
+- [Capture switches](/sdk/capture-switches) lists every page-wide switch and its default.
+- [Event contract](/sdk/event-contract) documents the envelope, the batch request, and each payload type.
+- [Privacy and exclusions](/sdk/privacy-and-exclusions) states what is never read and how `data-analytics="ignore"` works.
+- [Delivery and retries](/sdk/delivery-and-retries) covers batching, flush points, retry limits, and the endpoint's job.
+- [Live examples](/guides/live-examples) renders the registry primitives and the action each one sends.
 
-The provider uses browser APIs after mounting, so it works in a React app or behind a Next.js client boundary. Only `endpoint` recreates the client; other options can change after mount and apply to the next event.
+## What the docs site does not do
 
-## Send an event
-
-`useAnalytics()` returns the client inside the provider. `track()` takes the event type, flat context, and an optional structured payload.
-
-```tsx
-import { useAnalytics } from 'tracky'
-
-type ExportSummary = { rows: number; columns: string[] }
-
-export function ExportButton() {
-  const analytics = useAnalytics()
-
-  const onExport = () =>
-    analytics.track<ExportSummary>(
-      'report_exported',
-      { format: 'csv' },
-      { rows: 120, columns: ['date', 'total'] },
-    )
-
-  return (
-    <button type="button" onClick={onExport}>
-      Export
-    </button>
-  )
-}
-```
-
-Explicit events send when you call the method. The capture switches control only automatic page-wide capture, so `track()` works with every switch off.
+The docs shell mounts no provider and sends nothing. Only a live example mounts one, against a reserved `.invalid` endpoint that the page answers itself, so interacting with an example never reaches your endpoint or any Tracky service.
 
 ## Where to start
 
-- If you are choosing what to collect, start with the capture switches guide.
-- If you are wiring an endpoint, the event shape in the repository README is the contract.
-- If you are adding a primitive, read the component conventions before you write a file.
-
-## What the docs do not do
-
-The pages send nothing on their own. The shell mounts no provider; a live example mounts one against a reserved endpoint that the page answers itself, so reading the docs never reaches your endpoint.
+If you are wiring an endpoint and a first event, start with [Getting started](/sdk/getting-started). If you are deciding what to collect, read [Capture switches](/sdk/capture-switches) first, then check the privacy boundaries beside it.

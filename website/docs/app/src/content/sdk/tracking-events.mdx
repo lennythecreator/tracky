@@ -1,0 +1,76 @@
+---
+title: Tracking events
+description: Explicit events, component interactions, and typed payloads, and what belongs in each field.
+order: 2
+status: unreleased
+---
+
+## Three ways to record work
+
+- **Explicit events** call `analytics.track()` when your code decides something happened. They work with every capture switch off.
+- **Component interactions** come from Tracky primitives, or from `analytics.trackComponentEvent()` when you want a component-shaped event from your own UI.
+- **Page-wide capture** is automatic and off until you enable one switch. It records page views and interaction metadata, never field values.
+
+## Track an explicit event
+
+```ts
+track<TPayload extends JsonValue = JsonValue>(
+  eventType: string,
+  context?: AnalyticsContext,
+  payload?: TPayload,
+): void
+```
+
+`eventType` is a stable name such as `report_exported`. `context` is a flat `AnalyticsContext`: string, number, boolean, or null values that you supply. `payload` is optional structured data of type `JsonValue`, which covers strings, numbers, booleans, null, arrays, and plain objects.
+
+```tsx
+analytics.track('plan_changed', { plan: 'team', source: 'settings' })
+```
+
+The event's `route` defaults to the current path plus query string, or to your route resolver's output. The SDK adds `timestamp` and `sessionId`; you do not pass them.
+
+## Record a component interaction
+
+`trackComponentEvent(component, action, context?)` sends an event with `eventType: 'component_interaction'`. The component name and action go in a top-level `component` object with the `AnalyticsComponent` shape, not into `context`.
+
+```tsx
+analytics.trackComponentEvent('billing_form', 'submit', { plan: 'team' })
+```
+
+The primitives use the same call with fixed actions: `button` / `activate`, `checkbox` / `toggle`, `switch` / `toggle`, and `select` / `change`. Enter and Space on a button produce `activate`, the same as a pointer click. Only the analytics name travels in context; labels, checked state, and selected options never do.
+
+## Send structured data as a payload
+
+Keep structured data in `payload`, not in `context`. The third argument is typed per event, so a caller can name the shape it sends.
+
+```tsx
+type ExportSummary = { rows: number; columns: string[] }
+
+analytics.track<ExportSummary>(
+  'report_exported',
+  { format: 'csv' },
+  { rows: 120, columns: ['date', 'total'] },
+)
+```
+
+Built-in summaries use the same field: heat maps send `HeatMapSummary`, scroll depth sends `ScrollDepthSummary`, engagement sends `EngagementSummary`, and the performance entry sends `PerformanceSummary`. Each type is documented in the [event contract](/sdk/event-contract).
+
+## Types the SDK exports
+
+The root entry exports these types alongside the functions:
+
+- `AnalyticsClient`, `AnalyticsEvent`, `AnalyticsComponent`, `AnalyticsContext`, `AnalyticsOptions`, `AnalyticsProviderProps`, and `CaptureOptions`.
+- `EngagementSummary`, `HeatMapSummary`, `ScrollDepthSummary`, and `JsonValue`.
+- `RouteResolver`, the type of the `resolveRoute` option.
+
+`PerformanceSummary` is exported with `observePerformance()` from `tracky/performance`, not from the root entry.
+
+## What context is for
+
+Context carries small, developer-supplied metadata that helps you query an event later, such as a plan name, a feature flag, or an analytics name. It is not a place for credentials, personal data, form values, arbitrary props, or page text.
+
+If a value identifies a person or spans sessions, leave it out. Tracky does not add identity or stitch sessions together, and it does not inspect your context for secrets. Read [Privacy and exclusions](/sdk/privacy-and-exclusions) before you add a field.
+
+## Next step
+
+Read [Capture switches](/sdk/capture-switches) to decide which automatic signals, if any, you want beyond the events your app sends explicitly.

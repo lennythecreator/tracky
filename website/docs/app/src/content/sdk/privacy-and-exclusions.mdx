@@ -1,0 +1,67 @@
+---
+title: Privacy and exclusions
+description: The capture boundary, the exclusion attribute, and what is stored before consent.
+order: 5
+status: unreleased
+---
+
+## Page-wide capture is off by default
+
+Rendering `AnalyticsProvider` and using a Tracky primitive start no automatic capture. Every switch in [Capture switches](/sdk/capture-switches) is independent and defaults to `false`, and a component's documented action does not enable any of them.
+
+Explicit events still send when your code calls `track()` or `trackComponentEvent()`. That is your decision, not automatic collection.
+
+## What is never read or sent
+
+- Field values, typed text, and textarea content.
+- Keystrokes, key names, and which key moved focus.
+- Password and hidden input values.
+- Contenteditable text and arbitrary page text.
+- Labels, `aria-label` values, component props, and child text.
+- Selected options and checked state.
+- Cookies, identity, and cross-session identifiers.
+
+Input and form capture record that the interaction happened, with element metadata only. Heat maps record aggregate counts and sampled time, not coordinates or trails. Scroll depth records a bucket, not a scroll position. Engagement records durations, not activity contents.
+
+## The exclusion boundary
+
+Add `data-analytics="ignore"` to a subtree to exclude it from every capture category. Nothing inside it produces a click, form submit, input change, frustration click, heat map sample, focus entry, scroll contribution, or engagement activity.
+
+```tsx
+<section data-analytics="ignore">
+  <BillingForm />
+</section>
+```
+
+The attribute is read with `closest()`, so it protects the whole subtree, including elements added later. Explicit calls to `track()` and `trackComponentEvent()` inside the subtree still send, because the attribute governs automatic capture only.
+
+## Safe target metadata
+
+Automatic interaction events add only these context fields:
+
+- `tag`: the element's lowercase tag name.
+- `id`: the element's `id`, when it has one.
+- `name`: the `data-analytics-name` value, when one is set.
+- `className`: the element's class string, truncated to 120 characters.
+
+A `pageview` adds `title` from `document.title`. Nothing else is attached automatically. `data-analytics-name` is the stable label to use when you want clicks and frustration clicks grouped across rendered instances.
+
+## Storage before consent
+
+The SDK writes one `sessionStorage` key, `ui-analytics-session-id`, and only when the first event is created. A page that has not captured or tracked anything writes no browser storage. The value is a random UUID for the tab; it is not a cookie, not shared across tabs, and not kept beyond the session.
+
+If storage is blocked or full, the SDK keeps the ID in memory and continues without throwing.
+
+## Custom context is yours to control
+
+Values you pass in `context` and `payload` are sent as-is. Tracky does not inspect them for secrets or personal data. Keep credentials, personal data, form values, and page text out of both, and prefer stable labels such as `plan: 'team'` over anything that identifies a person.
+
+## Consent
+
+Tracky does not ship a consent manager and does not decide your policy. Render the provider with no capture switches, read your consent manager's stored decision, then apply the switches that decision allows. A click that a reload forgets is not a consent decision; the stored decision is.
+
+The repository README carries a custom-banner recipe, a Cookiebot recipe, and a vendor-neutral fallback. Nothing here is legal advice, and the integrator remains responsible for consent, retention, and access.
+
+## Licensing is not enforced
+
+There is no hosted license verification. The SDK does not make a network license check, and delivery never waits on one.

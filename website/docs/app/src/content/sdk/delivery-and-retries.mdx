@@ -1,0 +1,84 @@
+---
+title: Delivery and retries
+description: How Tracky batches events, when it flushes, and the retry limits your endpoint can expect.
+order: 6
+status: unreleased
+---
+
+## Delivery is batched
+
+The client holds events in a bounded in-memory buffer and posts them in batches. Two `AnalyticsOptions` values decide when:
+
+- `batchSize` defaults to `10` events.
+- `flushIntervalMs` defaults to `3000` milliseconds.
+
+```tsx
+<AnalyticsProvider
+  endpoint="/api/events"
+  options={{ batchSize: 20, flushIntervalMs: 5000 }}
+/>
+```
+
+Delivery is asynchronous. Buffering and posting never block rendering, input, or navigation.
+
+## When a flush happens
+
+The SDK flushes the buffer when:
+
+- It reaches `batchSize`.
+- The `flushIntervalMs` timer elapses.
+- You call `analytics.flush()`.
+- The page fires `pagehide` or `visibilitychange` reports the tab as hidden.
+- You call `analytics.shutdown()`.
+
+The `pagehide` and `visibilitychange` listeners belong to delivery, not capture. They stay attached with every capture switch off, read no DOM data, and create no events; they exist so buffered explicit events still leave before the page closes. Requests use `keepalive`, which gives a closing page a better chance of finishing the POST.
+
+## Retry rules
+
+Each batch gets up to `maxRetries` further attempts, defaulting to `3`. The delay starts at one second and doubles per attempt, capped at 30 seconds.
+
+- A 5xx response, 408, or 429 is retried.
+- Any other 4xx response is not retried, because resending the same request cannot succeed.
+- When the attempts run out, the SDK calls `options.onDeliveryError` with the error and drops that batch.
+
+```tsx
+<AnalyticsProvider
+  endpoint="/api/events"
+  options={{
+    maxRetries: 2,
+    onDeliveryError: (error) => console.warn('Event batch was not delivered', error),
+  }}
+/>
+```
+
+## Bounds
+
+Memory stays bounded when the endpoint is unreachable:
+
+- The buffer holds at most 1,000 events. A new event past that limit drops the oldest one.
+- At most four batches are in flight at once. A finished request starts the next waiting batch.
+- Retries are bounded; there is no durable queue, no service worker, and no replay after a reload.
+
+## `flush()` and `shutdown()`
+
+`flush()` posts the current buffer and resolves after the in-flight requests settle. `shutdown()` flushes, stops the timer, and then drops any later event. Neither method throws when the endpoint fails; failures go to `onDeliveryError`.
+
+```ts
+await analytics.flush()
+await analytics.shutdown()
+```
+
+## What the endpoint owns
+
+Your endpoint owns the guarantees that outlive the page:
+
+- Validating the event schema and rejecting or accepting the batch.
+- Storing events durably and deduplicating if a retry arrives twice.
+- Retention, access control, and dashboards.
+- Guaranteed delivery. Tracky's retry is bounded and best effort.
+
+See the [event contract](/sdk/event-contract) for the request body and payload types, and [Capture switches](/sdk/capture-switches) for when summaries trigger their own flushes.
+
+## Limits to plan for
+
+A request can still be cut off when a browser closes a page or loses connectivity. Tracky does not persist events outside memory, so the endpoint should treat a missing batch as lost rather than expect a later replay.

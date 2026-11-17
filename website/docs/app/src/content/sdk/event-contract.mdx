@@ -1,0 +1,95 @@
+---
+title: Event contract
+description: The envelope, the batch request, and the payload types your endpoint receives.
+order: 4
+status: unreleased
+---
+
+## The event envelope
+
+Every event is a JSON object with these fields. `AnalyticsEvent` is the exported type.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `eventType` | `string` | The stable event type, such as `pageview`, `click`, `component_interaction`, or an application-defined name. |
+| `timestamp` | `string` | Client event time as an ISO-8601 UTC string. |
+| `route` | `string` | The route the resolver returned, or path plus query by default. |
+| `context` | `AnalyticsContext` | Flat, JSON-safe metadata: string, number, boolean, or null values. |
+| `sessionId` | `string` | Random pseudonymous ID scoped to the browser tab. |
+| `component` | `AnalyticsComponent`, optional | `{ name, action }` on a component interaction. |
+| `payload` | `JsonValue`, optional | Structured data for an event that needs more than flat context. |
+
+`context` and `payload` are different on purpose. Context answers "what small labels should I filter this event by"; payload carries a typed structure such as a heat map grid, and belongs to exactly one event type.
+
+## A batch request
+
+The SDK posts batches with `content-type: application/json` and a body shaped like this:
+
+```json
+{
+  "events": [
+    {
+      "eventType": "report_exported",
+      "timestamp": "2026-01-01T09:00:00.000Z",
+      "route": "/reports?range=30d",
+      "context": { "format": "csv" },
+      "sessionId": "0f8fad5b-d9cb-469f-a165-70867728950e",
+      "payload": { "rows": 120, "columns": ["date", "total"] }
+    }
+  ]
+}
+```
+
+The request carries no authorization header and no cookies from Tracky. Authentication, if you need it, is yours to add at the endpoint or in front of it. There is no second endpoint and no hidden request.
+
+## Component events
+
+A component interaction has `eventType: "component_interaction"` and a top-level `component` object. The action is never duplicated into `context`.
+
+```json
+{
+  "eventType": "component_interaction",
+  "timestamp": "2026-01-01T09:00:00.000Z",
+  "route": "/settings",
+  "context": { "name": "billing_plan" },
+  "sessionId": "0f8fad5b-d9cb-469f-a165-70867728950e",
+  "component": { "name": "select", "action": "change" }
+}
+```
+
+The documented actions are `button` / `activate`, `checkbox` / `toggle`, `switch` / `toggle`, and `select` / `change`; application components choose their own names and actions.
+
+## Structured payload types
+
+| Event type | Payload type | Fields |
+| --- | --- | --- |
+| `heatmap` | `HeatMapSummary` | `visitId`, `visitStartedAt`, `periodStartedAt`, `periodEndedAt`, `columns`, `rows`, `sampleIntervalMs`, and the row-major arrays `pointerMs`, `clicks`, and `focusEntries`. |
+| `scroll_depth` | `ScrollDepthSummary` | `visitId`, `visitStartedAt`, and `maxDepthPercent`, one of 0, 25, 50, 75, or 100. |
+| `engagement` | `EngagementSummary` | `visitId`, `visitStartedAt`, `activeMs`, and `foregroundMs`. |
+| `performance` | `PerformanceSummary` | Optional `lcpMs`, `cls`, and `inpMs`; an absent field was not measured, which is not the same as zero. |
+
+`HeatMapSummary` is scoped to one period of one visit to one route. Periods for the same `visitId` do not overlap, so sum them to get the visit. Each grid is `columns × rows` long, row-major, over the visible viewport; index 0 is the top-left region.
+
+`ScrollDepthSummary` and `EngagementSummary` are cumulative for their visit, so keep the largest value per `visitId`. Every summary carries a random `visitId` and `visitStartedAt`; neither is stored or reused.
+
+`PerformanceSummary` ships from the separate `tracky/performance` entry with `observePerformance(analytics)`. Nothing in the root entry imports it.
+
+## Session ID and storage
+
+`sessionId` is a random v4 UUID. The SDK reads or writes it in `sessionStorage` under `ui-analytics-session-id` when it creates the first event, not when the provider mounts. A page that captures nothing and never calls `track()` writes no browser storage.
+
+The ID lives for one browser tab. There is no cookie, no cross-session identifier, and no identity stitching. When storage is unavailable or full, the ID stays in memory for the page and is not persisted.
+
+## Routes and ignored locations
+
+Without a resolver, `route` is `window.location.pathname` plus `window.location.search`, and a hash-only change keeps the same route. Pass `resolveRoute` to read router state or a hash route instead. Its type is `RouteResolver`; it receives a `Location` and returns a string or `null`.
+
+`null` marks an ignored location. No page view, heat map, scroll-depth, or engagement visit starts there, and its activity is not attributed to the next route. `pathResolver`, `hashResolver`, and `stripBasePath` cover the common shapes without adding a router dependency.
+
+## What the endpoint receives
+
+The endpoint owns the parts of the contract that outlive the browser: schema validation, authorization, storage, deduplication, retention, access control, and any dashboard. Tracky retries a failed batch within its bounded limits and then drops it; it does not store events durably. See [Delivery and retries](/sdk/delivery-and-retries).
+
+## Fields that never appear
+
+No field value, keystroke, password, hidden-input value, contenteditable text, page text, label, prop, key name, or selected option is read or sent. Page views add `document.title`; automatic capture adds only the safe target metadata documented in [Privacy and exclusions](/sdk/privacy-and-exclusions).
