@@ -16,7 +16,7 @@ Then visit `http://localhost:5173`. The app source is in `playground/app/`; the 
 npm run build:playground
 ```
 
-On the served site the playground is at `http://localhost:8000/playground/`, which forwards to `playground/dist/`. The Vite app root is `playground/app/`, so `playground/index.html` is a plain page rather than the app entry — opening the app's own `index.html` over a static server shows nothing.
+After a build, the app is at `playground/dist/`; open `http://localhost:8000/playground/dist/` when serving this folder directly. On the deployed site the playground is at `/playground/`, which `vercel.json` rewrites to the built app. The Vite app root is `playground/app/`, so opening the app's own `index.html` over a static server shows nothing.
 
 ## Docs
 
@@ -27,11 +27,19 @@ npm run dev:docs
 npm run build:docs
 ```
 
-The dev server serves the app at `http://localhost:5173`, and the built output is in `docs/dist/`. On the site the docs are at `/docs/`, which the deployment config rewrites to the app, so a deep link or a reload lands on the same page. The shell mounts no analytics provider and sends no analytics requests; search loads one static index when it first opens, and the live examples mount a provider against a reserved `.invalid` endpoint that the page answers itself. The docs have light and dark schemes over the same theme tokens: the first visit follows the system preference, the header toggle stores an explicit choice, and a pre-paint script applies either one before the first frame. The stack, the alternatives that were rejected, and the no-per-page-HTML trade-off are in [`../docs/adr/0004-docs-site.md`](../docs/adr/0004-docs-site.md).
+The dev server serves the app at `http://localhost:5173`, and the built output is in `docs/dist/`; open `http://localhost:8000/docs/dist/` when serving this folder directly. On the site the docs are at `/docs/`, which the deployment config rewrites to the app, so a deep link or a reload lands on the same page. The shell mounts no analytics provider and sends no analytics requests; search loads one static index when it first opens, and the live examples mount a provider against a reserved `.invalid` endpoint that the page answers itself. The docs have light and dark schemes over the same theme tokens: the first visit follows the system preference, the header toggle stores an explicit choice, and a pre-paint script applies either one before the first frame. The stack, the alternatives that were rejected, and the no-per-page-HTML trade-off are in [`../docs/adr/0004-docs-site.md`](../docs/adr/0004-docs-site.md).
 
 ## Page metadata and icons
 
 `index.html` carries the canonical URL, description, Open Graph and Twitter card tags, and the theme colour. `og-image.png` is the 1200×630 share image named by `og:image`.
+
+Regenerate the share image and the icon set from the same design with the locally installed Chrome:
+
+```sh
+node scripts/site-assets.mjs
+```
+
+The script writes `og-image.png` at 1200×630, `favicon.ico` at 16/32/48, and `apple-touch-icon.png` at 180×180. It downloads no browser, contacts no network, and accepts `CHROME_PATH` when Chrome is not in its default location.
 
 The icon set lives at the root of this folder: `favicon.svg` (primary, the blue route mark), `favicon.ico` (16/32/48 fallback), and `apple-touch-icon.png` (180×180, square so iOS can apply its own rounding). The playground reuses these files; `playground/vite.config.ts` copies them into `playground/dist/` and serves them in dev, so there is no second copy to keep in sync.
 

@@ -123,7 +123,7 @@ export function App() {
             </span>
           </a>
           <div className="ml-auto flex items-center gap-2">
-            <a href="/playground/dist/" className={`hidden text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline ${FOCUS}`}>
+            <a href="/playground/" className={`hidden text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline ${FOCUS}`}>
               Playground
             </a>
             <a href="/" className={`hidden text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline ${FOCUS}`}>
@@ -148,6 +148,19 @@ export function App() {
             id="docs-mobile-nav"
             className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-border bg-background px-4 py-4 lg:hidden"
           >
+            <div className="mb-5 border-b border-border pb-4 sm:hidden">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                Site
+              </p>
+              <div className="flex gap-5 text-sm font-semibold">
+                <a href="/" className={`text-muted-foreground hover:text-foreground ${FOCUS}`}>
+                  Home
+                </a>
+                <a href="/playground/" className={`text-muted-foreground hover:text-foreground ${FOCUS}`}>
+                  Playground
+                </a>
+              </div>
+            </div>
             {nav}
           </div>
         ) : null}

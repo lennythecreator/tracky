@@ -43,9 +43,10 @@ function siteIcons(): Plugin {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   root: appDir,
-  base: './',
+  // The deployed app is served from `/playground/`; its assets stay in `dist/`.
+  base: command === 'serve' ? '/' : '/playground/dist/',
   plugins: [nodeNextSourceImports(), siteIcons(), react(), tailwindcss()],
   resolve: {
     alias: { tracky: path.join(repoRoot, 'src', 'index.ts') },
@@ -57,4 +58,4 @@ export default defineConfig({
     outDir: path.join(playgroundDir, 'dist'),
     emptyOutDir: true,
   },
-})
+}))

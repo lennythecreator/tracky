@@ -30,21 +30,31 @@ rounded:
   lg: "16px"
   xl: "20px"
 spacing:
-  sm: "8px"
-  md: "16px"
-  lg: "24px"
-  xl: "48px"
+  "1": "4px"
+  "2": "8px"
+  "3": "12px"
+  "4": "16px"
+  "5": "20px"
+  "6": "24px"
+  "8": "32px"
+  "10": "40px"
+  "12": "48px"
+  "16": "64px"
+  "20": "80px"
+  "24": "96px"
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.neutral-bg}"
-    rounded: "13px"
-    padding: "14px 18px"
+    rounded: "12px"
+    padding: "12px 20px"
+    minHeight: "50px"
   button-secondary:
     backgroundColor: "{colors.neutral-bg}"
     textColor: "{colors.ink}"
     rounded: "12px"
     padding: "12px 16px"
+    minHeight: "44px"
 ---
 
 ## Overview
@@ -64,15 +74,27 @@ Use white for the main canvas and pale blue for diagram and event-example surfac
 
 ## Typography
 
-Use the self-hosted Plus Jakarta Sans files in `website/fonts/` for headings, prose, and code. Headings are bold with modest negative tracking; avoid compressed letter spacing. Code samples, paths, and event data use the same family so the page keeps one voice; rely on the code panel's background, padding, and syntax colour for separation instead of a second typeface.
+Use the self-hosted Plus Jakarta Sans files in `website/fonts/` for headings, prose, and code. One scale lives in `website/styles.css`: `--text-2xs` through `--text-xl`, a fluid `--text-2xl` for section headings, and the fluid `--text-display` pinned at `clamp(2.9rem, 5.3vw, 5.4rem)` for the hero. Headings use `--leading-heading` and `--tracking-heading`; the hero uses `--leading-display` and `--tracking-display`. Paragraphs cap at the `--measure-*` tokens rather than fixed widths.
+
+Do not add a selector-specific font size or line height. A new size is a token addition in `:root`, and every heading in a section uses the same scale step. Code samples, paths, and event data use the same family so the page keeps one voice; rely on the code panel's background, padding, and syntax colour for separation instead of a second typeface.
 
 ## Layout
 
 The page uses a centered content column up to 1160px. At desktop widths, pair the hero message with the event-path poster. At tablet and mobile widths, stack them and preserve the React → Tracky → endpoint sequence. Keep code examples horizontally scrollable rather than shrinking them until unreadable.
 
+Spacing is a 4px scale, `--space-1` through `--space-24`; section rhythm is `--space-section`. Every section heading uses the same pattern: a `.section-kicker` label, the heading, and an intro capped at `--measure-intro`. Tinted bands (`trust-band`, `event-section`, the footer) meet white with a hairline `border-block` in `--line`.
+
 ## Elevation & Depth
 
-Prefer clear surface color and a fine blue-gray border. Use soft, low-opacity shadows only for the primary action and floating navigation. Avoid decorative blur beyond the sticky header material.
+Prefer clear surface color and a fine blue-gray border. Use soft, low-opacity shadows only for the primary action and floating navigation. Avoid decorative blur beyond the sticky header material. Shadows are the `--shadow-xs` through `--shadow-panel` tokens, built from the ink colour with `color-mix`; do not add a one-off shadow.
+
+## Motion
+
+One timing set: `--duration-fast` (140ms), `--duration-base` (170ms), and `--duration-slow` (240ms), with `--ease-out` for movement and `--ease-standard` for colour. Every transition and keyframe uses them. Under `prefers-reduced-motion: reduce`, all animation and transition durations collapse, and the route animation's pause control is hidden.
+
+## Focus
+
+Every control uses the same `:focus-visible` treatment: a 3px `--sky-600` ring at a 4px offset. Hover changes colour, border, or a one-pixel lift; active returns the lift or scales the control to 0.98. Interactive targets are at least 24px in one dimension, and the header and mobile-navigation controls are at least 44px.
 
 ## Shapes
 
