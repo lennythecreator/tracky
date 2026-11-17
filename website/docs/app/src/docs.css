@@ -41,7 +41,7 @@
   --radius-md: var(--tracky-radius-md);
   --radius-lg: var(--tracky-radius-lg);
   --font-sans: var(--tracky-font-sans);
-  --font-mono: var(--tracky-font-sans);
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 :root {
