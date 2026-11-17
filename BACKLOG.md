@@ -640,7 +640,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-027 — Document each registry component
 
-**Status:** Open. Depends on T-024 for live examples.
+**Status:** Complete. `/components` and seven pages in registry order document the four sending primitives and the three silent ones. Each page carries the `tracky add` command, a live example (including `sendsEvents={false}` demos for `Input`, `Textarea`, and `Label`), a props table with defaults, the exact action string, keyboard and screen-reader behavior, the tokens the source uses, and a link to its registry file. The shared explanation of `analyticsName`, `data-tracky-component`, and provider-absent behavior lives on the index, and `test/docs-components.test.ts` checks every page against `registry/registry.json`.
 
 **Priority:** After T-024
 **GitHub:** [#49](https://github.com/lennythecreator/tracky/issues/49)

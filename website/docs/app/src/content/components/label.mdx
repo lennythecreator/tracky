@@ -1,0 +1,50 @@
+---
+title: Label
+description: A native label bound with htmlFor, with no analytics of its own.
+order: 5
+status: unreleased
+---
+
+## Install
+
+```sh
+npx tracky add label
+```
+
+`Label` requires the `utils` item for `cn()` and lists no analytics dependency. The package is not published yet, so install `utils` alongside it once a release exists.
+
+## Example
+
+<Example name="label" sendsEvents={false} />
+
+Click the label: the browser moves focus to the bound field. The label itself never sends an event.
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'htmlFor', type: 'string', description: 'The id of the control this label names.' },
+    { name: '...props', type: 'LabelHTMLAttributes<HTMLLabelElement>', description: 'Native attributes, handlers, and ref pass through.' },
+  ]}
+/>
+
+## Action
+
+`Label` sends no component event and does not render `data-tracky-component`. It has no analytics code, so clicking or focusing the label cannot reach the SDK from this component.
+
+## Keyboard and screen readers
+
+- A native `label` associated with a control names that control for assistive technology.
+- Clicking the label moves focus to the control; no JavaScript is involved.
+- Focus styling belongs to the control, not the label.
+- The label is not focusable on its own, so it adds no tab stop.
+
+Use `htmlFor` with a matching `id`, or wrap the control inside the label. For a control without visible text, give the control an `aria-label` rather than leaving it unnamed.
+
+## Theme tokens
+
+`text-foreground`, `font-sans`, and the inherited font size and weight used by the field it names.
+
+## Source
+
+[`registry/components/ui/label.tsx`](https://github.com/lennythecreator/tracky/blob/main/registry/components/ui/label.tsx)

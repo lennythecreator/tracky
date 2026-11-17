@@ -16,6 +16,11 @@ const sources = import.meta.glob<string>('../examples/*.tsx', {
 export interface ExampleProps {
   /** The file name in `app/examples`, without `.tsx`, such as `button`. */
   name: string
+  /**
+   * `false` for a primitive that sends nothing. The demo still renders, but the
+   * readout would otherwise claim no event had happened yet.
+   */
+  sendsEvents?: boolean
 }
 
 function EventReadout({ name }: { name: string }) {
@@ -48,7 +53,7 @@ function EventReadout({ name }: { name: string }) {
  * and the exact file that produced it. The demo and the listing come from the
  * same import, so they cannot drift.
  */
-export function Example({ name }: ExampleProps) {
+export function Example({ name, sendsEvents = true }: ExampleProps) {
   const source = sources[`../examples/${name}.tsx`]
   const Demo = demos[`../examples/${name}.tsx`]?.default
   const [open, setOpen] = useState(false)
@@ -68,7 +73,13 @@ export function Example({ name }: ExampleProps) {
       >
         <Demo />
       </AnalyticsProvider>
-      <EventReadout name={name} />
+      {sendsEvents ? (
+        <EventReadout name={name} />
+      ) : (
+        <p className="docs-example-readout mt-3 rounded-md border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
+          This primitive sends no component event. Its value and text stay in your app.
+        </p>
+      )}
       <button
         type="button"
         className="docs-example-source docs-code-copy mt-3"

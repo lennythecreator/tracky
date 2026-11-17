@@ -147,9 +147,10 @@ region.
 Renders `app/examples/button.tsx` and prints that same file through a raw import,
 so the demo and the listing cannot drift. The example imports registry source,
 mounts a provider against the reserved preview endpoint the page answers itself,
-and reports the event the primitive sent. Files live in
-`website/docs/app/examples/`; each event-sending primitive (`button`,
-`checkbox`, `switch`, `select`) has one.
+and reports the event the primitive sent. Pass `sendsEvents={false}` for a
+primitive that sends nothing (`input`, `textarea`, `label`); the demo still
+renders and the readout says that no component event exists instead of waiting
+for one. Files live in `website/docs/app/examples/`; every primitive has one.
 
 ## The check
 

@@ -1,0 +1,53 @@
+---
+title: Checkbox
+description: A native checkbox that reports the toggle and never the checked state.
+order: 6
+status: unreleased
+---
+
+## Install
+
+```sh
+npx tracky add checkbox
+```
+
+`Checkbox` requires the `utils` item for `cn()` and lists `tracky` as a dependency. The package is not published yet, so install both once a release exists.
+
+## Example
+
+<Example name="checkbox" />
+
+The checked state is app state. The event says the box was toggled, not whether it is now on or off.
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'checked', type: 'boolean', description: 'Controlled checked state, passed to the native input.' },
+    { name: 'defaultChecked', type: 'boolean', description: 'Initial state for uncontrolled use.' },
+    { name: 'analyticsName', type: 'string', description: 'Renders as data-analytics-name and becomes { name } in the event context.' },
+    { name: '...props', type: 'Omit<InputHTMLAttributes<HTMLInputElement>, "type">', description: 'Native attributes, onChange, and ref pass through. type is always checkbox.' },
+  ]}
+/>
+
+## Action
+
+`Checkbox` sends `checkbox · toggle` through the nearest provider after your `onChange` runs. The event carries `{ name: 'checkbox', action: 'toggle' }` and, when set, `context: { name: analyticsName }`.
+
+The `checked` value, the label, and any prop are never read or sent. Use `analyticsName` when several rendered instances should group together.
+
+## Keyboard and screen readers
+
+- Space toggles the focused checkbox; that is the native behavior.
+- The native `checked` state is exposed to assistive technology, so the control announces on and off.
+- Tab reaches the checkbox unless it is disabled.
+- Focus shows a `focus-visible` ring; disabled uses the native attribute.
+- `aria-invalid="true"` switches the border and ring to `destructive`.
+
+## Theme tokens
+
+`border-border`, `accent-primary`, `text-destructive`, `ring-ring`, `ring-offset-background`, `rounded-sm`, and `font-sans`.
+
+## Source
+
+[`registry/components/ui/checkbox.tsx`](https://github.com/lennythecreator/tracky/blob/main/registry/components/ui/checkbox.tsx)

@@ -1,0 +1,53 @@
+---
+title: Select
+description: A native select that reports the change and never the selected option.
+order: 8
+status: unreleased
+---
+
+## Install
+
+```sh
+npx tracky add select
+```
+
+`Select` requires the `utils` item for `cn()` and lists `tracky` as a dependency. The package is not published yet, so install both once a release exists.
+
+## Example
+
+<Example name="select" />
+
+Pick a different option: your app gets the value, and the event says only that the choice changed.
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'value', type: 'string', description: 'Controlled selected value, passed to the native select.' },
+    { name: 'defaultValue', type: 'string', description: 'Initial selection for uncontrolled use.' },
+    { name: 'analyticsName', type: 'string', description: 'Renders as data-analytics-name and becomes { name } in the event context.' },
+    { name: '...props', type: 'SelectHTMLAttributes<HTMLSelectElement>', description: 'Native attributes, onChange, and ref pass through. Render option elements as children.' },
+  ]}
+/>
+
+## Action
+
+`Select` sends `select · change` through the nearest provider after your `onChange` runs. The event carries `{ name: 'select', action: 'change' }` and, when set, `context: { name: analyticsName }`.
+
+The selected value, the option text, the label, and any prop are never read or sent.
+
+## Keyboard and screen readers
+
+- The native select keeps its own keyboard model: arrow keys move through options, Home and End jump, and typing selects by prefix.
+- The current option is exposed to assistive technology by the browser.
+- Tab reaches the select unless it is disabled.
+- Focus shows a `focus-visible` ring; disabled uses the native attribute.
+- `aria-invalid="true"` switches the border and ring to `destructive`; connect error text with `aria-describedby`.
+
+## Theme tokens
+
+`bg-background`, `text-foreground`, `border-border`, `text-destructive`, `ring-ring`, `ring-offset-background`, `rounded-md`, and `font-sans`.
+
+## Source
+
+[`registry/components/ui/select.tsx`](https://github.com/lennythecreator/tracky/blob/main/registry/components/ui/select.tsx)

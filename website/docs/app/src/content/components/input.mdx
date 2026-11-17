@@ -1,0 +1,53 @@
+---
+title: Input
+description: A native single-line field with invalid and disabled states that sends no event.
+order: 3
+status: unreleased
+---
+
+## Install
+
+```sh
+npx tracky add input
+```
+
+`Input` requires the `utils` item for `cn()` and lists no analytics dependency. The package is not published yet, so install `utils` alongside it once a release exists.
+
+## Example
+
+<Example name="input" sendsEvents={false} />
+
+Type into the field: the text stays in your app's state and the component sends nothing.
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'type', type: 'string', defaultValue: '"text"', description: 'Native input type, including password and hidden.' },
+    { name: '...props', type: 'InputHTMLAttributes<HTMLInputElement>', description: 'Native attributes, value or defaultValue, handlers, and ref pass through.' },
+  ]}
+/>
+
+`Input` has no `analyticsName`, because it sends no component event. Page-wide input capture, when you enable it, reads the same `data-analytics-name` attribute on any element.
+
+## Action
+
+`Input` sends no component event and does not render `data-tracky-component`. It has no analytics code at all, so nothing about the field, its value, or its focus can reach the SDK from this component.
+
+If `capture.inputChanges` is on, the SDK's own page-wide listener records `input_interaction` for a `change` with element metadata only. That listener skips password inputs and hidden inputs, and it never reads the value.
+
+## Keyboard and screen readers
+
+- Typing, selection, and clipboard behavior are the browser's.
+- Tab reaches the field unless it is disabled.
+- Focus shows a `focus-visible` ring; the field keeps its native semantics.
+- Disabled uses the native attribute and a muted surface.
+- `aria-invalid="true"` switches the border and ring to `destructive`; connect error text yourself with `aria-describedby`.
+
+## Theme tokens
+
+`bg-background`, `text-foreground`, `border-border`, `placeholder:text-muted-foreground`, `text-destructive`, `ring-ring`, `ring-offset-background`, `rounded-md`, and `font-sans`.
+
+## Source
+
+[`registry/components/ui/input.tsx`](https://github.com/lennythecreator/tracky/blob/main/registry/components/ui/input.tsx)
