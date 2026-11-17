@@ -7,6 +7,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig, type Plugin } from 'vite'
 import { checkDocs } from './shared/check.ts'
+import { nodeNextSourceImports } from '../shared/node-next.ts'
 
 const docsDir = path.dirname(fileURLToPath(import.meta.url))
 const appDir = path.join(docsDir, 'app')
@@ -38,10 +39,13 @@ export default defineConfig(({ command }) => ({
   base: command === 'serve' ? '/' : '/docs/dist/',
   plugins: [
     docsContent(),
+    nodeNextSourceImports(),
     mdx({ remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter] }),
     react(),
     tailwindcss(),
   ],
+  // Live examples import the registry source, which imports the SDK by name.
+  resolve: { alias: { tracky: path.join(repoRoot, 'src', 'index.ts') } },
   server: { fs: { allow: [path.resolve(docsDir, '../..')] } },
   build: {
     // The source lives in `app/`; the built site ships at `docs/dist/`.

@@ -1,32 +1,9 @@
-import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineConfig, type Plugin } from 'vitest/config'
+import { defineConfig } from 'vitest/config'
+import { nodeNextSourceImports } from './website/shared/node-next.ts'
 
 const repoRoot = path.dirname(fileURLToPath(import.meta.url))
-
-/**
- * The SDK and registry sources use NodeNext `.js` specifiers that point at
- * `.ts`/`.tsx` files. Map them back before resolution, as the playground does.
- */
-function nodeNextSourceImports(): Plugin {
-  return {
-    name: 'tracky-node-next-imports',
-    enforce: 'pre',
-    resolveId(source, importer) {
-      if (!importer || !source.startsWith('.') || !source.endsWith('.js')) return null
-
-      const resolved = path.resolve(path.dirname(importer), source)
-
-      for (const extension of ['.ts', '.tsx']) {
-        const candidate = resolved.replace(/\.js$/, extension)
-        if (existsSync(candidate)) return candidate
-      }
-
-      return null
-    },
-  }
-}
 
 export default defineConfig({
   plugins: [nodeNextSourceImports()],

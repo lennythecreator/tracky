@@ -138,6 +138,19 @@ and End jump, and the active pane carries the copy button. Every fenced block
 gets that copy button on its own, and both outcomes are announced in a live
 region.
 
+### `Example`
+
+```mdx
+<Example name="button" />
+```
+
+Renders `app/examples/button.tsx` and prints that same file through a raw import,
+so the demo and the listing cannot drift. The example imports registry source,
+mounts a provider against the reserved preview endpoint the page answers itself,
+and reports the event the primitive sent. Files live in
+`website/docs/app/examples/`; each event-sending primitive (`button`,
+`checkbox`, `switch`, `select`) has one.
+
 ## The check
 
 ```sh

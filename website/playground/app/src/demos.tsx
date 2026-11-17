@@ -7,7 +7,7 @@ import { Select } from '../../../../registry/components/ui/select'
 import { Switch } from '../../../../registry/components/ui/switch'
 import { Textarea } from '../../../../registry/components/ui/textarea'
 import { StateChips } from './PrimitiveCard'
-import { useLastEvent } from './useEventStream'
+import { useLastEvent } from '../../../shared/usePreviewEvents'
 
 const CANVAS = 'inset-canvas mt-4 p-4'
 const NOTE = 'mt-3 text-[11px] leading-relaxed text-[var(--pg-soft)]'

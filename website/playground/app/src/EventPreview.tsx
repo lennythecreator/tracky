@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { AnalyticsEvent } from 'tracky'
-import { SAMPLE_EVENT } from './preview'
-import { usePreviewEvents } from './useEventStream'
+import { SAMPLE_EVENT } from '../../../shared/preview'
+import { usePreviewEvents } from '../../../shared/usePreviewEvents'
 
 function formatTime(timestamp: string): string {
   const date = new Date(timestamp)

@@ -3,6 +3,7 @@
 
 /* Keep the committed build output out of Tailwind's automatic source scan. */
 @source not "../../dist";
+@source "../../../../registry/components";
 
 @font-face {
   font-family: "Plus Jakarta Sans";

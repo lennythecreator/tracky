@@ -575,7 +575,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-024 — Render live component examples in docs pages
 
-**Status:** Open.
+**Status:** Complete. `Example` renders a file from `website/docs/app/examples/` and prints the same file through a raw import, so the demo and the listing cannot drift. The preview transport and its hook moved to `website/shared/` and are shared with the playground, so the in-page interception is written once; the inspector answers the SDK's own request and no capture switch is on. The disclosure control is a labelled button with `aria-expanded` and `aria-controls`, and a jsdom test asserts the button example reports `button · activate` while `fetch` is never called. The docs index, ADR 0004, and `website/README.md` now state that only the examples mount a provider.
 
 **Priority:** After T-021; before T-027
 **GitHub:** [#46](https://github.com/lennythecreator/tracky/issues/46)
