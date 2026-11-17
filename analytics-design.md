@@ -78,6 +78,7 @@ Keep each capture type independently configurable, grouped as page-wide capture.
 - Frustration clicks: may be enabled independently from ordinary click events.
 - Cursor heat maps: aggregated region summaries only.
 - Scroll depth: a separate opt-in signal, independent of cursor heat maps.
+- Engagement: foreground time per visit, with hidden and idle time excluded.
 
 Use separate switches so developers can enable one category without enabling the others. Page views and page-wide interactions must not turn on automatically merely because an `AnalyticsProvider` is mounted.
 
@@ -108,11 +109,11 @@ Build a per-visit, per-route summary on a normalized 10×10 grid of the visible 
 
 The grid payload is `HeatMapSummary` in `src/types.ts`, and the periodic flush interval is 30 seconds (see README). Preserve the approved aggregation and privacy behavior above.
 
-### Engagement and performance (defined, not implemented)
+### Engagement and performance
 
-[ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) fixes these measures. No capture code ships for them yet.
+[ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) fixes these measures. Engagement capture ships; performance capture does not yet.
 
-- **Active session.** `capture.engagement` sends one `engagement` event per visit with an `EngagementSummary` payload: `visitId`, `visitStartedAt`, `activeMs`, and `foregroundMs`. Time counts only while the tab is visible, the visit is on an accepted route, and the last pointer, key, scroll, or touch activity was within 30 seconds. Time in a hidden tab never counts, and idle time stops counting. The summary is cumulative for the visit, so the endpoint keeps the largest `activeMs` per `visitId`. It costs one one-second interval and one passive activity listener set, both removed when the switch turns off.
+- **Active session.** `capture.engagement` is off by default and enables no other category. It sends one `engagement` event per visit with an `EngagementSummary` payload: `visitId`, `visitStartedAt`, `activeMs`, and `foregroundMs`. Time counts only while the tab is visible, the visit is on an accepted route, and the last pointer, key, scroll, or touch activity was within 30 seconds; hidden time never counts, and idle time stops counting. The payload is cumulative for the visit, so the endpoint keeps the largest `activeMs` per `visitId`, and a visit that resumes after being hidden keeps its ID and totals. The module owns one one-second interval, running only while the tab is visible, and one passive activity listener set that records a timestamp and reads nothing from the event; both are removed when the switch turns off.
 - **Feature usage.** Derived at the endpoint from `component_interaction` events and developer-named events. The SDK emits nothing extra.
 - **Performance.** The separate `tracky/performance` entry exposes `observePerformance(analytics)` and sends one `performance` event per page view with a `PerformanceSummary` payload: `lcpMs`, `cls`, and `inpMs`, each present only when the browser provided it. It reads buffered `PerformanceObserver` inputs, never polls, and adds nothing to the root entry.
 

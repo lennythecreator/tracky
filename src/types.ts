@@ -35,6 +35,8 @@ export interface CaptureOptions {
   heatMaps?: boolean
   /** `scroll_depth` with the deepest 25% bucket reached per visit. Independent of `heatMaps`. */
   scrollDepth?: boolean
+  /** `engagement` foreground time per visit, excluding hidden and idle time. */
+  engagement?: boolean
 }
 
 /**
@@ -48,6 +50,22 @@ export type ScrollDepthSummary = {
   visitStartedAt: string
   /** Bottom of the viewport as a share of the page height, rounded down to 0, 25, 50, 75, or 100. */
   maxDepthPercent: 0 | 25 | 50 | 75 | 100
+}
+
+/**
+ * Payload of an `engagement` event: the foreground time one visit accumulated.
+ * Time counts only while the tab is visible, on an accepted route, and with
+ * activity inside the idle threshold. Snapshots are cumulative for the visit,
+ * so keep the largest `activeMs` per `visitId`.
+ */
+export type EngagementSummary = {
+  /** Random ID for this visit to the route. Not stored and not reused. */
+  visitId: string
+  visitStartedAt: string
+  /** Visible time on an accepted route with activity inside the idle threshold. */
+  activeMs: number
+  /** Visible time on the route, including idle time. */
+  foregroundMs: number
 }
 
 /**
