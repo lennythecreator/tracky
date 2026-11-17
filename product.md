@@ -63,7 +63,8 @@ Tracky includes source for an initial set of reusable React UI primitives alongs
 - Optional page-view tracking for initial load and History API navigation, keyed by path plus query, so hash-only changes don't count. A `resolveRoute` option supports hash-based and custom routers and can return `null` to ignore a location; an ignored location is not a route visit, so page views, heat maps, and scroll depth record nothing for it and its activity is never attributed to the next route. Capture options can be turned on or off after mount, for example once consent is given.
 - Independent, opt-in `capture` switches for page views, clicks, form submits, input changes, frustration clicks (3+ pointer clicks on one target within 1 second), cursor heat maps (`HeatMapSummary` payloads aggregated in the browser on a 10 × 10 grid), and scroll depth (`ScrollDepthSummary`, the deepest 25% bucket per visit). The earlier `capturePageViews` and `captureInteractions` flags are kept as deprecated aliases.
 - Event buffering, JSON batch POST, a flush when the page is hidden or unloaded, bounded exponential retry for transient failures, a bounded buffer, and a delivery error callback.
-- Random session ID held in `sessionStorage` when available.
+- Random session ID held in `sessionStorage` when available. It is created on the first event, so a page that captures nothing and tracks nothing writes no browser storage.
+- A documented consent pattern: render the provider with capture off, read the consent manager's stored decision, then apply the switches it allows. `README.md` carries a custom-banner recipe, a Cookiebot recipe, and a vendor-neutral fallback, and `analytics-design.md` records the privacy review of what is stored and sent before and after consent.
 
 Initial primitive source is implemented and the `tracky` CLI installs it into a project, but the package is not published yet.
 
@@ -76,7 +77,7 @@ Initial primitive source is implemented and the `tracky` CLI installs it into a 
 - Conventions for components added after the initial seven.
 - Engagement and performance capture. The measures, compute boundary, payloads, and bundle budget are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md); no capture code ships yet.
 - Conversion-flow helpers and richer typed event conventions.
-- A complete consent integration story and production privacy review.
+- Deeper production privacy review beyond the documented consent pattern.
 - Build, release, and package publishing workflow.
 - Optional commercial licensing and verification service.
 

@@ -160,6 +160,8 @@ export function createAnalyticsClient(endpoint: string, options: AnalyticsOption
       timestamp: new Date().toISOString(),
       route: route ?? resolveRoute(options.resolveRoute) ?? defaultRoute(),
       context: { ...options.context, ...context },
+      // Deferred on purpose: nothing is written to browser storage until the
+      // first event exists, so a page that captures nothing stays storage-free.
       sessionId: sessionId ??= getSessionId(),
     }
     if (component) event.component = component

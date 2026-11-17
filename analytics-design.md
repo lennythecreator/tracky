@@ -10,6 +10,29 @@ Tracky is a React analytics SDK paired with reusable, analytics-aware React comp
 
 The integrating app owns consent. The SDK must not collect before its configured capture options permit it. All page-wide capture is opt-in and off by default. A Tracky component may emit its documented action when used; this must not implicitly enable page-wide DOM, cursor, or scroll capture.
 
+## Consent
+
+The app owns the consent decision. Tracky enforces only what the app tells it: a capture category stays off until its switch is on, and no event is sent without a switch or an explicit tracking call.
+
+The SDK stores nothing before the first event. The session ID is created on the first event, not when the client is created, so a page that captures nothing and calls no tracking method writes no browser storage.
+
+Enable capture from the consent manager's persisted decision, read after mount, not from the click that recorded it. A click that a reload forgets must not start capture. Turning a switch on later applies to the next event; turning one off removes that category's listeners. The provider's page-hidden listeners stay attached either way, because they deliver events the app already tracked rather than collect new ones.
+
+`README.md` carries a custom-banner recipe, a Cookiebot recipe, and a vendor-neutral pattern. The SDK ships no banner, contacts no consent service, and reads no manager's record.
+
+### Privacy review
+
+| Data | Before consent | After consent | Owner |
+| --- | --- | --- | --- |
+| Browser storage | Nothing | `ui-analytics-session-id` in `sessionStorage`: a random ID for this tab, gone when the tab closes | Tracky writes it; the app's consent decision allows it |
+| Events sent | Nothing | The enabled capture events, component actions, and explicit `track()` calls | The app chooses what to track; the endpoint stores it |
+| Field values, keystrokes, passwords, hidden inputs, editor text, ignored subtrees | Never read | Never read | The SDK never reads them |
+| Identity, cookies, cross-session linking | None | None | The app may add its own context; Tracky adds none |
+| Retention, access control, deletion | The endpoint | The endpoint | The endpoint owner |
+| Consent records, categories, policy, legal basis | The app | The app | The app |
+
+Tracky does not decide the consent policy, the categories, how long data is kept, or what a deletion request covers.
+
 ## Event contract
 
 Use one event envelope:

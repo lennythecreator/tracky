@@ -140,6 +140,10 @@ _Avoid_: widget, control, element, atomic.
 A primitive's fixed `{ name, action }` pair, emitted when the person performs that component's normal interaction, such as `button` `activate`, `checkbox` `toggle`, or `select` `change`.
 _Avoid_: click, interaction, gesture, usage, event name.
 
+**Consent decision**:
+The stored choice the integrating app reads from its consent manager before it turns on any capture switch.
+_Avoid_: opt-in flag, banner click, consent state, permission.
+
 **Integrator**:
 The developer who installs Tracky, configures the endpoint, and decides the consent policy.
 _Avoid_: user (the person using the app), customer, client, consumer, host.

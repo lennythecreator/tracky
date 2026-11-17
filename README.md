@@ -65,7 +65,7 @@ An ignored location is not a route visit. Page views skip it, and heat maps and 
 >
 ```
 
-Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then turn on the `capture` switches you need once you have consent. Turning an option off removes its capture listeners. The page-hidden flush listeners below stay attached, because they deliver explicit events rather than collect.
+Only `endpoint` recreates the client. The other options can change after mount, and new values apply to the next event. To start collecting after the user consents, render the provider without capture options, then turn on the `capture` switches you need once you have consent. [Consent](#consent) has copyable recipes. Turning an option off removes its capture listeners. The page-hidden flush listeners below stay attached, because they deliver explicit events rather than collect.
 
 The provider uses browser APIs after mounting, so it can be rendered inside a React app or a Next.js client boundary. In Next.js App Router, put it in a small Client Component and render that component from the server layout.
 
@@ -140,6 +140,96 @@ Delivery is bounded while the endpoint is unreachable. At most four requests are
 ### Engagement and performance (planned)
 
 Tracky's engagement and performance surfaces are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) and not implemented yet, so there is nothing to configure today. Two changes are planned. `capture.engagement` would send one cumulative foreground-time summary per visit, counting only visible time on an accepted route and excluding idle time after 30 seconds without activity. A separate `tracky/performance` entry would send LCP, CLS, and INP once per page view, and an app that never imports it would load none of that code. Both would stay off by default.
+
+## Consent
+
+Capture is off by default, and the SDK stores nothing until an event is sent: the session ID is created on the first event, not when the provider mounts. A page that captures nothing and calls no tracking method writes no browser storage.
+
+Consent must come from the consent manager's stored decision. Read that decision, then enable the switches it allows. A banner click that a reload forgets must not start capture, so the click handler that records a decision is not the place to enable capture: read the stored decision instead.
+
+### Custom banner
+
+Keep one boolean that is true only while the stored decision allows analytics, and pass `capture` only while it is true:
+
+```tsx
+'use client'
+
+import { useEffect, useState } from 'react'
+import { AnalyticsProvider } from 'tracky'
+
+const CONSENT_KEY = 'analytics-consent'
+
+function storedDecision() {
+  try {
+    return window.localStorage.getItem(CONSENT_KEY) === 'granted'
+  } catch {
+    return false
+  }
+}
+
+export function AppAnalytics({ children }: { children: React.ReactNode }) {
+  const [granted, setGranted] = useState(false)
+
+  useEffect(() => {
+    setGranted(storedDecision())
+    const onDecision = (event: StorageEvent) => {
+      if (event.key === CONSENT_KEY) setGranted(event.newValue === 'granted')
+    }
+    window.addEventListener('storage', onDecision)
+    return () => window.removeEventListener('storage', onDecision)
+  }, [])
+
+  return (
+    <AnalyticsProvider endpoint="/api/events" options={{ capture: granted ? { pageViews: true } : {} }}>
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+The first render has capture off, so nothing is captured or stored until the decision is read. Turning a switch on later sends the next event; turning it off removes that category's listeners. `storage` only fires in other tabs, so a banner on the current page should update the same state through its own handler.
+
+### Cookiebot
+
+Cookiebot exposes the decision as `Cookiebot.consent.statistics`, the analytics category, and fires `CookiebotOnConsentReady` once the stored state is known. Read it on mount and listen for that event rather than for the banner click:
+
+```tsx
+'use client'
+
+import { useEffect, useState } from 'react'
+import { AnalyticsProvider } from 'tracky'
+
+declare global {
+  interface Window {
+    Cookiebot?: { consent: { statistics: boolean } }
+  }
+}
+
+export function AppAnalytics({ children }: { children: React.ReactNode }) {
+  const [granted, setGranted] = useState(false)
+
+  useEffect(() => {
+    const read = () => setGranted(window.Cookiebot?.consent.statistics === true)
+    read()
+    window.addEventListener('CookiebotOnConsentReady', read)
+    return () => window.removeEventListener('CookiebotOnConsentReady', read)
+  }, [])
+
+  return (
+    <AnalyticsProvider endpoint="/api/events" options={{ capture: granted ? { pageViews: true } : {} }}>
+      {children}
+    </AnalyticsProvider>
+  )
+}
+```
+
+The declaration names only the part of Cookiebot's API this recipe reads, so Tracky does not depend on Cookiebot's typings. Load the Cookiebot script before this effect runs, and treat a declined or unanswered decision as off.
+
+### Another consent manager
+
+The shape is the same for any manager: expose one boolean that is true only when the stored decision allows analytics, read it in an effect, and pass `capture` only while it is true. Where the decision lives is your choice, whether a first-party cookie you control, `localStorage`, or a server-side record. Tracky reads and writes none of it, and it ships no banner.
+
+The review of what is stored and sent before and after consent, and what your endpoint owns, is in [`analytics-design.md`](analytics-design.md#consent).
 
 ## Component source
 
