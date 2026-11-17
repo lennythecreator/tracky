@@ -5,6 +5,10 @@
   "outputDirectory": "website",
   "rewrites": [
     { "source": "/docs", "destination": "/docs/dist/index.html" },
-    { "source": "/docs/:path*", "destination": "/docs/dist/index.html" }
+    { "source": "/docs/", "destination": "/docs/dist/index.html" },
+    { "source": "/docs/:path*", "destination": "/docs/dist/index.html" },
+    { "source": "/playground", "destination": "/playground/dist/index.html" },
+    { "source": "/playground/", "destination": "/playground/dist/index.html" },
+    { "source": "/playground/:path*", "destination": "/playground/dist/index.html" }
   ]
 }

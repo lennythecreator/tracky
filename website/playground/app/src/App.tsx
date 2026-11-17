@@ -28,7 +28,7 @@ export function App() {
     <div className="min-h-dvh bg-[var(--pg-wash)]">
       <header className="sticky top-0 z-20 border-b border-[var(--pg-line)] bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 py-3">
-          <a href="../../index.html" className="flex items-center gap-[0.55rem] text-[1.25rem] font-bold tracking-[-0.035em] text-[var(--pg-ink)]">
+          <a href="/" className="flex items-center gap-[0.55rem] text-[1.25rem] font-bold tracking-[-0.035em] text-[var(--pg-ink)]">
             {/* Same mark as the landing page header. */}
             <svg viewBox="0 0 32 32" className="h-[30px] w-[30px] shrink-0 text-[#3e7fb7]" aria-hidden="true">
               <path
@@ -56,13 +56,13 @@ export function App() {
               Provider connected
             </span>
             <a
-              href="../../docs/dist/"
+              href="/docs/"
               className="text-[11px] font-bold text-[var(--pg-accent)] underline-offset-4 hover:underline"
             >
               Docs
             </a>
             <a
-              href="../../index.html"
+              href="/"
               className="text-[11px] font-bold text-[var(--pg-accent)] underline-offset-4 hover:underline"
             >
               Back to site
