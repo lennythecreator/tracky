@@ -354,7 +354,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-015 — Define engagement and performance measures
 
-**Status:** Open. Defines active session, feature usage, and the LCP, CLS, and INP measures, plus the compute boundary and the bundle budget. No capture code ships in this ticket.
+**Status:** Complete. [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) fixes the measures, the idle rule, the compute boundary, the payloads, and the bundle budget; no capture code shipped. Implementation follows in #39 and #40.
 
 **Priority:** Before any engagement or performance capture; independent of route adapters and conversion helpers
 **GitHub:** [#37](https://github.com/lennythecreator/tracky/issues/37)

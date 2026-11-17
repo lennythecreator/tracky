@@ -1,6 +1,6 @@
 # Tracky
 
-A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped random ID.
+A lightweight React analytics SDK that sends first-party events to an endpoint you control. The initial package foundation includes an explicit tracking hook, independent opt-in switches for page views, clicks, form submissions, and input changes, buffered delivery, retry with backoff, and a session-scoped random ID. Engagement and performance measures are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) and not implemented yet.
 
 ## Status
 
@@ -136,6 +136,10 @@ The browser sends batches with `fetch` and `keepalive`. Each request carries at 
 Failed requests are retried with capped exponential backoff while the page remains open. That covers network errors, `5xx`, `408`, and `429`. Tracky doesn't retry any other `4xx` response, because the endpoint rejected the request itself. In both cases `onDeliveryError` receives the error.
 
 Delivery is bounded while the endpoint is unreachable. At most four requests are in flight, and at most 1,000 events wait in the buffer. When the buffer is full, Tracky drops the oldest event first. For durable delivery, validate and queue events on your own endpoint.
+
+### Engagement and performance (planned)
+
+Tracky's engagement and performance surfaces are defined in [ADR 0003](docs/adr/0003-engagement-and-performance-measures.md) and not implemented yet, so there is nothing to configure today. Two changes are planned. `capture.engagement` would send one cumulative foreground-time summary per visit, counting only visible time on an accepted route and excluding idle time after 30 seconds without activity. A separate `tracky/performance` entry would send LCP, CLS, and INP once per page view, and an app that never imports it would load none of that code. Both would stay off by default.
 
 ## Component source
 
