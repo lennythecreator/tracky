@@ -2,8 +2,9 @@ import type { AnalyticsEvent } from 'tracky'
 
 /**
  * A reserved, non-routable endpoint. `installPreviewTransport` answers requests
- * to it inside the page, so the playground exercises the real SDK delivery path
- * without sending anything anywhere.
+ * to it inside the page, so the playground and the docs exercise the real SDK
+ * delivery path without sending anything anywhere. Shared by both apps, so the
+ * interception is written once.
  */
 export const PREVIEW_ENDPOINT = 'https://tracky-preview.invalid/events'
 

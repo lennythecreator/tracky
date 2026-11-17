@@ -19,7 +19,7 @@ Build the docs as a **Vite + React + MDX app in `website/docs/`**, mirroring the
 - **Navigation is authored.** Each content folder has a `meta.json` that lists its pages in order and names the section; the root folder comes first and the others follow by `order`. A page that is not listed, a listed page with no file, and a folder with no meta all fail the build with the file named.
 - **One shell.** Sidebar, on-this-page TOC, previous/next pager, mobile drawer, and skip link live in one layout. The TOC is built from the headings the page just rendered, so a page and its list cannot disagree.
 - **Styling reuses the registry tokens.** Tailwind and the `--tracky-*` variables only; no new palette and no second stylesheet of colors.
-- **No analytics.** The app mounts no provider, imports nothing from `tracky`, and requests nothing of its own. Reading the docs is not a visit to anyone's endpoint.
+- **No analytics, except a self-answering example.** The shell mounts no provider; the app imports `tracky` only for the live examples, which render registry source against a reserved `tracky-preview.invalid` endpoint that the page answers itself. No request leaves the browser, and no capture switch is on.
 - **Static output with a client router.** Vercel builds the docs with the playground and rewrites `/docs/*` to the app, so a link or a reload lands on the same page.
 
 ## Alternatives considered

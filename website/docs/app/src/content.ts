@@ -1,9 +1,9 @@
-import type { ComponentType, ReactNode } from 'react'
+import type { ComponentType } from 'react'
 import { buildNav, folderOf, readMeta, routeFor, type FolderMeta } from '../../shared/meta'
 
 /** Props an MDX page accepts, so the shell can map Markdown tags to components. */
 export interface MdxContentProps {
-  components?: Record<string, ComponentType<{ children?: ReactNode }>>
+  components?: Record<string, ComponentType<any>>
 }
 
 export interface PageFrontmatter {

@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { AnalyticsProvider } from 'tracky'
 import { App } from './App'
-import { installPreviewTransport, PREVIEW_ENDPOINT } from './preview'
+import { installPreviewTransport, PREVIEW_ENDPOINT } from '../../../shared/preview'
 import './playground.css'
 
 installPreviewTransport()

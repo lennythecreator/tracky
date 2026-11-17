@@ -1,12 +1,15 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "noEmit": true,
     "rootDir": "..",
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
-    "types": ["node"],
+    "types": ["node", "vite/client"],
     "paths": { "tracky": ["../src/index.ts"] }
   },
   "include": ["./**/*.ts", "./**/*.tsx", "../src/**/*.ts", "../src/**/*.tsx", "../registry/components/ui/**/*.ts", "../registry/components/ui/**/*.tsx", "../vitest.config.ts"]

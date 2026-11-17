@@ -1,5 +1,5 @@
 {
   "label": "Guides",
   "order": 1,
-  "pages": ["capture-switches"]
+  "pages": ["capture-switches", "live-examples"]
 }

@@ -14,9 +14,13 @@ The sidebar on the left is authored by `meta.json` in each content folder, and t
 
 The package is not published yet. Once a release is available:
 
-```sh
-npm install tracky
-```
+<CodeTabs
+  tabs={[
+    { label: 'npm', language: 'sh', code: 'npm install tracky' },
+    { label: 'pnpm', language: 'sh', code: 'pnpm add tracky' },
+    { label: 'yarn', language: 'sh', code: 'yarn add tracky' },
+  ]}
+/>
 
 React 18 or newer is a peer dependency. Tracky has no other runtime dependency.
 
@@ -78,4 +82,4 @@ Explicit events send when you call the method. The capture switches control only
 
 ## What the docs do not do
 
-The pages send nothing. This app mounts no analytics provider and makes no request of its own, so reading the docs never reaches your endpoint.
+The pages send nothing on their own. The shell mounts no provider; a live example mounts one against a reserved endpoint that the page answers itself, so reading the docs never reaches your endpoint.

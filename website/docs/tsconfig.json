@@ -9,7 +9,11 @@
     "skipLibCheck": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "tracky": ["../../src/index.ts"]
+    },
     "types": ["vite/client", "node"]
   },
-  "include": ["app/src", "shared", "vite.config.ts"]
+  "include": ["app/src", "app/examples", "shared", "vite.config.ts"]
 }

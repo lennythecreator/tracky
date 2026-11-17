@@ -27,7 +27,7 @@ npm run dev:docs
 npm run build:docs
 ```
 
-The dev server serves the app at `http://localhost:5173`, and the built output is in `docs/dist/`. On the site the docs are at `/docs/`, which the deployment config rewrites to the app, so a deep link or a reload lands on the same page. The app mounts no analytics provider and sends no requests. The stack, the alternatives that were rejected, and the no-per-page-HTML trade-off are in [`../docs/adr/0004-docs-site.md`](../docs/adr/0004-docs-site.md).
+The dev server serves the app at `http://localhost:5173`, and the built output is in `docs/dist/`. On the site the docs are at `/docs/`, which the deployment config rewrites to the app, so a deep link or a reload lands on the same page. The shell mounts no analytics provider and sends no requests; the live examples mount one against a reserved `.invalid` endpoint that the page answers itself. The stack, the alternatives that were rejected, and the no-per-page-HTML trade-off are in [`../docs/adr/0004-docs-site.md`](../docs/adr/0004-docs-site.md).
 
 ## Page metadata and icons
 
