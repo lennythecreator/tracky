@@ -531,7 +531,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-022 — Define the docs authoring contract and validate it in CI
 
-**Status:** Open.
+**Status:** Complete. [`docs/AUTHORING.md`](docs/AUTHORING.md) records the frontmatter fields, the `meta.json` order, the heading and link rules, and the five MDX components (`Callout`, `Steps`, `Kbd`, `PropsTable`, `PageHeader`). `npm run check:docs` runs in CI and at docs build start, failing with the file, line, and reason on missing frontmatter, unlisted or duplicated meta entries, duplicate anchors, and dead routes or anchors.
 
 **Priority:** After T-021
 **GitHub:** [#44](https://github.com/lennythecreator/tracky/issues/44)

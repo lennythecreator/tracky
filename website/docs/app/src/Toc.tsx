@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react'
 import { FOCUS } from './focus'
+import { slugify } from '../../shared/slug'
 
 interface Heading {
   id: string
   text: string
   level: number
-}
-
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
 /**
