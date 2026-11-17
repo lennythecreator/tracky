@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { CodeTabs } from '../CodeTabs'
 import { Callout } from './Callout'
 import { Kbd } from './Kbd'
 import { PageHeader } from './PageHeader'
@@ -12,6 +13,7 @@ import { Steps } from './Steps'
  */
 export const mdxComponents: Record<string, ComponentType<any>> = {
   Callout,
+  CodeTabs,
   Kbd,
   PageHeader,
   PropsTable,

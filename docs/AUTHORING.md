@@ -122,6 +122,22 @@ Each row needs `name`, `type`, and `description`; `defaultValue` is optional. Ev
 
 A section header with an optional description and label row. It renders `##` by default; pass `level={3}` for a subsection. Use it where a plain heading needs that extra context, not on every heading.
 
+### `CodeTabs`
+
+```mdx
+<CodeTabs
+  tabs={[
+    { label: 'npm', language: 'sh', code: 'npm install tracky' },
+    { label: 'pnpm', language: 'sh', code: 'pnpm add tracky' },
+  ]}
+/>
+```
+
+One change shown several ways. It renders a real tablist: Arrow keys wrap, Home
+and End jump, and the active pane carries the copy button. Every fenced block
+gets that copy button on its own, and both outcomes are announced in a live
+region.
+
 ## The check
 
 ```sh

@@ -553,7 +553,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-023 — Add build-time highlighted, copyable code blocks
 
-**Status:** Open.
+**Status:** Complete, with two deviations recorded here. Highlighting stays the docs app's own tokenizer from T-021 instead of Shiki: the build ships no highlighter chunk because there is no highlighter, which is the same acceptance bar reached a different way. Every block renders through one code surface with a copy button whose success and failure are announced, and `CodeTabs` is a real tablist with Arrow, Home, and End support and one tab in the tab order. The optional filename label and highlighted-line ranges are not included.
 
 **Priority:** After T-021
 **GitHub:** [#45](https://github.com/lennythecreator/tracky/issues/45)
