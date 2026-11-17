@@ -41,3 +41,6 @@ jobs:
 
       - name: Build docs
         run: npm run build:docs
+
+      - name: Build playground
+        run: npm run build:playground
