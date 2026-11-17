@@ -1,0 +1,53 @@
+---
+title: Textarea
+description: A native multi-line field that leaves its text in your app and sends no event.
+order: 4
+status: unreleased
+---
+
+## Install
+
+```sh
+npx tracky add textarea
+```
+
+`Textarea` requires the `utils` item for `cn()` and lists no analytics dependency. The package is not published yet, so install `utils` alongside it once a release exists.
+
+## Example
+
+<Example name="textarea" sendsEvents={false} />
+
+Resizing the field is ordinary app state. The typed text never leaves the element and the component sends nothing.
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'rows', type: 'number', description: 'Native visible line count; pair it with app state to resize.' },
+    { name: '...props', type: 'TextareaHTMLAttributes<HTMLTextAreaElement>', description: 'Native attributes, value or defaultValue, handlers, and ref pass through.' },
+  ]}
+/>
+
+The component sets a minimum height and no fixed rows, so `rows` and your own classes decide the size.
+
+## Action
+
+`Textarea` sends no component event and does not render `data-tracky-component`. It has no analytics code, so no value, resize, or focus can reach the SDK from this component.
+
+With `capture.inputChanges` on, the SDK's page-wide listener records `input_interaction` with element metadata only, and never reads the textarea's content.
+
+## Keyboard and screen readers
+
+- Typing, selection, and new lines are the browser's native behavior.
+- Tab reaches the field unless it is disabled.
+- Focus shows a `focus-visible` ring.
+- Disabled uses the native attribute and a muted surface.
+- `aria-invalid="true"` switches the border and ring to `destructive`; error text belongs to your app.
+
+## Theme tokens
+
+`bg-background`, `text-foreground`, `border-border`, `placeholder:text-muted-foreground`, `text-destructive`, `ring-ring`, `ring-offset-background`, `rounded-md`, and `font-sans`.
+
+## Source
+
+[`registry/components/ui/textarea.tsx`](https://github.com/lennythecreator/tracky/blob/main/registry/components/ui/textarea.tsx)

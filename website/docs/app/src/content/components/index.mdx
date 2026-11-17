@@ -1,0 +1,61 @@
+---
+title: Components
+description: The registry primitives, which ones send a documented action, and how they behave without a provider.
+order: 1
+status: unreleased
+---
+
+## Install a primitive
+
+The component library is source you own, not a runtime export of the SDK. `tracky init` writes `tracky.json`, the theme files, and the stylesheet import; `tracky add <component>` copies that component and the shared `cn()` helper into your project and records the ref in `tracky.lock.json`.
+
+```sh
+npx tracky init
+npx tracky add button
+```
+
+The `tracky` package is not published yet, so these commands apply once a release exists. Read the registry README before you change the copied source; the conventions in this section are what keep it consistent.
+
+## What the registry contains
+
+| Component | Analytics | Files |
+| --- | --- | --- |
+| [Button](/components/button) | `button · activate` | `button.tsx` |
+| [Input](/components/input) | None | `input.tsx` |
+| [Textarea](/components/textarea) | None | `textarea.tsx` |
+| [Label](/components/label) | None | `label.tsx` |
+| [Checkbox](/components/checkbox) | `checkbox · toggle` | `checkbox.tsx` |
+| [Switch](/components/switch) | `switch · toggle` | `switch.tsx` |
+| [Select](/components/select) | `select · change` | `select.tsx` |
+
+Four primitives send one documented action each. `Input`, `Textarea`, and `Label` send nothing, because their interactions say nothing a stable event can describe without reading the value or the text.
+
+Every primitive also requires the `utils` registry item for `cn()`. The four sending primitives import `tracky` for `useAnalyticsOptional()`; the three silent ones add no dependency.
+
+## Props that matter on every page
+
+### `analyticsName`
+
+`analyticsName` is an optional string that renders as `data-analytics-name` on the native element and takes precedence over an attribute you set yourself. It is the only context a primitive adds: the event carries `{ name }` when the prop is present, and nothing when it is not. It never changes the `{ name, action }` component object, so grouping happens in context without changing the documented action.
+
+```tsx
+<Button analyticsName="settings_save">Save changes</Button>
+```
+
+Page-wide click capture reads the same attribute, so one name groups a component event and any surrounding page metadata.
+
+### The `data-tracky-component` marker
+
+Every sending primitive renders `data-tracky-component="button"`, `"checkbox"`, `"switch"`, or `"select"` on the native element. Page-wide click capture skips a click inside that marker, so one interaction produces the component event and not a second generic `click`. The marker also tells you a copied file still has its analytics code. Silent primitives do not render it.
+
+### Without a provider
+
+Each sending primitive reads the nearest provider with `useAnalyticsOptional()`. Without an `AnalyticsProvider`, the component renders, keeps its native behavior, preserves your handlers and refs, and sends nothing. It never calls `useAnalytics()`, so it cannot throw for that reason, and it never turns on page-wide capture.
+
+## Choosing a primitive
+
+Use the native element that already has the semantics. `Label` binds with `htmlFor`; `Input`, `Textarea`, and `Select` pass native props through; `Checkbox` and `Switch` are checkboxes underneath, with `role="switch"` on the switch. Each page lists the props, the exact action, keyboard behavior, and the theme tokens the source uses.
+
+## Source of truth
+
+The pages describe `registry/components/ui/`. Each page links to its file in the repository. The analytics contract is recorded in [ADR 0001](https://github.com/lennythecreator/tracky/blob/main/docs/adr/0001-component-registry-and-styling.md), and the bar for a new component is in [the component conventions](https://github.com/lennythecreator/tracky/blob/main/docs/component-conventions.md).

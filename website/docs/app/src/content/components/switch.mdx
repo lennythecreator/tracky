@@ -1,0 +1,55 @@
+---
+title: Switch
+description: A checkbox with switch semantics and a sliding thumb that reports only the toggle.
+order: 7
+status: unreleased
+---
+
+## Install
+
+```sh
+npx tracky add switch
+```
+
+`Switch` requires the `utils` item for `cn()` and lists `tracky` as a dependency. The package is not published yet, so install both once a release exists.
+
+## Example
+
+<Example name="switch" />
+
+Space or a click flips the switch and sends one toggle. The event does not include the new state.
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'role', type: 'string', defaultValue: '"switch"', description: 'Passed to the native input. A switch announces as on or off rather than checked.' },
+    { name: 'checked', type: 'boolean', description: 'Controlled state, passed to the native input.' },
+    { name: 'defaultChecked', type: 'boolean', description: 'Initial state for uncontrolled use.' },
+    { name: 'analyticsName', type: 'string', description: 'Renders as data-analytics-name and becomes { name } in the event context.' },
+    { name: '...props', type: 'Omit<InputHTMLAttributes<HTMLInputElement>, "type">', description: 'Native attributes, onChange, and ref pass through. type is always checkbox.' },
+  ]}
+/>
+
+## Action
+
+`Switch` sends `switch · toggle` through the nearest provider after your `onChange` runs. The event carries `{ name: 'switch', action: 'toggle' }` and, when set, `context: { name: analyticsName }`.
+
+The checked value, the label, and any prop are never read or sent. The control's thumb and colour change in your app; neither is part of the event.
+
+## Keyboard and screen readers
+
+- Space toggles the focused switch.
+- The native checkbox state is exposed with `role="switch"`, so assistive technology announces on or off.
+- Tab reaches the switch unless it is disabled.
+- Focus shows a `focus-visible` ring with the ring offset against the background.
+- Disabled uses the native attribute, a muted track, and reduced opacity.
+- `aria-invalid="true"` adds a destructive border and ring.
+
+## Theme tokens
+
+`bg-muted`, `bg-primary`, `bg-switch-thumb`, `border-border`, `text-destructive`, `ring-ring`, `ring-offset-background`, and `rounded-full`.
+
+## Source
+
+[`registry/components/ui/switch.tsx`](https://github.com/lennythecreator/tracky/blob/main/registry/components/ui/switch.tsx)

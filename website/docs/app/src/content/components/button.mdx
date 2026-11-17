@@ -1,0 +1,56 @@
+---
+title: Button
+description: Five variants, three sizes, and one activation event that never includes the label.
+order: 2
+status: unreleased
+---
+
+## Install
+
+```sh
+npx tracky add button
+```
+
+`Button` requires the `utils` item for `cn()` and lists `tracky` as a dependency. The package is not published yet, so install `utils` alongside it once a release exists.
+
+## Example
+
+<Example name="button" />
+
+Two variants share the example so you can compare them. Each enabled button sends its own activation, and the labels never travel with the event.
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'variant', type: '"primary" | "secondary" | "outline" | "ghost" | "destructive"', defaultValue: '"primary"', description: 'The button treatment.' },
+    { name: 'size', type: '"sm" | "md" | "lg"', defaultValue: '"md"', description: 'Control height and padding.' },
+    { name: 'type', type: '"button" | "submit" | "reset"', defaultValue: '"button"', description: 'Native button type. The default does not submit a form.' },
+    { name: 'analyticsName', type: 'string', description: 'Renders as data-analytics-name and becomes { name } in the event context.' },
+    { name: '...props', type: 'ButtonHTMLAttributes<HTMLButtonElement>', description: 'Native attributes, handlers, and ref pass through.' },
+  ]}
+/>
+
+The caller's `onClick` runs first. If it calls `event.preventDefault()`, the button sends nothing, because the interaction was cancelled.
+
+## Action
+
+`Button` sends `button · activate` through the nearest provider. Enter and Space produce the same action as a pointer click, because they are the native button's activation. The event carries the component object `{ name: 'button', action: 'activate' }` and, when you set it, `context: { name: analyticsName }`.
+
+No label, child text, `aria-label`, `type`, variant, size, or other prop is read or sent.
+
+## Keyboard and screen readers
+
+- Tab reaches every enabled button; disabled buttons are skipped.
+- Enter and Space activate the focused button.
+- Focus shows a `focus-visible` ring built from `ring-ring` and `ring-offset-background`.
+- Disabled uses the native attribute, so assistive technology reports it and the button is not focusable.
+- The label is yours to supply, with visible text or `aria-label`.
+
+## Theme tokens
+
+`bg-primary`, `text-primary-foreground`, `bg-primary-hover`, `bg-secondary`, `bg-secondary-foreground`, `bg-secondary-hover`, `bg-background`, `text-foreground`, `bg-muted`, `bg-destructive`, `text-destructive-foreground`, `bg-destructive-hover`, `border-border`, `ring-ring`, `ring-offset-background`, `rounded-md`, and `font-sans`.
+
+## Source
+
+[`registry/components/ui/button.tsx`](https://github.com/lennythecreator/tracky/blob/main/registry/components/ui/button.tsx)
