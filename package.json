@@ -27,7 +27,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev:playground": "vite --config website/playground/vite.config.ts",
+    "dev:docs": "vite --config website/docs/vite.config.ts",
     "build:playground": "tsc --noEmit -p website/playground/tsconfig.json && vite build --config website/playground/vite.config.ts",
+    "build:docs": "tsc --noEmit -p website/docs/tsconfig.json && vite build --config website/docs/vite.config.ts",
     "lint": "tsc --noEmit -p tsconfig.json && tsc -p test/tsconfig.json",
     "check:terms": "node scripts/check-terms.mjs",
     "test": "vitest run"
@@ -36,6 +38,7 @@
     "react": ">=18.2.0"
   },
   "devDependencies": {
+    "@mdx-js/rollup": "^3.1.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^22.20.5",
     "@types/react": "^19.0.0",
@@ -45,6 +48,8 @@
     "puppeteer-core": "^25.16.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-mdx-frontmatter": "^6.0.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.0.0",
     "vite": "^8.3.5",

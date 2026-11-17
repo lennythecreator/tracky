@@ -18,6 +18,17 @@ npm run build:playground
 
 On the served site the playground is at `http://localhost:8000/playground/`, which forwards to `playground/dist/`. The Vite app root is `playground/app/`, so `playground/index.html` is a plain page rather than the app entry — opening the app's own `index.html` over a static server shows nothing.
 
+## Docs
+
+The documentation app is in `docs/`: a Vite + React app whose pages are MDX files in `docs/app/src/content/`. Each content folder has a `meta.json` that lists its pages in order and names the sidebar section; the build fails, naming the file, when a page is missing from it or a listed page has no file.
+
+```sh
+npm run dev:docs
+npm run build:docs
+```
+
+The dev server serves the app at `http://localhost:5173`, and the built output is in `docs/dist/`. On the site the docs are at `/docs/`, which the deployment config rewrites to the app, so a deep link or a reload lands on the same page. The app mounts no analytics provider and sends no requests. The stack, the alternatives that were rejected, and the no-per-page-HTML trade-off are in [`../docs/adr/0004-docs-site.md`](../docs/adr/0004-docs-site.md).
+
 ## Page metadata and icons
 
 `index.html` carries the canonical URL, description, Open Graph and Twitter card tags, and the theme colour. `og-image.png` is the 1200×630 share image named by `og:image`.
@@ -28,7 +39,7 @@ Canonical, Open Graph, and Twitter URLs point at `https://tracky-ivory.vercel.ap
 
 ## Deploying
 
-`vercel.json` at the repository root builds the playground and publishes this folder, so the deployed site is the landing page plus the playground at `/playground/`. No environment variables or server code are involved.
+`vercel.json` at the repository root builds the playground and the docs app and publishes this folder, so the deployed site is the landing page, the playground at `/playground/`, and the docs at `/docs/`. No environment variables or server code are involved.
 
 On Vercel, import the repository and leave the defaults: the config sets the build command to `npm run build:playground` and the output directory to `website`.
 

@@ -481,7 +481,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-020 — Define conventions for components added after the first seven
 
-**Status:** Open. Documents the contract the next primitives follow.
+**Status:** Complete. [`docs/component-conventions.md`](docs/component-conventions.md) records the analytics contract, registry item fields, accessibility bar, test and surface bar, and a definition-of-done checklist; `AGENTS.md` and the registry README link to it, and it points at ADR 0001 instead of restating it.
 
 **Priority:** Before the next primitive
 **GitHub:** [#42](https://github.com/lennythecreator/tracky/issues/42)
@@ -504,7 +504,7 @@ These tickets follow the component foundation and use `analytics-design.md` as t
 
 ### T-021 — Scaffold the docs app and record the docs architecture
 
-**Status:** Open. Adds the docs surface at `/docs/`; no page content yet.
+**Status:** Complete. `website/docs/` is a Vite + React + MDX app mirroring the playground: routes come from the MDX files and each folder's `meta.json`, and the build fails naming a page that is missing from meta or listed without a file. It ships the sidebar, on-this-page TOC, pager, mobile drawer, and skip link, builds with `npm run build:docs` in CI, and is recorded in [ADR 0004](docs/adr/0004-docs-site.md).
 
 **Priority:** Before the rest of the docs track
 **GitHub:** [#43](https://github.com/lennythecreator/tracky/issues/43)
