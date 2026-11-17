@@ -30,6 +30,9 @@ jobs:
       - name: Check terminology
         run: npm run check:terms
 
+      - name: Check docs authoring
+        run: npm run check:docs
+
       - name: Test
         run: npm test
 

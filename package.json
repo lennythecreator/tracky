@@ -32,6 +32,7 @@
     "build:docs": "tsc --noEmit -p website/docs/tsconfig.json && vite build --config website/docs/vite.config.ts",
     "lint": "tsc --noEmit -p tsconfig.json && tsc -p test/tsconfig.json",
     "check:terms": "node scripts/check-terms.mjs",
+    "check:docs": "node scripts/check-docs.ts",
     "test": "vitest run"
   },
   "peerDependencies": {
